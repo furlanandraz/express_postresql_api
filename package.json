@@ -1,0 +1,19 @@
+{
+  "name": "express_postresql_api",
+  "version": "1.0.0",
+  "description": "express application that works in tandem with postgres to provide a backend api for a CMS frontend app",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/furlanandraz/express_postresql_api.git"
+  },
+  "author": "Andraz Furlan",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/furlanandraz/express_postresql_api/issues"
+  },
+  "homepage": "https://github.com/furlanandraz/express_postresql_api#readme"
+}
