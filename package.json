@@ -31,7 +31,6 @@
     "pg": "^8.13.1"
   },
   "imports": {
-    "#routes/*": "./server/routes/index.js",
     "#clients": "./server/clients/index.js"
   }
 }
