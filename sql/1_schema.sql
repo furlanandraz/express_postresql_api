@@ -16,7 +16,7 @@ CREATE SCHEMA IF NOT EXISTS customer;
 
 GRANT ALL ON SCHEMA customer TO postgres;
 
--- SCHEMA: customer
+-- SCHEMA: settings
 
 CREATE SCHEMA IF NOT EXISTS settings;
 

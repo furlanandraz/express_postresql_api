@@ -1,5 +1,5 @@
 -- First, drop the database outside the transaction block
-DROP DATABASE IF EXISTS express_postgres_api;
+-- DROP DATABASE IF EXISTS express_postgres_api;
 
 -- Then, create the new database using template0 to avoid collation conflicts
 CREATE DATABASE express_postgres_api
