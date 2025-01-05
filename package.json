@@ -6,7 +6,9 @@
   "type": "module",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "db-init": "node init.js"
+    "db-init": "node init.js",
+    "start": "node index.js",
+    "dev": "nodemon index.js"
   },
   "repository": {
     "type": "git",
@@ -21,6 +23,15 @@
   "dependencies": {
     "child_process": "^1.0.2",
     "cross-env": "^7.0.3",
-    "dotenv": "^16.4.7"
+    "dotenv": "^16.4.7",
+    "esm-module-alias": "^2.2.1",
+    "express": "^4.21.2",
+    "module-alias": "^2.2.3",
+    "nodemon": "^3.1.9",
+    "pg": "^8.13.1"
+  },
+  "imports": {
+    "#routes/*": "./server/routes/index.js",
+    "#clients": "./server/clients/index.js"
   }
 }

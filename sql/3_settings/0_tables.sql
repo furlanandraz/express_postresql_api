@@ -3,5 +3,4 @@ CREATE TABLE settings.schema_showing_order (
     display_order INT NOT NULL,
     schema_name TEXT UNIQUE NOT NULL,
     ui_name TEXT,
-    description TEXT
 );
