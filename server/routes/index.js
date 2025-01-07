@@ -1,4 +1,3 @@
-// export { default as navigation } from './navigation/index.js';
 import express from 'express';
 const routes = express.Router();
 

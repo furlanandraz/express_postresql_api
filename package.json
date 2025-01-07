@@ -31,6 +31,7 @@
     "pg": "^8.13.1"
   },
   "imports": {
-    "#clients": "./server/clients/index.js"
+    "#clients": "./server/clients/index.js",
+    "#middleware/*": "./server/middleware/*"
   }
 }
