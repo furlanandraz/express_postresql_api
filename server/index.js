@@ -12,6 +12,11 @@ const base = `/${entry}/v${v}`;
 server.use(express.json());
 server.use(express.urlencoded({ extended: true }));
 
+server.use((req, res, next) => {
+  req.locals = req.locals || {};
+  next();
+});
+
 server.use(getClientMiddleware);
 
 server.use(base, routes);
