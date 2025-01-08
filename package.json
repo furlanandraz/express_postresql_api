@@ -7,7 +7,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "db-init": "node init.js",
-    "start": "node index.js",
+    "start": "pm2 start ecosystem.config.cjs",
     "dev": "nodemon index.js"
   },
   "repository": {
@@ -28,7 +28,9 @@
     "express": "^4.21.2",
     "module-alias": "^2.2.3",
     "nodemon": "^3.1.9",
-    "pg": "^8.13.1"
+    "pg": "^8.13.1",
+    "pg-listen": "^1.7.0",
+    "pm2": "^5.4.3"
   },
   "imports": {
     "#clients": "./server/clients/index.js",

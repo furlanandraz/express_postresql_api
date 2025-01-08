@@ -21,3 +21,9 @@ GRANT ALL ON SCHEMA customer TO postgres;
 CREATE SCHEMA IF NOT EXISTS settings;
 
 GRANT ALL ON SCHEMA settings TO postgres;
+
+-- SCHEMA: cache
+
+CREATE SCHEMA IF NOT EXISTS cache;
+
+GRANT ALL ON SCHEMA cache TO postgres;
