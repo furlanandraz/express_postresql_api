@@ -34,3 +34,7 @@ const readonly = new Pool({
 });
 
 export { god, admin, customer, readonly };
+// export default clients = {
+//     'god': god,
+//     'admin': admin
+// }

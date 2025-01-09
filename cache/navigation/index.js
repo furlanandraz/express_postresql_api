@@ -5,8 +5,13 @@ const subscriber = createSubscriber({
     pgClient: god
 });
 
-subscriber.notifications.on('menu_item_change', (payload) => {
-    console.log('Received menu item change notification:', payload);
+subscriber.notifications.on('menu_item_change', async (payload) => {
+    try {
+        const menuItems = await god.query('SELECT * FROM navigation.menu_item');
+        res.json(menuItems);
+    } catch (error) {
+        res.status(500);
+    }
 });
 
 subscriber.events.on('error', (error) => {

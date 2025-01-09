@@ -36,6 +36,7 @@
   },
   "imports": {
     "#clients": "./clients/index.js",
-    "#middleware/*": "./server/middleware/*"
+    "#middleware/*": "./server/middleware/*",
+    "#DAO/*": "./DAO/*"
   }
 }
