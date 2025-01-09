@@ -1,10 +1,8 @@
 import createSubscriber from 'pg-listen';
-import clients from '#clients';
-
-const god = clients.god;
+import { god } from '#clients';
 
 const subscriber = createSubscriber({
-    connectionString: 'postgresql://postgres:furlanandraz@localhost:5432/express_postgres_api'
+    pgClient: god
 });
 
 subscriber.notifications.on('menu_item_change', (payload) => {

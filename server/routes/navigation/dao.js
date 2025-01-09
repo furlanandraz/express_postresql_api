@@ -1,4 +1,4 @@
-import clients from '#clients';
+import * as clients from '#clients';
 
 const Nav = {
     async getMenuItems(clientType) {

@@ -5,7 +5,7 @@
   "main": "index.js",
   "type": "module",
   "scripts": {
-    "db:init": "node init.js",
+    "init:db": "node init.js",
     "start:services": "npx pm2 start ecosystem.config.cjs",
     "stop:services": "npx pm2 stop all",
     "restart:services": "npx pm2 restart all",
@@ -35,7 +35,7 @@
     "pm2": "^5.4.3"
   },
   "imports": {
-    "#clients": "./server/clients/index.js",
+    "#clients": "./clients/index.js",
     "#middleware/*": "./server/middleware/*"
   }
 }

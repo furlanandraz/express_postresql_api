@@ -11,7 +11,7 @@ module.exports = {
     {
       name: 'cache-listener',
       script: 'cache/index.js',
-      watch: false,
+      watch: true,
       env: {
         NODE_ENV: 'production'
       }
