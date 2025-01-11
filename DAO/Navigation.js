@@ -1,20 +1,15 @@
-import * as clients from '#clients';
+import Static from "./Static.js";
 
-class Navigation {
 
-    constructor(clientType = 'readonly') {
-        this.clientType = clientType;
-    }
+class Navigation extends Static {
 
-    static setClient(clientType) {
-        return new Navigation(clientType);  // Returns a new instance
-    }
-    static async getMenuItems() {
-        const client = clients[this.clientType];
+    async getMenuItems() {
+
         try {
-            const result = await client.query('SELECT * FROM navigation.menu_item');
+            const result = await this.client.query('SELECT * FROM navigation.menu_item');
             return result.rows;
         } catch (error) {
+            console.error('Database query error:', error);
             return { error: 'Database query error' };
         }
     }

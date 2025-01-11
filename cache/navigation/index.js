@@ -1,16 +1,32 @@
 import createSubscriber from 'pg-listen';
+import dotenv from 'dotenv';
+dotenv.config();
+
+import Navigation from '#DAO/Navigation.js'
+import Cache from '#DAO/Cache.js';
+import { buildMenuTree } from './functions.js';
 import { god } from '#clients';
 
+
 const subscriber = createSubscriber({
-    pgClient: god
+    connectionString: `postgres://${process.env.PG_GOD_USER}:${process.env.PG_GOD_PASSWORD}@${process.env.PG_SERVICE_HOST}:${process.env.PG_SERVICE_PORT}/${process.env.PG_SERVICE_NAME}`
+    
 });
 
 subscriber.notifications.on('menu_item_change', async (payload) => {
+    console.log(payload);
+    
     try {
-        const menuItems = await god.query('SELECT * FROM navigation.menu_item');
-        res.json(menuItems);
+
+        const result = await Navigation.setClient('god').getMenuItems();
+        const menuTree = buildMenuTree(result);
+        await Cache.setClient('god').cacheMenuTree(menuTree)
+
+        
+
     } catch (error) {
-        res.status(500);
+        console.error('Error updating cache table:', error);
+        throw error;
     }
 });
 

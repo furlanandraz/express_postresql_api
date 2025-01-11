@@ -1,40 +1,39 @@
-import pg from 'pg';  // Default import for a CommonJS module
+import pg from 'pg';
+import dotenv from 'dotenv';
+dotenv.config();
+
 const { Pool } = pg;
 
 const god = new Pool({
-        user: 'postgres',
-        password: 'furlanandraz',
-        host: 'localhost',
-        port: 5432,
-        database: 'express_postgres_api',
+    user: process.env.PG_GOD_USER,
+    password: process.env.PG_GOD_PASSWORD,
+    host: process.env.PG_SERVICE_HOST,
+    port: process.env.PG_SERVICE_PORT,
+    database: process.env.PG_SERVICE_NAME,
 });
     
 const admin = new Pool({
-    user: 'admin',
-    password: 'admin',
-    host: 'localhost',
-    port: 5432,
-    database: 'express_postgres_api',
+    user: process.env.PG_ADMIN_USER,
+    password: process.env.PG_ADMIN_PASSWORD,
+    host: process.env.PG_SERVICE_HOST,
+    port: process.env.PG_SERVICE_PORT,
+    database: process.env.PG_SERVICE_NAME,
 });
 
 const customer = new Pool({
-    user: 'customer',
-    password: 'customer',
-    host: 'localhost',
-    port: 5432,
-    database: 'express_postgres_api',
+    user: process.env.PG_CUSTOMER_USER,
+    password: process.env.PG_CUSTOMER_PASSWORD,
+    host: process.env.PG_SERVICE_HOST,
+    port: process.env.PG_SERVICE_PORT,
+    database: process.env.PG_SERVICE_NAME,
 });
 
 const readonly = new Pool({
-    user: 'client',
-    password: 'client',
-    host: 'localhost',
-    port: 5432,
-    database: 'express_postgres_api',
+    user: process.env.PG_READONLY_USER,
+    password: process.env.PG_READONLY_PASSWORD,
+    host: process.env.PG_SERVICE_HOST,
+    port: process.env.PG_SERVICE_PORT,
+    database: process.env.PG_SERVICE_NAME,
 });
 
 export { god, admin, customer, readonly };
-// export default clients = {
-//     'god': god,
-//     'admin': admin
-// }
