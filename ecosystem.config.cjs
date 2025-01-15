@@ -2,7 +2,7 @@ module.exports = {
   apps: [
     {
       name: 'api',
-      script: 'index.js',
+      script: 'server/index.js',
       watch: true,
       env: {
         NODE_ENV: 'production'
