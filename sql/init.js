@@ -4,19 +4,21 @@ import { fileURLToPath } from 'url';
 import { exec } from 'child_process';
 import dotenv from 'dotenv';
 
+
 dotenv.config();
 
-const pgPassword = process.env.POSTGRES_PASSWORD;
+const PgOwner = process.env.PG_GOD_USER
+const pgPassword = process.env.PG_GOD_PASSWORD;
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-const sqlDir = path.join(__dirname, 'sql');
-const tmpFile = path.join(__dirname, 'sql', 'tmp.sql');
+const sqlDir = __dirname;
+const tmpFile = path.join(__dirname, 'tmp.sql');
 
 function sqlCrawler(directory) {
     let partial = '';
     
     const allFiles = fs.readdirSync(directory);
-    const files = allFiles.filter(file => file.endsWith('.sql'));
+    const files = allFiles.filter(file => file.endsWith('.sql') && file);
     const dirs = allFiles.filter(dir => fs.statSync(path.join(directory, dir)).isDirectory());
 
     files.sort((a, b) => {
@@ -58,13 +60,14 @@ function execPromise(command) {
     });
 }
 
-async function init() {
+(async function init() {
     const combined = sqlCrawler(sqlDir);
+    fs.writeFileSync(tmpFile, '', 'utf-8');
     fs.writeFileSync(tmpFile, combined, 'utf-8');
 
     const command = process.platform === 'win32'
-        ? `cross-env PGPASSWORD="${pgPassword}" psql -U postgres -f ${tmpFile}`  // Windows
-        : `PGPASSWORD=${pgPassword} psql -U postgres -f ${tmpFile}`;         // Linux/macOS
+        ? `cross-env PGPASSWORD="${pgPassword}" psql -U ${PgOwner} -f ${tmpFile}`  // Windows
+        : `PGPASSWORD=${pgPassword} psql -U ${PgOwner} -f ${tmpFile}`;         // Linux/macOS
 
     try {
         const result = await execPromise(command);
@@ -72,13 +75,11 @@ async function init() {
     } catch (error) {
         console.error(error);
     } finally {
-        // Ensure tmp.sql file is deleted after execution
         if (fs.existsSync(tmpFile)) {
             fs.unlinkSync(tmpFile);
         }
     }
-}
+})();
 
-init();
 
 
