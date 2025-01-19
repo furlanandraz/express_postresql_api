@@ -9,7 +9,7 @@ import navigationSubscriberInit from './navigation/index.js';
     }
 })();
 
-process.on('exit', async () => {
-    console.log('Closing subscriber...');
-    await subscriber.close();
-});
+// process.on('exit', async () => {
+//     console.log('Closing subscriber...');
+//     await subscriber.close();
+// });

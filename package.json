@@ -6,11 +6,12 @@
   "type": "module",
   "scripts": {
     "init:db": "node sql/init.js",
-    "start:services": "npx pm2 start ecosystem.config.cjs --no-daemon",
-    "stop:services": "npx pm2 stop all",
-    "restart:services": "npx pm2 restart all --no-daemon",
-    "status:services": "npx pm2 list",
-    "dev": "nodemon index.js"
+    "init:cache": "npx pm2 start ecosystem.config.cjs --only server:cache:listener --silent && node cache/_global/notify.js && pm2 stop all",
+    "reinit:cache": "npx pm2 start ecosystem.config.cjs --only server:cache:listener --silent && node cache/_global/notify.js",
+    "server:start": "npx pm2 start ecosystem.config.cjs --no-daemon",
+    "server:stop": "npx pm2 stop all",
+    "server:restart": "npx pm2 restart all --no-daemon",
+    "server:status": "npx pm2 list"
   },
   "repository": {
     "type": "git",
@@ -27,6 +28,7 @@
     "cross-env": "^7.0.3",
     "dotenv": "^16.4.7",
     "esm-module-alias": "^2.2.1",
+    "execa": "^9.5.2",
     "express": "^4.21.2",
     "module-alias": "^2.2.3",
     "nodemon": "^3.1.9",

@@ -1,20 +1,22 @@
 module.exports = {
   apps: [
     {
-      name: 'api',
+      name: 'server:api',
       script: 'server/index.js',
       watch: true,
+      autorestart: true,
       env: {
         NODE_ENV: 'production'
       }
     },
     {
-      name: 'cache-listener',
+      name: 'server:cache:listener',
       script: 'cache/index.js',
       watch: true,
+      autorestart: true,
       env: {
         NODE_ENV: 'production'
       }
-    }
+    },
   ]
 };
