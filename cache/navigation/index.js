@@ -5,7 +5,6 @@ dotenv.config();
 import Navigation from '#DAO/Navigation.js'
 import Cache from '#DAO/Cache.js';
 import { buildMenuTree } from './functions.js';
-import { god } from '#clients';
 
 
 const subscriber = createSubscriber({
@@ -14,8 +13,7 @@ const subscriber = createSubscriber({
 });
 
 subscriber.notifications.on('menu_item_change', async (payload) => {
-    console.log(payload);
-    
+        
     try {
 
         const result = await Navigation.setClient('god').getMenuItems();
