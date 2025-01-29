@@ -6,5 +6,6 @@ CREATE TABLE navigation.menu_item (
     ui_name TEXT NOT NULL DEFAULT '',
     meta_description TEXT,
     meta_keywords TEXT,
-    render_method types.render_method DEFAULT 'ssr'
+    render_method types.render_method DEFAULT 'ssr',
+    layout_type TEXT DEFAULT ''
 );

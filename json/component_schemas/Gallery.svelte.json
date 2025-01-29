@@ -1,0 +1,30 @@
+{
+  "type": "object",
+  "properties": {
+    "gallery": {
+      "type": "array",
+      "title": "Image Gallery",
+      "items": {
+        "type": "object",
+        "properties": {
+          "src": {
+            "type": "string",
+            "format": "data-url",
+            "title": "Image Source URL"
+          },
+          "caption": {
+            "type": "string",
+            "title": "Image Caption"
+          },
+          "alt": {
+            "type": "string",
+            "title": "Image Alt Text"
+          }
+        },
+        "required": [
+          "src"
+        ]
+      }
+    }
+  }
+}

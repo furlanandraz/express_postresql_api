@@ -1,0 +1,19 @@
+{
+    "title": "Figure",
+    "type": "object",
+    "properties": {
+        "figcaption": {
+            "type": "string",
+            "title": "Figure Caption"
+        },
+        "src": {
+            "type": "string",
+            "title": "Image Source URL",
+            "format": "data-url",
+            "mimetypes": ["image/jpeg", "image/webp"],
+            "ui:options": {
+                "accept": "image/jpeg, image/webp"
+            }
+        }
+    }
+}

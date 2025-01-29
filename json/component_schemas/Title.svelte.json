@@ -1,0 +1,14 @@
+{
+    "title": "Title",
+    "type": "object",
+    "properties": {
+        "largeTitle": {
+            "type": "string",
+            "title": "Large Title"
+        },
+        "smallTitle": {
+            "type": "string",
+            "title": "Small title"
+        }
+    }
+}

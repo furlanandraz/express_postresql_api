@@ -1,0 +1,17 @@
+{
+    "title": "Text Photo",
+    "type": "object",
+    "properties": {
+        "align": {
+            "type": "string",
+            "enum": ["left", "right"],
+            "default": "left",
+            "title": "Align Content"
+        },
+        "background": {
+            "type": "boolean",
+            "default": false,
+            "title": "Show Background"
+        }
+    }
+}

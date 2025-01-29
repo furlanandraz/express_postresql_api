@@ -1,1 +1,1 @@
-CREATE DOMAIN types.html_notation AS text;
+-- CREATE DOMAIN types.html AS text;
