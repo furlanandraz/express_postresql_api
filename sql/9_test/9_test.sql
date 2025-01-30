@@ -50,5 +50,5 @@ INSERT INTO types.segment_schema (
     json_preset
 ) VALUES (
     1,
-    '{"type":"object","name":"Text Photo","properties":{"template":{"template_id":1},"buttonLinkPrimary":{"component_id":1},"buttonLinkSecondary":{"component_id":1},"title":{"component_id":4},"figure":{"component_id":3}}}'
+    '{"type":"object","properties":{"template":{"template_id":1},"components":{"type":"object","title":"Components","properties": {"buttonLinkPrimary":{"component_id":1},"buttonLinkSecondary":{"component_id":1},"title":{"component_id":4},"figure":{"component_id":3}}}}}'
 );
