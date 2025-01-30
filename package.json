@@ -12,7 +12,8 @@
     "server:stop": "npx pm2 stop all",
     "server:restart": "npx pm2 restart all --no-daemon",
     "server:status": "npx pm2 list",
-    "init:types": "node json/parse.js"
+    "init:types": "node json/parse.js",
+    "render": "node json/render.js"
   },
   "repository": {
     "type": "git",
