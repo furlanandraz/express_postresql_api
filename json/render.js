@@ -1,6 +1,4 @@
 import fs from 'fs';
-import path from 'path';
-import { fileURLToPath } from 'url';
 
 import { god } from '#clients';
 
@@ -9,8 +7,7 @@ async function renderSegmentSchemaById(id) {
     const {rows: [result]}  = await god.query('SELECT * FROM types.segment_schema WHERE id = $1 LIMIT 1', [id]);
     const json_preset = result.json_preset;
     const regeneratedSchema = await regenerateSchema(json_preset);
-    console.log(JSON.stringify(regeneratedSchema, null, 2));
-
+    await god.query('UPDATE types.segment_schema SET json_form = $1 WHERE id = $2', [JSON.stringify(regeneratedSchema), id])
 }
 
 async function regenerateSchema(schema) {
@@ -23,18 +20,16 @@ async function regenerateSchema(schema) {
     }
 
     ids['components'] = [...new Set(ids['components'])];
-    // console.log(mainProperties, ids);
 
 
     let { rows: [resultTemplate] } = await god.query('SELECT json_ref FROM types.template_schema WHERE id=$1 LIMIT 1;', [ids.template]);
     let json_ref_template = resultTemplate.json_ref;
     mainProperties.template = JSON.parse(fs.readFileSync(json_ref_template, 'utf-8'));
 
-    // console.log(ids.components)
+
     
     const {rows: resultComponents} = await god.query('SELECT DISTINCT id, json_ref FROM types.component_schema WHERE id=ANY($1::int[]);', [ids.components]);
     
-    // console.log(resultComponents);
     
 
     for (const [key, value] of Object.entries(mainProperties.components.properties)) {
@@ -46,16 +41,7 @@ async function regenerateSchema(schema) {
         mainProperties.components.properties[key] = JSON.parse(fs.readFileSync(componentPath.json_ref, 'utf-8'));
     }
 
-
-    
-    
-    // const json_ref_component = resultComponent.json_ref;
-    // mainProperties.template = JSON.parse(fs.readFileSync(json_ref, 'utf-8'));
-
-    
-
-    // console.log(mainProperties);
     return {...schema, properties: mainProperties};
 }
 
-renderSegmentSchemaById(2);
+renderSegmentSchemaById(1);
