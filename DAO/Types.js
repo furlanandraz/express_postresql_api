@@ -13,15 +13,40 @@ class Types extends Static {
 
         try {
             const result = await this.client.query(`
-                INSERT INTO types.${jsonSchemaName} (url_name, ui_name, json_ref)
+                INSERT INTO ${jsonSchemaName} (url_name, ui_name, json_ref)
                 VALUES 
                 ${values}
                 ON CONFLICT (url_name) DO NOTHING;
-                DELETE FROM types.${jsonSchemaName}
+                DELETE FROM ${jsonSchemaName}
                 WHERE url_name NOT IN (${allExistingFiles});
                 `
             );
             return result.rows;
+        } catch (error) {
+            console.error('Database insert error:', error);
+            return { error: 'Database insert error' };
+        }
+    }
+
+    async layoutTypesInsertMany(data) {
+
+        const values = data.reduce((all, row) => {
+            return all + `('${row.url_name}', '${row.ui_name}'), `;
+        }, '').slice(0, -2);
+
+        const existing = `(${data.map(value => `'${value.url_name}'`).join(', ')})`;
+
+        console.log(values, "\n", existing);
+
+
+        try {
+            await this.client.query(`
+                INSERT INTO types.layout_type (url_name, ui_name)
+                VALUES ${values}
+                ON CONFLICT (url_name) DO NOTHING;
+                DELETE FROM types.layout_type
+                WHERE url_name NOT IN ${existing};`
+            );
         } catch (error) {
             console.error('Database insert error:', error);
             return { error: 'Database insert error' };

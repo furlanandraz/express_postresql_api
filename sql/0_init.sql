@@ -1,4 +1,4 @@
-CREATE DATABASE express_postgres_api
+CREATE DATABASE cms
     WITH
     OWNER = postgres
     ENCODING = 'UTF8'
@@ -9,9 +9,9 @@ CREATE DATABASE express_postgres_api
     IS_TEMPLATE = False
     TEMPLATE = template0;
 
-GRANT TEMPORARY, CONNECT ON DATABASE express_postgres_api TO PUBLIC;
+GRANT TEMPORARY, CONNECT ON DATABASE cms TO PUBLIC;
 
-GRANT ALL ON DATABASE express_postgres_api TO postgres;
+GRANT ALL ON DATABASE cms TO postgres;
 
-\c express_postgres_api
+\c cms
 

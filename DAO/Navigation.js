@@ -6,7 +6,7 @@ class Navigation extends Static {
     async getMenuItems() {
 
         try {
-            const result = await this.client.query('SELECT * FROM navigation.menu_item');
+            const result = await this.client.query('SELECT * FROM navigation.route');
             return result.rows;
         } catch (error) {
             console.error('Database query error:', error);

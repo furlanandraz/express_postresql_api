@@ -66,13 +66,7 @@ function execPromise(command) {
     fs.writeFileSync(tmpFile, '', 'utf-8');
     fs.writeFileSync(tmpFile, combined, 'utf-8');
 
-    // const command = process.platform === 'win32'
-    //     ? `cross-env PGPASSWORD="${pgPassword}" psql -U ${PgOwner} -f ${tmpFile}`  // Windows
-    //     : `PGPASSWORD=${pgPassword} psql -U ${PgOwner} -f ${tmpFile}`;         // Linux/macOS
-
     try {
-        // const result = await execPromise(command);
-        // console.log(`psql stdout: ${result}`);
         const result = await execa("psql", ["-U", pgOwner, "-f", tmpFile], {
             env: { PGPASSWORD: pgPassword }, // Set environment variables
             stdio: "inherit", // Redirect stdout and stderr to the console

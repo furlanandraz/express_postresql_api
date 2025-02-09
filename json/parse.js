@@ -6,18 +6,19 @@ import { fileURLToPath } from 'url';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-console.log(__dirname);
 
 const schemaDirectories = [
     {
-        tableName: 'component_schema',
+        tableName: 'types.component_schema',
         dirName: 'component_schemas'
     },
     {
-        tableName: 'template_schema',
+        tableName: 'types.template_schema',
         dirName: 'template_schemas'
     }
 ];
+
+// parser to be redone for .svelte files not .svelte.json in the future, json schemas editing moved to cms, real components parsed - or json schemas possibly moved to same folder and parsed together with components
 
 schemaDirectories.forEach(async directory => {
 
@@ -42,3 +43,39 @@ schemaDirectories.forEach(async directory => {
     }
 
 });
+
+// this parser to be used also with components and templates, now only for layouts that dont need json schema
+
+const libDirectory = [
+    {
+        table: 'layout_type',
+        dir: 'sveltekit_cms_test/src/lib/layouts'
+    },
+];
+
+(function lib2table(libDirectory) {
+
+    libDirectory.forEach(async directory => {
+        let data = [];
+        let { table, dir } = directory;
+        dir = path.resolve(__dirname, '../..', dir);
+        console.log(dir);
+        let files = fs.readdirSync(dir);
+        files = files.filter(file => file.endsWith('.svelte') && file);
+        files.forEach(file => {
+            data.push({
+                url_name: file,
+                ui_name: file.replace(/\.svelte$/, '').replace(/([a-z])([A-Z])/g, '$1 $2'),
+            });
+        });
+
+        try {
+            await Types.setClient('god').layoutTypesInsertMany(data);
+            console.log('inserted');
+        } catch (error) {
+            console.log(error);
+        }
+
+    });
+
+})(libDirectory);

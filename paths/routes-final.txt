@@ -1,0 +1,17 @@
+src/
+└ routes/
+  └ (main)
+    ├ +layout.svelte
+    ├ +page.svelte
+    └ (breadcrumbs)/
+      ├ +layout.svelte
+      ├ about/
+      │  └ + page.svelte
+      └ (blog-grid)/
+        ├ +layout.svelte
+        └ blog-grid/
+          ├ +page.svelte
+          └ (blog-post)/
+            ├ +layout@(breadcrumbs).svelte
+            └ blog-grid/
+              └ +page.svelte

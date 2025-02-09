@@ -12,7 +12,7 @@ const subscriber = createSubscriber({
     
 });
 
-subscriber.notifications.on('menu_item_change', async (payload) => {
+subscriber.notifications.on('route_change', async (payload) => {
         
     try {
 
@@ -36,8 +36,8 @@ subscriber.events.on('error', (error) => {
 async function subscriberInit () {
     try {
         await subscriber.connect();
-        console.log('Listening for notifications on channel: menu_item_change...');
-        await subscriber.listenTo('menu_item_change');
+        console.log('Listening for notifications on channel: route_change...');
+        await subscriber.listenTo('route_change');
     } catch (err) {
         console.error('Error setting up subscriber:', err);
     }
