@@ -130,3 +130,7 @@ dist
 .pnp.*
 
 # helperFiles
+helperFiles
+
+# rendered routes
+sveltekit-adapter/routes

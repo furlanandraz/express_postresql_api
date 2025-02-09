@@ -8,3 +8,6 @@ CREATE TABLE navigation.route (
     route_type types.route_type DEFAULT 'Static',
     route_render_method types.render_method DEFAULT 'SSR'   
 );
+
+CREATE UNIQUE INDEX unique_root ON navigation.route (parent_id)
+WHERE parent_id IS NULL;

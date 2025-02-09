@@ -13,7 +13,8 @@
     "server:restart": "npx pm2 restart all --no-daemon",
     "server:status": "npx pm2 list",
     "init:types": "node json/parse.js",
-    "render": "node json/render.js"
+    "render": "node json/render.js",
+    "routes:build": "node sveltekit-adapter/routes.js"
   },
   "repository": {
     "type": "git",
