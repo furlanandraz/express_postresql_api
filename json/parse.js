@@ -9,11 +9,11 @@ const __dirname = path.dirname(__filename);
 
 const schemaDirectories = [
     {
-        tableName: 'types.component_schema',
+        tableName: 'types.component_type',
         dirName: 'component_schemas'
     },
     {
-        tableName: 'types.template_schema',
+        tableName: 'types.template_type',
         dirName: 'template_schemas'
     }
 ];

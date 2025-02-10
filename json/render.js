@@ -22,13 +22,13 @@ async function regenerateSchema(schema) {
     ids['components'] = [...new Set(ids['components'])];
 
 
-    let { rows: [resultTemplate] } = await god.query('SELECT json_ref FROM types.template_schema WHERE id=$1 LIMIT 1;', [ids.template]);
+    let { rows: [resultTemplate] } = await god.query('SELECT json_ref FROM types.template_type WHERE id=$1 LIMIT 1;', [ids.template]);
     let json_ref_template = resultTemplate.json_ref;
     mainProperties.template = JSON.parse(fs.readFileSync(json_ref_template, 'utf-8'));
 
 
     
-    const {rows: resultComponents} = await god.query('SELECT DISTINCT id, json_ref FROM types.component_schema WHERE id=ANY($1::int[]);', [ids.components]);
+    const {rows: resultComponents} = await god.query('SELECT DISTINCT id, json_ref FROM types.component_type WHERE id=ANY($1::int[]);', [ids.components]);
     
     
 

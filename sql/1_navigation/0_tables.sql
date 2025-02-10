@@ -5,8 +5,8 @@ CREATE TABLE navigation.route (
     ui_name TEXT NOT NULL,
     meta_description TEXT,
     meta_keywords TEXT,
-    route_type types.route_type DEFAULT 'Static',
-    route_render_method types.render_method DEFAULT 'SSR'   
+    url_type types.route_url_type DEFAULT 'Static',
+    render_method types.route_render_method DEFAULT 'SSR'   
 );
 
 CREATE UNIQUE INDEX unique_root ON navigation.route (parent_id)

@@ -6,8 +6,8 @@ SELECT
     r.ui_name,
     r.meta_description,
     r.meta_keywords,
-    r.route_type,
-    r.route_render_method,
+    r.url_type,
+    r.render_method,
     COALESCE(rl.layout_id, NULL) AS layout_id,
     COALESCE(rp.id, NULL) AS page_id
 FROM
