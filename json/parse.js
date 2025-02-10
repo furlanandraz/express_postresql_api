@@ -27,7 +27,7 @@ schemaDirectories.forEach(async directory => {
     const allSchemas = allFiles.filter(file => file.endsWith('.svelte.json') && file);
     const allValues = allSchemas.reduce((allRows, row) => {
         allRows.push({
-            url_name: row,
+            url_name: row.replace(/\.json$/, ""),
             ui_name: row.replace(/\.svelte\.json$/, '').replace(/([a-z])([A-Z])/g, '$1 $2'),
             json_ref: path.resolve(__dirname, directory.dirName, row)
         });

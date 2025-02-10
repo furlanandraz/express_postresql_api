@@ -1,7 +1,7 @@
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
-import { exec } from 'child_process';
+// import { exec } from 'child_process';
 import { execa } from 'execa';
 import dotenv from 'dotenv';
 
@@ -31,7 +31,6 @@ function sqlCrawler(directory) {
         const fullPath = path.join(directory, file);
         partial += fs.readFileSync(fullPath, 'utf-8') + '\n';
     });
-
     dirs.sort((a, b) => {
         a = parseInt(a.split('_')[0], 10);
         b = parseInt(b.split('_')[0], 10);
@@ -62,10 +61,7 @@ function execPromise(command) {
 }
 
 (async function init() {
-    const combined = sqlCrawler(sqlDir);
-    fs.writeFileSync(tmpFile, '', 'utf-8');
-    fs.writeFileSync(tmpFile, combined, 'utf-8');
-
+    await fs.promises.writeFile(tmpFile, combined, 'utf-8');
     try {
         const result = await execa("psql", ["-U", pgOwner, "-f", tmpFile], {
             env: { PGPASSWORD: pgPassword }, // Set environment variables
@@ -82,8 +78,7 @@ function execPromise(command) {
         if (fs.existsSync(tmpFile)) {
             fs.unlinkSync(tmpFile);
         }
-        console.log('Builing done');
-        
+        console.log('Builing done'); 
     }
 })();
 
