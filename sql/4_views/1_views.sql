@@ -25,6 +25,7 @@ CREATE VIEW presentation.route_page_segment_type AS
 SELECT
     rpc.route_id,
     rpc.segment_instance_order,
+    si.id
     si.segment_json,
     tt.url_name
 FROM presentation.route_page_content rpc

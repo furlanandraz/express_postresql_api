@@ -44,21 +44,21 @@ function sqlCrawler(directory) {
     return partial;
 }
 
-function execPromise(command) {
-    return new Promise((resolve, reject) => {
-        exec(command, (error, stdout, stderr) => {
-            if (error) {
-                reject(`Error executing psql: ${error.message}`);
-                return;
-            }
-            if (stderr) {
-                reject(`psql stderr: ${stderr}`);
-                return;
-            }
-            resolve(stdout);
-        });
-    });
-}
+// function execPromise(command) {
+//     return new Promise((resolve, reject) => {
+//         exec(command, (error, stdout, stderr) => {
+//             if (error) {
+//                 reject(`Error executing psql: ${error.message}`);
+//                 return;
+//             }
+//             if (stderr) {
+//                 reject(`psql stderr: ${stderr}`);
+//                 return;
+//             }
+//             resolve(stdout);
+//         });
+//     });
+// }
 
 (async function init() {
     await fs.promises.writeFile(tmpFile, combined, 'utf-8');

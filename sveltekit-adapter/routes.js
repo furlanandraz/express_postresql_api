@@ -10,8 +10,9 @@ const outputDir = path.resolve(__dirname, routeDir);
 import { god } from '#clients';
 
 import renderPage from './templates/renderPage.js';
+import renderPageServer from './templates/renderPageServer.js';
 
-function buildFiles(route, parentId, buildPath) {
+async function buildFiles(route, parentId, buildPath) {
     const layoutServer = path.join(buildPath, '+layout.server.js');
     fs.writeFileSync(layoutServer, '');
 
@@ -19,26 +20,25 @@ function buildFiles(route, parentId, buildPath) {
     fs.writeFileSync(layout, '');
 
     const pageServer = path.join(buildPath, '+page.server.js');
-    fs.writeFileSync(pageServer, '');
+    const pageServerContent = renderPageServer(route);
+    fs.writeFileSync(pageServer, pageServerContent);
 
     const page = path.join(buildPath, '+page.svelte');
-    const pageContent = renderPage(route);
+    const pageContent = await renderPage(route);
     fs.writeFileSync(page, pageContent);
 
 }
 
-function buildRoutes(routes, parentId = null, buildPath = outputDir) {
+async function buildRoutes(routes, parentId = null, buildPath = outputDir) {
 
     try { 
-        routes
-            .filter(route => route.parent_id === parentId)
-            .forEach(route => {
-                const folderName = route.url_type === 'Dynamic' ? `[${route.url_name}]` : route.url_name;
-                const folderPath = path.join(buildPath, folderName);
-                fs.mkdirSync(folderPath, { recursive: true });
-                buildFiles(route, parentId, folderPath);
-                buildRoutes(routes, route.id, folderPath);
-            });
+        for (const route of routes.filter(route => route.parent_id === parentId)) {
+            const folderName = route.url_type === 'Dynamic' ? `[${route.url_name}]` : route.url_name;
+            const folderPath = path.join(buildPath, folderName);
+            fs.mkdirSync(folderPath, { recursive: true });
+            await buildFiles(route, parentId, folderPath);
+            await buildRoutes(routes, route.id, folderPath);
+        };
         return true;
     } catch (err) {
         console.error("Error building routes:", err);
@@ -51,8 +51,8 @@ function buildRoutes(routes, parentId = null, buildPath = outputDir) {
         fs.rmSync(outputDir, { recursive: true, force: true }, err => {
             if (err) console.log(err)
         });
-        const { rows: routes } = await god.query("SELECT id, parent_id, url_name, url_type, render_method FROM navigation.route_layout_page ORDER BY id;");
-        const success = buildRoutes(routes);
+        const { rows: routes } = await god.query("SELECT id, parent_id, url_name, url_type, render_method, meta_description, meta_keywords FROM navigation.route_layout_page ORDER BY id;");
+        const success = await buildRoutes(routes);
         if (success) {
             console.log("Routes built successfully.");
             process.exit(0);

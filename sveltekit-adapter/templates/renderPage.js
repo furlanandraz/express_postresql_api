@@ -1,17 +1,28 @@
-export default function renderPage(route) {
+import Presentation from '#DAO/Presentation.js';
+export default async function renderPage(route) { 
+    
+    const data = await Presentation.setClient('god').getPageContentById(route.id);
+    const imports = Object.values(data).reduce((acc, template) => 
+        acc += `import ${template.url_name.replace('.svelte', '')} from '$templates/${template.url_name}';\n`, 
+        ''
+    );
+    const segments = Object.entries(data).map(([key, value]) => {
+        const componentName = value.url_name.replace('.svelte', '');
+        return `<${componentName} data={data[${key}].segment_json} />`;
+    }).join('\n');
+      
+    return `
+    <svelte:head>
+        <title>${route.ui_name}</title>
+        ${route.meta_description && `<meta name="description" content="${route.meta_description}" />`}
+        ${route.meta_keywords && `<meta name="keywords" content="${route.meta_keywords}" />`}
+    </svelte:head>
+    
+    <script>
+        ${imports}
+        export let data;
+        data = JSON.parse(data);
+    </script>
 
-   
-
-    let rendering;
-    switch (route.render_method) {
-        case 'SSG':
-            rendering = "export const prerender = true;\n\n";
-            break;
-        case 'SSR':
-            rendering = "export const prerender = false;\n";
-            break;
-    }
-    const content = `${rendering}\n`;
-
-    return content;
+    ${segments}`;
 };
