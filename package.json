@@ -33,15 +33,19 @@
     "esm-module-alias": "^2.2.1",
     "execa": "^9.5.2",
     "express": "^4.21.2",
+    "http": "^0.0.1-security",
     "module-alias": "^2.2.3",
     "nodemon": "^3.1.9",
     "pg": "^8.13.1",
     "pg-listen": "^1.7.0",
-    "pm2": "^5.4.3"
+    "pm2": "^5.4.3",
+    "systeminformation": "^5.25.11",
+    "ws": "^8.18.0"
   },
   "imports": {
     "#clients": "./clients/index.js",
     "#middleware/*": "./server/middleware/*",
-    "#DAO/*": "./DAO/*"
+    "#DAO/*": "./DAO/*",
+    "#serverFunctions/*": "./server/functions/*"
   }
 }
