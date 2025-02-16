@@ -26,6 +26,23 @@ class Presentation extends Static {
             return { error: 'Databse error' };
         }
     }
+
+    async getPageLayoutById(id) {
+
+        try {
+            const {rows: [content]} = await this.client.query(`
+                SELECT * FROM
+                    presentation.route_layout_type_url
+                WHERE
+                    route_id = $1
+                LIMIT 1;
+                `, [id]);
+            return content;
+        } catch (error) {
+            console.error('Database error:', error);
+            return { error: 'Databse error' };
+        }
+    }
 }
 
 export default Presentation;

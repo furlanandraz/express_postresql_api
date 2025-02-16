@@ -87,4 +87,8 @@ INSERT INTO navigation.route (
 --     1,
 --     1,
 --     1
+-- ), (
+--     2,
+--     4,
+--     2
 -- );
