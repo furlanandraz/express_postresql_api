@@ -9,15 +9,23 @@ const outputDir = path.resolve(__dirname, routeDir);
 
 import { god } from '#clients';
 
-import renderPage from './templates/renderPage.js';
+import renderLayoutServer from './templates/renderLayoutServer.js';
+import renderLayout from './templates/renderLayout.js';
 import renderPageServer from './templates/renderPageServer.js';
+import renderPage from './templates/renderPage.js';
 
 async function buildFiles(route, parentId, buildPath) {
-    const layoutServer = path.join(buildPath, '+layout.server.js');
-    fs.writeFileSync(layoutServer, '');
 
-    const layout = path.join(buildPath, parentId === null ? '+layout.svelte' : '+layout@.svelte');
-    fs.writeFileSync(layout, '');
+    if (route.layout_id) {
+        
+        const layoutServer = path.join(buildPath, '+layout.server.js');
+        const layoutServerContent = renderLayoutServer(route);
+        fs.writeFileSync(layoutServer, layoutServerContent);
+        
+        const layout = path.join(buildPath, parentId === null ? '+layout.svelte' : '+layout@.svelte');
+        const layoutContent = await renderLayout(route);
+        fs.writeFileSync(layout, layoutContent);
+    }
 
     const pageServer = path.join(buildPath, '+page.server.js');
     const pageServerContent = renderPageServer(route);
@@ -51,7 +59,7 @@ async function buildRoutes(routes, parentId = null, buildPath = outputDir) {
         fs.rmSync(outputDir, { recursive: true, force: true }, err => {
             if (err) console.log(err)
         });
-        const { rows: routes } = await god.query("SELECT id, parent_id, url_name, url_type, render_method, meta_description, meta_keywords FROM navigation.route_layout_page ORDER BY id;");
+        const { rows: routes } = await god.query("SELECT * FROM navigation.route_layout_page ORDER BY id;");
         const success = await buildRoutes(routes);
         if (success) {
             console.log("Routes built successfully.");

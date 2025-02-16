@@ -1,0 +1,3 @@
+const apiURL = 'http://localhost:8000/db/v1';
+
+export {apiURL}

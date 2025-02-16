@@ -20,8 +20,7 @@ export default async function renderPage(route) {
     
     <script>
         ${imports}
-        export let data;
-        data = JSON.parse(data);
+        let {data} = $props();
     </script>
 
     ${segments}`;
