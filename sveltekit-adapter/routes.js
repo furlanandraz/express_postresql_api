@@ -34,7 +34,6 @@ async function buildFiles(route, parentId, buildPath) {
     const page = path.join(buildPath, '+page.svelte');
     const pageContent = await renderPage(route);
     fs.writeFileSync(page, pageContent);
-
 }
 
 async function buildRoutes(routes, parentId = null, buildPath = outputDir) {
@@ -52,13 +51,18 @@ async function buildRoutes(routes, parentId = null, buildPath = outputDir) {
         console.error("Error building routes:", err);
         return false;
     }
+
 }
 
 (async function init() {
+
     try {
-        fs.rmSync(outputDir, { recursive: true, force: true }, err => {
-            if (err) console.log(err)
-        });
+        fs.readdirSync(outputDir).forEach(file => {
+        const filePath = path.join(outputDir, file);
+        if (file !== 'api') {
+            fs.rmSync(filePath, { recursive: true, force: true });
+        }
+    });
         const { rows: routes } = await god.query("SELECT * FROM navigation.route_layout_page ORDER BY id;");
         const success = await buildRoutes(routes);
         if (success) {
