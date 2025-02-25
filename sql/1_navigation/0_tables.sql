@@ -5,7 +5,7 @@ CREATE TABLE navigation.route (
     ui_name TEXT NOT NULL,
     meta_description TEXT,
     meta_keywords TEXT,
-    url_type types.route_url_type DEFAULT 'Static',
+    url_type types.route_url_type DEFAULT 'static',
     render_method types.route_render_method DEFAULT 'SSR'   
 );
 

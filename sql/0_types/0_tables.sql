@@ -20,9 +20,9 @@ CREATE TABLE types.template_type (
 
 -- segment schema table + form ready json schema
 
-CREATE TABLE types.segment_schema (
+CREATE TABLE types.template_schema (
     id SERIAL PRIMARY KEY,
-	template_schema_id INT NOT NULL REFERENCES types.template_type(id) ON DELETE CASCADE, 
+	template_type_id INT NOT NULL REFERENCES types.template_type(id) ON DELETE CASCADE, 
     json_preset JSON NOT NULL,
     json_form JSON NOT NULL DEFAULT '{}'
 );
@@ -34,4 +34,11 @@ CREATE TABLE types.layout_type (
     url_name VARCHAR(64) NOT NULL UNIQUE,
     ui_name VARCHAR(64) NOT NULL,
     CONSTRAINT unique_layout_entry UNIQUE (url_name, ui_name)
+);
+
+CREATE TABLE types.layout_schema (
+    id SERIAL PRIMARY KEY,
+	layout_type_id INT NOT NULL REFERENCES types.layout_type(id) ON DELETE CASCADE, 
+    json_preset JSON NOT NULL,
+    json_form JSON NOT NULL DEFAULT '{}'
 );

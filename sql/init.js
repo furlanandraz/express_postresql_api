@@ -1,12 +1,12 @@
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
-// import { exec } from 'child_process';
 import { execa } from 'execa';
 import dotenv from 'dotenv';
 
-
 dotenv.config();
+
+const deleteTmp = false;
 
 const pgOwner = process.env.PG_GOD_USER
 const pgPassword = process.env.PG_GOD_PASSWORD;
@@ -61,6 +61,7 @@ function sqlCrawler(directory) {
 // }
 
 (async function init() {
+    const combined = sqlCrawler(sqlDir);
     await fs.promises.writeFile(tmpFile, combined, 'utf-8');
     try {
         const result = await execa("psql", ["-U", pgOwner, "-f", tmpFile], {
@@ -75,7 +76,7 @@ function sqlCrawler(directory) {
         }
         process.exit(1);
     } finally {
-        if (fs.existsSync(tmpFile)) {
+        if (fs.existsSync(tmpFile) && deleteTmp) {
             fs.unlinkSync(tmpFile);
         }
         console.log('Builing done'); 

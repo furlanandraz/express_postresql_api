@@ -1,52 +1,52 @@
-INSERT INTO navigation.route (
-    id,
-    parent_id,
-    url_name,
-    ui_name,
-    meta_description,
-    meta_keywords
-) VALUES (
-    2,
-    1,
-    'contact',
-    'contact',
-    'Ask me anything about my CMS',
-    'CMS, FAQ'
-), (
-    3,
-    1,
-    'about',
-    'About',
-    'Ask me anything about my CMS',
-    'CMS, FAQ'
-), (
-    4,
-    1,
-    'services',
-    'Services',
-    'Other services',
-    ''
-), (
-    5,
-    4,
-    'plumbing',
-    'Plumbing',
-    '',
-    ''
-), (
-    6,
-    4,
-    'wiring',
-    'Wiring',
-    '',
-    ''
-);
+-- INSERT INTO navigation.route (
+--     id,
+--     parent_id,
+--     url_name,
+--     ui_name,
+--     meta_description,
+--     meta_keywords
+-- ) VALUES (
+--     2,
+--     1,
+--     'contact',
+--     'contact',
+--     'Ask me anything about my CMS',
+--     'CMS, FAQ'
+-- ), (
+--     3,
+--     1,
+--     'about',
+--     'About',
+--     'Ask me anything about my CMS',
+--     'CMS, FAQ'
+-- ), (
+--     4,
+--     1,
+--     'services',
+--     'Services',
+--     'Other services',
+--     ''
+-- ), (
+--     5,
+--     4,
+--     'plumbing',
+--     'Plumbing',
+--     '',
+--     ''
+-- ), (
+--     6,
+--     4,
+--     'wiring',
+--     'Wiring',
+--     '',
+--     ''
+-- );
 
 ------ npm run init:types
 
--- INSERT INTO types.segment_schema (
+-- INSERT INTO types.template_schema (
 --     id,
---     template_schema_id,
+--     template_type_id,
 --     json_preset
 -- ) VALUES (
 --     1,
@@ -56,39 +56,14 @@ INSERT INTO navigation.route (
 
 ------ npm run render
 
--- INSERT INTO presentation.segment_instance (
---     id,
---     segment_id,
---     segment_json
+-- INSERT INTO presentation.route_template_instance (
+-- 	route_id,
+-- 	template_type_id,
+-- 	template_instance_order,
+--     json_data
 -- ) VALUES (
 --     1,
 --     1,
---     '{"template":{"align":"left","background":true},"components":{"buttonLinkPrimary":{"variant":"primary","text":"Hello","href":"www.google.com"},"buttonLinkSecondary":{"variant":"secondary","text":"Bye","href":"www.facebook.com"},"title":{"largeTitle":"Large Title","smallTitle":"Small title"},"figure":{"figcaption":"Figure Caption helo from rjsf"},"paragraph":{"description":"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur."}}}
-'
--- );
-
--- INSERT INTO presentation.route_page_content (
---     id,
---     route_id,
---     segment_instance_id,
---     segment_instance_order
--- ) VALUES (
---     1,
---     1,
---     1,
---     1
--- );
-
--- INSERT INTO presentation.route_layout_type (
---     id,
---     route_id,
---     layout_id
--- ) VALUES (
---     1,
---     1,
---     1
--- ), (
---     2,
---     4,
---     2
+-- 	1,
+--     '{"template":{"align":"left","background":true},"components":{"buttonLinkPrimary":{"variant":"primary","text":"Hello","href":"www.google.com"},"buttonLinkSecondary":{"variant":"secondary","text":"Bye","href":"www.facebook.com"},"title":{"largeTitle":"Large Title","smallTitle":"Small title"},"figure":{"figcaption":"Figure Caption helo from rjsf"},"paragraph":{"description":"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur."}}}'
 -- );

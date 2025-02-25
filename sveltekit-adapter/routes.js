@@ -40,7 +40,7 @@ async function buildRoutes(routes, parentId = null, buildPath = outputDir) {
 
     try { 
         for (const route of routes.filter(route => route.parent_id === parentId)) {
-            const folderName = route.url_type === 'Dynamic' ? `[${route.url_name}]` : route.url_name;
+            const folderName = route.url_type === 'dynamic' ? `[${route.url_name}]` : route.url_name;
             const folderPath = path.join(buildPath, folderName);
             fs.mkdirSync(folderPath, { recursive: true });
             await buildFiles(route, parentId, folderPath);
@@ -63,7 +63,7 @@ async function buildRoutes(routes, parentId = null, buildPath = outputDir) {
             fs.rmSync(filePath, { recursive: true, force: true });
         }
     });
-        const { rows: routes } = await god.query("SELECT * FROM navigation.route_layout_page ORDER BY id;");
+        const { rows: routes } = await god.query("SELECT * FROM navigation.route ORDER BY id;");
         const success = await buildRoutes(routes);
         if (success) {
             console.log("Routes built successfully.");

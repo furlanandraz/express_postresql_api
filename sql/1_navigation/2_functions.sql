@@ -16,8 +16,8 @@ $route_change$;
 -- LANGUAGE plpgsql AS $check_anchor_parent_static$
 -- BEGIN
 --     IF NEW.route_type = 'Anchor' AND (NEW.parent_id IS NOT NULL) THEN
---         IF (SELECT route_type FROM navigation.route WHERE id = NEW.parent_id) != 'Static' THEN
---             RAISE EXCEPTION 'Parent route_type must be "Static" for "Anchor" items';
+--         IF (SELECT route_type FROM navigation.route WHERE id = NEW.parent_id) != 'static' THEN
+--             RAISE EXCEPTION 'Parent route_type must be "static" for "Anchor" items';
 --         END IF;
 --     END IF;
 --     RETURN NEW;

@@ -4,10 +4,10 @@ import { god } from '#clients';
 
 
 async function renderSegmentSchemaById(id) {
-    const {rows: [result]}  = await god.query('SELECT * FROM types.segment_schema WHERE id = $1 LIMIT 1', [id]);
+    const {rows: [result]}  = await god.query('SELECT * FROM types.template_schema WHERE id = $1 LIMIT 1', [id]);
     const json_preset = result.json_preset;
     const regeneratedSchema = await regenerateSchema(json_preset);
-    await god.query('UPDATE types.segment_schema SET json_form = $1 WHERE id = $2', [JSON.stringify(regeneratedSchema), id])
+    await god.query('UPDATE types.template_schema SET json_form = $1 WHERE id = $2', [JSON.stringify(regeneratedSchema), id])
 }
 
 async function regenerateSchema(schema) {
