@@ -23,8 +23,8 @@ CREATE TABLE types.template_type (
 CREATE TABLE types.template_schema (
     id SERIAL PRIMARY KEY,
 	template_type_id INT NOT NULL REFERENCES types.template_type(id) ON DELETE CASCADE, 
-    json_preset JSON NOT NULL,
-    json_form JSON NOT NULL DEFAULT '{}'
+    json_preset JSONB NOT NULL,
+    json_form JSONB NOT NULL DEFAULT '{}'
 );
 
 -- layout type
@@ -40,6 +40,6 @@ CREATE TABLE types.layout_type (
 CREATE TABLE types.layout_schema (
     id SERIAL PRIMARY KEY,
 	layout_type_id INT NOT NULL REFERENCES types.layout_type(id) ON DELETE CASCADE, 
-    json_preset JSON NOT NULL,
-    json_form JSON NOT NULL DEFAULT '{}'
+    json_preset JSONB NOT NULL,
+    json_form JSONB NOT NULL DEFAULT '{}'
 );

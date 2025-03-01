@@ -19,13 +19,13 @@ CREATE TABLE presentation.route_template_instance (
 -- CREATE TABLE presentation.route_template_instance (
 --     id SERIAL PRIMARY KEY,
 --     route_id INT UNIQUE REFERENCES navigation.route(id),
---     page_json JSON NOT NULL DEFAULT '[]'
+--     page_json JSONB NOT NULL DEFAULT '[]'
 -- );
 
 -- CREATE TABLE presentation.template_instance (
 --     id SERIAL PRIMARY KEY,
 --     segment_id INT REFERENCES types.template_schema(id),
---     segment_json JSON NOT NULL DEFAULT '{}'
+--     segment_json JSONB NOT NULL DEFAULT '{}'
 -- );
 
 -- CREATE TABLE presentation.route_template_instance (
