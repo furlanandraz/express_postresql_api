@@ -37,6 +37,7 @@ class Presentation extends Static {
                     route_id = $1
                 LIMIT 1;
                 `, [id]);
+            console.log(content);
             return content;
         } catch (error) {
             console.error('Database error:', error);

@@ -1,4 +1,5 @@
 {
+  "title": "Image Gallery",
   "type": "object",
   "properties": {
     "gallery": {

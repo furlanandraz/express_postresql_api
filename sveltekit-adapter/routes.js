@@ -16,24 +16,33 @@ import renderPage from './templates/renderPage.js';
 
 async function buildFiles(route, parentId, buildPath) {
 
-    if (route.layout_id) {
-        
-        const layoutServer = path.join(buildPath, '+layout.server.js');
-        const layoutServerContent = renderLayoutServer(route);
-        fs.writeFileSync(layoutServer, layoutServerContent);
+    const layoutContent = await renderLayout(route);
+
+    if (layoutContent) {
         
         const layout = path.join(buildPath, parentId === null ? '+layout.svelte' : '+layout@.svelte');
-        const layoutContent = await renderLayout(route);
         fs.writeFileSync(layout, layoutContent);
+        
+        const layoutServerContent = renderLayoutServer(route);
+        const layoutServer = path.join(buildPath, '+layout.server.js');
+        fs.writeFileSync(layoutServer, layoutServerContent);
+        
     }
 
-    const pageServer = path.join(buildPath, '+page.server.js');
-    const pageServerContent = renderPageServer(route);
-    fs.writeFileSync(pageServer, pageServerContent);
-
-    const page = path.join(buildPath, '+page.svelte');
     const pageContent = await renderPage(route);
-    fs.writeFileSync(page, pageContent);
+
+    // && route.type != 'dynamic' - dynamic routes don't have pages, only layout
+    if (!pageContent) {
+        
+        const page = path.join(buildPath, '+page.svelte');
+        fs.writeFileSync(page, pageContent);
+        
+        const pageServerContent = renderPageServer(route);
+        const pageServer = path.join(buildPath, '+page.server.js');
+        fs.writeFileSync(pageServer, pageServerContent);
+    }
+
+    
 }
 
 async function buildRoutes(routes, parentId = null, buildPath = outputDir) {
@@ -43,6 +52,8 @@ async function buildRoutes(routes, parentId = null, buildPath = outputDir) {
             const folderName = route.url_type === 'dynamic' ? `[${route.url_name}]` : route.url_name;
             const folderPath = path.join(buildPath, folderName);
             fs.mkdirSync(folderPath, { recursive: true });
+
+            // in subsequent folder, dynamic/static need to differentiate - the load function for template is different for the two - dynamic uses slug to fetch from multiple
             await buildFiles(route, parentId, folderPath);
             await buildRoutes(routes, route.id, folderPath);
         };

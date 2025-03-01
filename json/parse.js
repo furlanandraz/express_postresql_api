@@ -15,7 +15,11 @@ const schemaDirectories = [
     {
         tableName: 'types.template_type',
         dirName: 'template_schemas'
-    }
+    },
+    {
+        tableName: 'types.layout_type',
+        dirName: 'layout_schemas'
+    },
 ];
 
 // parser to be redone for .svelte files not .svelte.json in the future, json schemas editing moved to cms, real components parsed - or json schemas possibly moved to same folder and parsed together with components
@@ -23,6 +27,7 @@ const schemaDirectories = [
 schemaDirectories.forEach(async directory => {
 
     const basePath = path.join(__dirname, directory.dirName);
+    console.log(basePath);
     const allFiles = fs.readdirSync(basePath);
     const allSchemas = allFiles.filter(file => file.endsWith('.svelte.json') && file);
     const allValues = allSchemas.reduce((allRows, row) => {
@@ -34,10 +39,10 @@ schemaDirectories.forEach(async directory => {
         return allRows;
     }, []);
 
+    console.log(allValues);
     
     try {
         await Types.setClient('god').jsonSchemaInsertMany(directory.tableName, allValues);
-        console.log('inserted');
     } catch (error) {
         console.log(error);
     }
@@ -46,36 +51,34 @@ schemaDirectories.forEach(async directory => {
 
 // this parser to be used also with components and templates, now only for layouts that dont need json schema
 
-const libDirectory = [
-    {
-        table: 'layout_type',
-        dir: 'sveltekit_cms_test/src/lib/layouts'
-    },
-];
+// const libDirectory = [
+//     {
+//         table: 'layout_type',
+//         dir: 'sveltekit_cms_test/src/lib/layouts'
+//     },
+// ];
 
-(function lib2table(libDirectory) {
+// (function lib2table(libDirectory) {
 
-    libDirectory.forEach(async directory => {
-        let data = [];
-        let { table, dir } = directory;
-        dir = path.resolve(__dirname, '../..', dir);
-        console.log(dir);
-        let files = fs.readdirSync(dir);
-        files = files.filter(file => file.endsWith('.svelte') && file);
-        files.forEach(file => {
-            data.push({
-                url_name: file,
-                ui_name: file.replace(/\.svelte$/, '').replace(/([a-z])([A-Z])/g, '$1 $2'),
-            });
-        });
+//     libDirectory.forEach(async directory => {
+//         let data = [];
+//         let { table, dir } = directory;
+//         dir = path.resolve(__dirname, '../..', dir);
+//         let files = fs.readdirSync(dir);
+//         files = files.filter(file => file.endsWith('.svelte') && file);
+//         files.forEach(file => {
+//             data.push({
+//                 url_name: file,
+//                 ui_name: file.replace(/\.svelte$/, '').replace(/([a-z])([A-Z])/g, '$1 $2'),
+//             });
+//         });
 
-        try {
-            await Types.setClient('god').layoutTypesInsertMany(data);
-            console.log('inserted');
-        } catch (error) {
-            console.log(error);
-        }
+//         try {
+//             await Types.setClient('god').layoutTypesInsertMany(data);
+//         } catch (error) {
+//             console.log(error);
+//         }
 
-    });
+//     });
 
-})(libDirectory);
+// })(libDirectory);

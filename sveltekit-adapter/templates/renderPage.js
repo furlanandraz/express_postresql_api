@@ -2,6 +2,8 @@ import Presentation from '#DAO/Presentation.js';
 export default async function renderPage(route) { 
     
     const data = await Presentation.setClient('god').getPageContentById(route.id);
+
+    if (!data) return;
     const imports = Object.values(data).reduce((acc, template) => 
         acc += `import ${template.url_name.replace('.svelte', '')} from '$templates/${template.url_name}';\n`, 
         ''

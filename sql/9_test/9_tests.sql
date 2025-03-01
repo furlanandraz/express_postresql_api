@@ -54,6 +54,26 @@
 --     '{"type":"object","properties":{"template":{"template_id":1},"components":{"type":"object","title":"Components","properties":{"buttonLinkPrimary":{"component_id":1},"buttonLinkSecondary":{"component_id":1},"title":{"component_id":4},"figure":{"component_id":2},"paragraph":{"component_id":5}}}}}'
 -- );
 
+-- INSERT INTO types.template_schema (
+--     id,
+--     template_type_id,
+--     json_preset
+-- ) VALUES (
+--     1,
+--     1,
+--     '{"type":"object","properties":{"template":{"template_id":1},"components":{"type":"object","title":"Components","properties":{"buttonLinkPrimary":{"component_id":1},"buttonLinkSecondary":{"component_id":1},"title":{"component_id":4},"figure":{"component_id":2},"paragraph":{"component_id":5}}}}}'
+-- );
+
+-- INSERT INTO types.layout_schema (
+--     id,
+--     layout_type_id,
+--     json_preset
+-- ) VALUES (
+--     1,
+--     1,
+--     '{"type":"object","properties":{"layout":{"layout_id":1},"templates":{"type":"object","title":"Templates","properties":{"textPhoto":{"template_id":1}}},"components":{"type":"object","title":"Components","properties":{"buttonLinkPrimary":{"component_id":1}}}}}'
+-- );
+
 ------ npm run render
 
 -- INSERT INTO presentation.route_template_instance (

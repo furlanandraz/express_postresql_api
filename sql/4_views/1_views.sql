@@ -1,3 +1,15 @@
+-- CREATE VIEW presentation.route_page_template AS
+-- SELECT
+--     rti.route_id,
+--     rti.template_instance_order,
+--     rti.json_data,
+--     tt.url_name
+-- FROM presentation.route_template_instance rti
+-- LEFT JOIN types.template_type tt 
+--     ON rti.template_type_id = tt.id
+-- ORDER BY rti.template_instance_order ASC;
+
+----- unused
 -- CREATE VIEW navigation.route_layout_page AS
 -- SELECT
 --     r.id,
@@ -21,21 +33,13 @@
 -- ON
 --     r.id = rp.route_id;
 
--- CREATE VIEW presentation.route_page_template AS
--- SELECT
---     rti.route_id,
---     rti.template_instance_order,
---     rti.json_data,
---     tt.url_name
--- FROM presentation.route_template_instance rti
--- LEFT JOIN types.template_type tt 
---     ON rti.template_type_id = tt.id
--- ORDER BY rti.template_instance_order ASC;
 
+
+--
 -- CREATE VIEW presentation.route_layout_type_url AS
 -- SELECT
 --     rl.route_id,
 -- 	lt.url_name
 -- FROM presentation.route_layout_type rl
 -- LEFT JOIN types.layout_type lt 
---     ON rl.layout_id = lt.id;
+-- ON rl.layout_id = lt.id;

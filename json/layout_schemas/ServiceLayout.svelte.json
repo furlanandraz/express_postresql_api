@@ -1,0 +1,11 @@
+{
+    "title": "Service Layout",
+    "type": "object",
+    "properties": {
+        "serviceName": {
+            "title": "Service Name",
+            "type": "string",
+            "description": "Service Name"
+        }
+    }
+}
