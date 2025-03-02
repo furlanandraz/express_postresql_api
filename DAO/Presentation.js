@@ -3,41 +3,103 @@ import Static from "./Static.js";
 import { generateLayoutSchema, generateTemplateSchema } from "./functions/presentation.js";
 class Presentation extends Static {
 
-    async getPageContentById(id) {
-
+    async getRouteContentById(id) {
         try {
             const {rows: content} = await this.client.query(`
-                SELECT * FROM
-                    presentation.route_page_template
+                SELECT
+                    rti.json_data,
+                    tt.url_name
+                FROM
+                    presentation.route_template_instance rti
+                LEFT JOIN
+                    types.template_type tt
+                ON
+                    rti.template_type_id = tt.id
                 WHERE
                     route_id = $1
                 ORDER BY
                     template_instance_order
                 ASC;
                 `, [id]);
-          
-            const contentOrder = content.reduce((acc, segment) => {
-                acc[segment.template_instance_order] = {segment_json: segment.segment_json, url_name: segment.url_name};
-                return acc;
-            }, {});
-            return contentOrder;
+            return content;
         } catch (error) {
             console.error('Database error:', error);
             return { error: 'Databse error' };
         }
     }
 
-    async getPageLayoutById(id) {
-
+    async getRouteLayoutById(id) {
         try {
             const {rows: [content]} = await this.client.query(`
-                SELECT * FROM
-                    presentation.route_layout_instance
+                SELECT
+                    rli.json_data,
+                    lt.url_name
+                FROM
+                    presentation.route_layout_instance rli
+                LEFT JOIN
+                    types.layout_type lt
+                ON
+                    rli.layout_type_id = lt.id
                 WHERE
                     route_id = $1
                 LIMIT 1;
                 `, [id]);
-            console.log(content);
+            return content;
+        } catch (error) {
+            console.error('Database error:', error);
+            return { error: 'Databse error' };
+        }
+    }
+
+    async getTopicByRouteId(id) {
+        try {
+            const {rows: content} = await this.client.query(`
+                SELECT
+                    ti.id,
+                    ti.slug,
+                    ti.json_data,
+                    ltyp.url_name
+                FROM
+                    presentation.topic_instance ti
+                LEFT JOIN
+                    presentation.topic_layout tl
+                ON
+                    ti.topic_layout_id = tl.id
+                LEFT JOIN
+                    types.layout_schema lsch
+                ON
+                    tl.layout_schema_id = lsch.id
+                LEFT JOIN
+                    types.layout_type ltyp
+                ON
+                    lsch.layout_type_id = ltyp.id
+                WHERE
+                    route_id = $1;
+                `, [id]);
+            return content;
+        } catch (error) {
+            console.error('Database error:', error);
+            return { error: 'Databse error' };
+        }
+    }
+    async getTopicById(id) {
+        try {
+            const {rows: content} = await this.client.query(`
+                SELECT 
+                    ti.slug, 
+                    ti.json_data, 
+                    ltyp.url_name 
+                FROM 
+                    presentation.topic_instance ti
+                LEFT JOIN 
+                    presentation.topic_layout tl ON ti.topic_layout_id = tl.id
+                LEFT JOIN 
+                    types.layout_schema lsch ON tl.layout_schema_id = lsch.id
+                LEFT JOIN 
+                    types.layout_type ltyp ON lsch.layout_type_id = ltyp.id
+                WHERE 
+                    ti.id = $1;
+                `, [id]);
             return content;
         } catch (error) {
             console.error('Database error:', error);

@@ -26,14 +26,13 @@ async function buildFiles(route, parentId, buildPath) {
         const layoutServerContent = renderLayoutServer(route);
         const layoutServer = path.join(buildPath, '+layout.server.js');
         fs.writeFileSync(layoutServer, layoutServerContent);
-        
+
     }
-
+    
     const pageContent = await renderPage(route);
-
-    // && route.type != 'dynamic' - dynamic routes don't have pages, only layout
-    if (!pageContent) {
-        
+    //&& route.type != 'dynamic' - dynamic routes don't have pages, only layout
+    
+    if (pageContent) {
         const page = path.join(buildPath, '+page.svelte');
         fs.writeFileSync(page, pageContent);
         
@@ -41,6 +40,7 @@ async function buildFiles(route, parentId, buildPath) {
         const pageServer = path.join(buildPath, '+page.server.js');
         fs.writeFileSync(pageServer, pageServerContent);
     }
+    
 
     
 }
@@ -65,6 +65,24 @@ async function buildRoutes(routes, parentId = null, buildPath = outputDir) {
 
 }
 
+
+function cleanup(dir) {
+    if (!fs.existsSync(dir)) return;
+
+    fs.readdirSync(dir).forEach(file => {
+        const filePath = path.join(dir, file);
+
+        if (fs.statSync(filePath).isDirectory()) {
+            cleanup(filePath);
+        }
+
+        if (fs.statSync(filePath).isDirectory() && fs.readdirSync(filePath).length === 0) {
+            fs.rmSync(filePath, { recursive: true, force: true });
+        }
+    });
+}
+
+
 (async function init() {
 
     try {
@@ -75,10 +93,10 @@ async function buildRoutes(routes, parentId = null, buildPath = outputDir) {
         }
     });
         const { rows: routes } = await god.query("SELECT * FROM navigation.route ORDER BY id;");
+        
         const success = await buildRoutes(routes);
         if (success) {
             console.log("Routes built successfully.");
-            process.exit(0);
         } else {
             console.error("Failed to build routes.");
             process.exit(1);
@@ -86,6 +104,9 @@ async function buildRoutes(routes, parentId = null, buildPath = outputDir) {
     } catch (err) {
         console.error("Error in routes", err);
         process.exit(1);
+    } finally {
+        cleanup(outputDir);
+        process.exit(0);
     }
     
 })();

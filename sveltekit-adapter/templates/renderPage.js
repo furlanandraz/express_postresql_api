@@ -1,16 +1,18 @@
 import Presentation from '#DAO/Presentation.js';
 export default async function renderPage(route) { 
     
-    const data = await Presentation.setClient('god').getPageContentById(route.id);
+    const data = await Presentation.setClient('god').getRouteContentById(route.id);
+    
 
-    if (!data) return;
+    if (!data?.length) return null;
+    
     const imports = Object.values(data).reduce((acc, template) => 
         acc += `import ${template.url_name.replace('.svelte', '')} from '$templates/${template.url_name}';\n`, 
         ''
     );
     const segments = Object.entries(data).map(([key, value]) => {
         const componentName = value.url_name.replace('.svelte', '');
-        return `<${componentName} data={data[${key}].segment_json} />`;
+        return `<${componentName} data={data[${key}].json_data} />`;
     }).join('\n');
       
     return `

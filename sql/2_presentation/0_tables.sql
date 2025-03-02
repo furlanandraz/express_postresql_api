@@ -37,3 +37,20 @@ CREATE TABLE presentation.route_template_instance (
 --     CONSTRAINT unique_segment_order UNIQUE (route_id, segment_order)
 -- );
 
+CREATE TABLE presentation.topic_layout (
+    id SERIAL PRIMARY KEY,
+    route_id INT NOT NULL UNIQUE REFERENCES navigation.route(id) ON DELETE CASCADE,
+    layout_schema_id INT NOT NULL REFERENCES types.layout_schema(id) ON DELETE CASCADE
+);
+
+CREATE TABLE presentation.topic_instance (
+    id SERIAL PRIMARY KEY,
+    topic_layout_id INT NOT NULL REFERENCES presentation.topic_layout(id) ON DELETE CASCADE,
+    url_slug VARCHAR(64) NOT NULL,
+    ui_slug VARCHAR(64) NOT NULL,
+    json_data JSON NOT NULL DEFAULT '{}',
+    CONSTRAINT unique_route_slug UNIQUE(topic_layout_id, slug)
+);
+
+
+

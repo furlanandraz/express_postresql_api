@@ -3,24 +3,48 @@ import Presentation from '#DAO/Presentation.js';
 
 const router = expres.Router();
 
-router.get('/get-page-content', async (req, res) => {
+router.get('/get-route-content', async (req, res) => {
     const { clientType } = req.locals;
     const id = req.query.id;
     if (!id) return res.status(400).json({ error: "Missing page ID" });
     try {
-        const pageContent = await Presentation.setClient(clientType).getPageContentById(id);
+        const pageContent = await Presentation.setClient(clientType).getRouteContentById(id);
         res.json(pageContent);
     } catch (error) {
         res.status(500);
     }
 });
 
-router.get('/get-page-layout', async (req, res) => {
+router.get('/get-route-layout', async (req, res) => {
     const { clientType } = req.locals;
     const id = req.query.id;
     if (!id) return res.status(400).json({ error: "Missing page ID" });
     try {
-        const pageContent = await Presentation.setClient(clientType).getPageLayoutById(id);
+        const pageContent = await Presentation.setClient(clientType).getRouteLayoutById(id);
+        res.json(pageContent);
+    } catch (error) {
+        res.status(500);
+    }
+});
+
+router.get('/get-route-topic', async (req, res) => {
+    const { clientType } = req.locals;
+    const id = req.query.id;
+    if (!id) return res.status(400).json({ error: "Missing page ID" });
+    try {
+        const pageContent = await Presentation.setClient(clientType).getTopicByRouteId(id);
+        res.json(pageContent);
+    } catch (error) {
+        res.status(500);
+    }
+});
+
+router.get('/get-topic', async (req, res) => {
+    const { clientType } = req.locals;
+    const id = req.query.id;
+    if (!id) return res.status(400).json({ error: "Missing page ID" });
+    try {
+        const pageContent = await Presentation.setClient(clientType).getTopicById(id);
         res.json(pageContent);
     } catch (error) {
         res.status(500);
