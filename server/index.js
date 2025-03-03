@@ -1,9 +1,8 @@
 import express from 'express';
 import dotenv from 'dotenv';
-import { WebSocketServer, WebSocket } from 'ws';
 import routes from './routes/index.js';
 import getClientMiddleware from '#middleware/clientType.js';
-import sysInfoWebSocket from './sysinfo/index.js';
+import services from './services/index.js';
 
 dotenv.config();
 
@@ -29,4 +28,5 @@ const server = app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);
 });
 
-sysInfoWebSocket(server);
+// sysInfoWebSocket(server);
+services(server);

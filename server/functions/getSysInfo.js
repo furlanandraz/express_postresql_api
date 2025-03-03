@@ -12,7 +12,7 @@ function formatUptime(seconds) {
     return `${days}d ${hours}h ${minutes}m ${sec}s`;
 }
 
-export async function getSysInfo() {
+export default async function getSysInfo() {
     const {  total: totalMem, free: freeMem, used: usedMem } = await si.mem();
     const memory = { total: b2gb(totalMem), free: b2gb(freeMem), used: b2gb(usedMem) };
     const fsSizeDisks = await si.fsSize();
