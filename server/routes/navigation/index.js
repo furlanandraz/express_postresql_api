@@ -14,4 +14,15 @@ router.get('/get-menu-items', async (req, res) => {
     }
 });
 
+router.put('/generate-links', async (req, res) => {
+
+    const { clientType } = req.locals;
+    try {
+        const links = await Navigation.setClient(clientType).generateRouteLinks();
+        res.json(links);
+    } catch (error) {
+        res.status(500);
+    }
+});
+
 export default router;

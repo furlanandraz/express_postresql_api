@@ -82,6 +82,32 @@ class Presentation extends Static {
             return { error: 'Databse error' };
         }
     }
+
+    async getTopicItems() {
+        try {
+            const {rows: content} = await this.client.query(`
+                SELECT 
+                    ti.id,
+                    ti.slug,
+                    ti.url_uuid,
+                    tl.route_id,
+                    ltyp.url_name 
+                FROM 
+                    presentation.topic_instance ti
+                LEFT JOIN 
+                    presentation.topic_layout tl ON ti.topic_layout_id = tl.id
+                LEFT JOIN 
+                    types.layout_schema lsch ON tl.layout_schema_id = lsch.id
+                LEFT JOIN 
+                    types.layout_type ltyp ON lsch.layout_type_id = ltyp.id;
+                `);
+            return content;
+        } catch (error) {
+            console.error('Database error:', error);
+            return { error: 'Databse error' };
+        }
+    }
+
     async getTopicById(id) {
         try {
             const {rows: content} = await this.client.query(`

@@ -8,7 +8,7 @@
 --     url_type
 -- ) VALUES (
 --     2,
---     1,
+--     3,
 --     'contact',
 --     'Contact',
 --     'Ask me anything about my CMS',
@@ -123,3 +123,5 @@ INSERT INTO presentation.topic_instance (
     'wiring',
     '{"layout":{"serviceName":"Wiring - from props"}}'
 );
+
+

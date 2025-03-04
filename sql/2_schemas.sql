@@ -1,6 +1,6 @@
 -- Drop the public schema if it exists
 
-DROP SCHEMA IF EXISTS public;
+-- DROP SCHEMA IF EXISTS public;
 
 -- SCHEMA: admin
 
