@@ -1,7 +1,7 @@
 import Presentation from '#DAO/Presentation.js';
 export default async function renderLayout(route) { 
     
-    const data = await Presentation.setClient('god').getRouteLayoutById(route.id);
+    const data = await Presentation.getRouteLayoutById(route.id);
 
     if (!data) return null;
 

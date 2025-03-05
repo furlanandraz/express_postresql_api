@@ -4,11 +4,8 @@ import Presentation from '#DAO/Presentation.js';
 const router = expres.Router();
 
 router.get('/get-route-content', async (req, res) => {
-    const { clientType } = req.locals;
-    const id = req.query.id;
-    if (!id) return res.status(400).json({ error: "Missing page ID" });
     try {
-        const pageContent = await Presentation.setClient(clientType).getRouteContentById(id);
+        const pageContent = await Presentation.getRouteContentById(id);
         res.json(pageContent);
     } catch (error) {
         res.status(500);
@@ -16,11 +13,8 @@ router.get('/get-route-content', async (req, res) => {
 });
 
 router.get('/get-route-layout', async (req, res) => {
-    const { clientType } = req.locals;
-    const id = req.query.id;
-    if (!id) return res.status(400).json({ error: "Missing page ID" });
     try {
-        const pageContent = await Presentation.setClient(clientType).getRouteLayoutById(id);
+        const pageContent = await Presentation.getRouteLayoutById(id);
         res.json(pageContent);
     } catch (error) {
         res.status(500);
@@ -28,11 +22,8 @@ router.get('/get-route-layout', async (req, res) => {
 });
 
 router.get('/get-route-topic', async (req, res) => {
-    const { clientType } = req.locals;
-    const id = req.query.id;
-    if (!id) return res.status(400).json({ error: "Missing page ID" });
     try {
-        const pageContent = await Presentation.setClient(clientType).getTopicByRouteId(id);
+        const pageContent = await Presentation.getTopicByRouteId(id);
         res.json(pageContent);
     } catch (error) {
         res.status(500);
@@ -40,11 +31,8 @@ router.get('/get-route-topic', async (req, res) => {
 });
 
 router.get('/get-topic', async (req, res) => {
-    const { clientType } = req.locals;
-    const id = req.query.id;
-    if (!id) return res.status(400).json({ error: "Missing page ID" });
     try {
-        const pageContent = await Presentation.setClient(clientType).getTopicById(id);
+        const pageContent = await Presentation.getTopicById(id);
         res.json(pageContent);
     } catch (error) {
         res.status(500);
@@ -52,11 +40,8 @@ router.get('/get-topic', async (req, res) => {
 });
 
 router.put('/render-template-schema', async (req, res) => {
-    const { clientType } = req.locals;
-    const id = req.query.id;
-    if (!id) return res.status(400).json({ error: "Missing page ID" });
     try {
-        const result = await Presentation.setClient(clientType).renderTemplateSchemaById(id);
+        const result = await Presentation.renderTemplateSchemaById(id);
         if (result?.error) {
             return res.status(500).json(result); 
         }
@@ -68,11 +53,8 @@ router.put('/render-template-schema', async (req, res) => {
 });
 
 router.put('/render-layout-schema', async (req, res) => {
-    const { clientType } = req.locals;
-    const id = req.query.id;
-    if (!id) return res.status(400).json({ error: "Missing page ID" });
     try {
-        const result = await Presentation.setClient(clientType).renderLayoutSchemaById(id);
+        const result = await Presentation.renderLayoutSchemaById(id);
         if (result?.error) {
             return res.status(500).json(result); 
         }

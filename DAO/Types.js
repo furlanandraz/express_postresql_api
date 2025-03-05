@@ -1,9 +1,9 @@
-import Static from "./Static.js";
+import { god, readonly } from '#clients';
 
 
 class Types extends Static {
 
-    async jsonSchemaInsertMany(jsonSchemaName, arrayOfObjects) {
+    static async jsonSchemaInsertMany(jsonSchemaName, arrayOfObjects) {
 
         const values = arrayOfObjects.reduce((allRows, row) => {
             return allRows + `('${row.url_name}', '${row.ui_name}', '${row.json_ref}'), `;
@@ -12,7 +12,7 @@ class Types extends Static {
         const allExistingFiles = arrayOfObjects.map(row => `'${row.url_name}'`).join(', ');
 
         try {
-            const result = await this.client.query(`
+            const result = await god.query(`
                 INSERT INTO ${jsonSchemaName} (url_name, ui_name, json_ref)
                 VALUES 
                 ${values}
@@ -28,7 +28,7 @@ class Types extends Static {
         }
     }
 
-    async layoutTypesInsertMany(data) {
+    static async layoutTypesInsertMany(data) {
 
         const values = data.reduce((all, row) => {
             return all + `('${row.url_name}', '${row.ui_name}'), `;
@@ -40,7 +40,7 @@ class Types extends Static {
 
 
         try {
-            await this.client.query(`
+            await god.query(`
                 INSERT INTO types.layout_type (url_name, ui_name)
                 VALUES ${values}
                 ON CONFLICT (url_name) DO NOTHING;

@@ -1,14 +1,14 @@
-import Static from "./Static.js";
+import { god, readonly } from "#clients";
 import Presentation from "./Presentation.js";
-import { buildRouteLink, buildTopicLink } from "./functions/navigation.js";
+import { buildRouteURL, buildTopicURL } from "./functions/navigation.js";
 
 
-class Navigation extends Static {
+class Navigation {
 
-    async getMenuItems() {
+    static async getMenuItems() {
 
         try {
-            const result = await this.client.query('SELECT * FROM navigation.route');
+            const result = await god.query('SELECT * FROM navigation.route');
             return result.rows;
         } catch (error) {
             console.error('Database query error:', error);
@@ -16,21 +16,18 @@ class Navigation extends Static {
         }
     }
 
-    async generateRouteLinks() {
+    static async generateURLs() {
         
         try {
-            
-            const menuItems = await Navigation.setClient('god').getMenuItems();
-            const topicItems = await Presentation.setClient('god').getTopicItems();
-            console.log(topicItems)
-            const routeLinks = buildRouteLink(menuItems);
-            const topicLinks = buildTopicLink(routeLinks, topicItems);
-            return {routeLinks: routeLinks, topicLinks: topicLinks};
+            const menuItems = await Navigation.getMenuItems();
+            const topicItems = await Presentation.getTopicItems();
+            const routeURLs = buildRouteURL(menuItems);
+            const topicURLs = buildTopicURL(routeURLs, topicItems);
+            return {routeURLs: routeURLs, topicURLs: topicURLs};
         } catch (error) {
             console.error('Database query error:', error);
             return { error: 'Database query error' };
         }
-        
     }
 }
 

@@ -4,10 +4,8 @@ import Navigation from '#DAO/Navigation.js';
 const router = expres.Router();
 
 router.get('/get-menu-items', async (req, res) => {
-
-    const { clientType } = req.locals;
     try {
-        const menuItems = await Navigation.setClient(clientType).getMenuItems();
+        const menuItems = await Navigation.getMenuItems();
         res.json(menuItems);
     } catch (error) {
         res.status(500);
@@ -15,10 +13,8 @@ router.get('/get-menu-items', async (req, res) => {
 });
 
 router.put('/generate-links', async (req, res) => {
-
-    const { clientType } = req.locals;
     try {
-        const links = await Navigation.setClient(clientType).generateRouteLinks();
+        const links = await Navigation.generateURLs();
         res.json(links);
     } catch (error) {
         res.status(500);

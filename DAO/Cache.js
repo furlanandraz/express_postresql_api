@@ -1,12 +1,11 @@
-import Static from "./Static.js";
+import { god, readonly } from '#clients';
 
+class Cache {
 
-class Cache extends Static {
-
-    async cacheMenuTree(menuTree) {
+    static async cacheMenuTree(menuTree) {
 
         try {
-            await this.client.query(`
+            await god.query(`
                 INSERT INTO cache.navigation_cache (cache_name, cache_json)
                 VALUES ($1, $2)
                 ON CONFLICT (cache_name)

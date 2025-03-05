@@ -1,11 +1,11 @@
-import Static from "./Static.js";
+import { god, readonly } from '#clients';
 
 import { generateLayoutSchema, generateTemplateSchema } from "./functions/presentation.js";
-class Presentation extends Static {
+class Presentation {
 
-    async getRouteContentById(id) {
+    static async getRouteContentById(id) {
         try {
-            const {rows: content} = await this.client.query(`
+            const {rows: content} = await god.query(`
                 SELECT
                     rti.json_data,
                     tt.url_name
@@ -28,9 +28,9 @@ class Presentation extends Static {
         }
     }
 
-    async getRouteLayoutById(id) {
+    static async getRouteLayoutById(id) {
         try {
-            const {rows: [content]} = await this.client.query(`
+            const {rows: [content]} = await god.query(`
                 SELECT
                     rli.json_data,
                     lt.url_name
@@ -51,9 +51,9 @@ class Presentation extends Static {
         }
     }
 
-    async getTopicByRouteId(id) {
+    static async getTopicByRouteId(id) {
         try {
-            const {rows: content} = await this.client.query(`
+            const {rows: content} = await god.query(`
                 SELECT
                     ti.id,
                     ti.slug,
@@ -83,9 +83,9 @@ class Presentation extends Static {
         }
     }
 
-    async getTopicItems() {
+    static async getTopicItems() {
         try {
-            const {rows: content} = await this.client.query(`
+            const {rows: content} = await god.query(`
                 SELECT 
                     ti.id,
                     ti.slug,
@@ -108,9 +108,9 @@ class Presentation extends Static {
         }
     }
 
-    async getTopicById(id) {
+    static async getTopicById(id) {
         try {
-            const {rows: content} = await this.client.query(`
+            const {rows: content} = await god.query(`
                 SELECT 
                     ti.slug, 
                     ti.json_data, 
@@ -133,12 +133,12 @@ class Presentation extends Static {
         }
     }
 
-    async renderTemplateSchemaById(id) {
+    static async renderTemplateSchemaById(id) {
         try {
-            const {rows: [result]}  = await this.client.query('SELECT * FROM types.template_schema WHERE id = $1 LIMIT 1', [id]);
+            const {rows: [result]}  = await god.query('SELECT * FROM types.template_schema WHERE id = $1 LIMIT 1', [id]);
             const schema = await generateTemplateSchema(result.json_preset);
             // write to db or just send out?
-            await this.client.query('UPDATE types.template_schema SET json_form = $1::jsonb WHERE id = $2', [JSON.stringify(schema), id]);
+            await god.query('UPDATE types.template_schema SET json_form = $1::jsonb WHERE id = $2', [JSON.stringify(schema), id]);
             return schema;
         } catch (error) {
             console.error('Database error:', error);
@@ -146,12 +146,12 @@ class Presentation extends Static {
         }
     }
 
-    async renderLayoutSchemaById(id) {
+    static async renderLayoutSchemaById(id) {
         try {
-            const { rows: [result] } = await this.client.query('SELECT json_preset FROM types.layout_schema WHERE id = $1 LIMIT 1', [id]);
+            const { rows: [result] } = await god.query('SELECT json_preset FROM types.layout_schema WHERE id = $1 LIMIT 1', [id]);
             const schema = await generateLayoutSchema(result.json_preset);
             // write to db or just send out?
-            await this.client.query('UPDATE types.layout_schema SET json_form = $1::jsonb WHERE id = $2', [JSON.stringify(schema), id]);
+            await god.query('UPDATE types.layout_schema SET json_form = $1::jsonb WHERE id = $2', [JSON.stringify(schema), id]);
             return schema;
         } catch (error) {
             console.error('Database error:', error);
