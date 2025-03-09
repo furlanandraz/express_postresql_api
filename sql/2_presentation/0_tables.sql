@@ -48,7 +48,7 @@ CREATE TABLE presentation.topic_instance (
     topic_layout_id INT NOT NULL REFERENCES presentation.topic_layout(id) ON DELETE CASCADE,
     url_uuid UUID DEFAULT gen_random_uuid() UNIQUE,
     url_slug VARCHAR(64) NOT NULL,
-    ui_slug VARCHAR(64) NOT NULL,
+    title VARCHAR(64) NOT NULL,
     json_data JSON NOT NULL DEFAULT '{}',
     CONSTRAINT unique_route_slug UNIQUE(topic_layout_id, slug)
 );

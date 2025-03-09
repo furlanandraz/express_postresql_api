@@ -1,34 +1,55 @@
-export function buildRouteURL(items, parentId = null, parentPath = '', collectedLinks = []) {
+export function buildRouteURL(items, parentId = null, parentPath = '', URLs = [], breadcrumbs = []) {
+    
     items
         .filter(item => item.parent_id === parentId)
         .forEach(item => {
+
             const fullUrl = parentId === null
                 ? ''
                 : `${parentPath}/${item.url_name}`;
+            
+            const fullBreadcrumbs = [
+                ...breadcrumbs,
+                {
+                    title: item.title,
+                    url: fullUrl || '/'
+                }
+            ];
 
-            collectedLinks.push({
+            URLs.push({
                 route_id: item.id,
                 url_uuid: item.url_uuid,
                 full_url: fullUrl,
-                route_url: item.url_name
+                route_url: item.url_name,
+                breadcrumbs: fullBreadcrumbs
             });
-            buildRouteURL(items, item.id, fullUrl, collectedLinks);
+            buildRouteURL(items, item.id, fullUrl, URLs, fullBreadcrumbs);
         });
-    return collectedLinks;
+    return URLs;
 }
 
-export function buildTopicURL(routeLinks, topicItems) {
+export function buildTopicURL(routeURLs, topicItems) {
     return topicItems.map(topic => {
-        const route = routeLinks.find(route => route.route_id === topic.route_id);
+        const route = routeURLs.find(route => route.route_id === topic.route_id);
+        console.log(topic)
         return {
             route_id: topic.route_id,
             topic_id: topic.id,
             url_uuid: topic.url_uuid,
             full_url: `${route.full_url}/${topic.slug}`,
-            topic_url: topic.slug
+            topic_url: topic.slug,
+            breadcrumbs: [
+                ...route.breadcrumbs,
+                {
+                    title: topic.title,
+                    url: `${route.full_url}/${topic.slug}`
+                }
+            ]
             
         };
     });
 }
+
+
 
 

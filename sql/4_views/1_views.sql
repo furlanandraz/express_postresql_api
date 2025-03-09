@@ -15,7 +15,7 @@
 --     r.id,
 --     r.parent_id,
 --     r.url_name,
---     r.ui_name,
+--     r.title,
 --     r.meta_description,
 --     r.meta_keywords,
 --     r.url_type,

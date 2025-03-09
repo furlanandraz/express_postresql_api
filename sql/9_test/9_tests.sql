@@ -2,7 +2,7 @@
 --     id,
 --     parent_id,
 --     url_name,
---     ui_name,
+--     title,
 --     meta_description,
 --     meta_keywords,
 --     url_type

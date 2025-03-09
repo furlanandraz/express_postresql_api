@@ -91,6 +91,7 @@ class Presentation {
                     ti.slug,
                     ti.url_uuid,
                     tl.route_id,
+                    ti.title,
                     ltyp.url_name 
                 FROM 
                     presentation.topic_instance ti

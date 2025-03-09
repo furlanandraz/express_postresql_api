@@ -30,12 +30,22 @@ export async function generateTemplateSchema(schema) {
 }
 
 export async function generateLayoutSchema(schema) {
-    
+    console.log('in generateLayoutSchema');
     const mainProperties = schema.properties;
 
     let ids = { layout: mainProperties.layout.layout_id};
     
     if (mainProperties.templates.properties) {
+        ids = {
+            ...ids,
+            templates: []
+        };
+    
+    if (mainProperties.templates.properties) {
+        for (const [_, value] of Object.entries(mainProperties.templates.properties)) {
+            ids['templates'].push(value.template_id);
+        }
+        }
         for (const [_, value] of Object.entries(mainProperties.templates.properties)) {
             ids['templates'].push(value.template_id);
         }
@@ -59,6 +69,10 @@ export async function generateLayoutSchema(schema) {
     }
 
     if (mainProperties.components.properties) {
+        ids = {
+            ...ids,
+            components: []
+        };
         for (const [_, value] of Object.entries(mainProperties.components.properties)) {
             ids['components'].push(value.component_id)
         }

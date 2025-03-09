@@ -17,7 +17,7 @@ export default async function renderPage(route) {
       
     return `
     <svelte:head>
-        <title>${route.ui_name}</title>
+        <title>${route.title}</title>
         ${route.meta_description && `<meta name="description" content="${route.meta_description}" />`}
         ${route.meta_keywords && `<meta name="keywords" content="${route.meta_keywords}" />`}
     </svelte:head>
