@@ -1,18 +1,29 @@
-import Presentation from '#DAO/Presentation.js';
+import Client from '#DAO/Client.js';
 export default async function renderLayout(route) { 
     
-    const data = await Presentation.getRouteLayoutById(route.id);
+    const data = await Client.layoutBuild(route.id);
 
-    if (!data) return null;
+    let imports = '';
 
-    const imports = `import ${data.url_name.replace('.svelte', '')} from '$layouts/${data.url_name}';\n`;
+    route.parent_id !== null ? imports += `import Breadcrumbs from '$layouts/Breadcrumbs.svelte'` : '';
+
+    data?.layout?.url_name ? imports += `\n\t\timport ${data.layout.url_name.replace('.svelte', '')} from '$layouts/${data.layout.url_name}';\n` : `;\n`;
       
     return `    
-    <script>
-        ${imports}
+        ${imports ? `
+        <script>
+            ${imports}
+            let {children, data} = $props();
+        </script>` : ''}
 
-        let {children, data} = $props();
-    </script>
+        <svelte:head>
+            ${route.title ? `<title>${route.title}</title>` : ''}
+            ${route.meta_description ? `<meta name="description" content="${route.meta_description}" />` : ''}
+            ${route.meta_keywords ? `<meta name="keywords" content="${route.meta_keywords}" />` : ''}
+        </svelte:head>
 
-    <${data.url_name.replace('.svelte', '')} {children} />`;
+        ${route.parent_id !== null ? '<Breadcrumbs data={data.breadcrumbs} />' : ''}
+
+        ${data?.layout?.url_name ? `<${data.layout.url_name.replace('.svelte', '')} data={data.props} {children} />` : '{@render children ()}'}`; 
+
 };

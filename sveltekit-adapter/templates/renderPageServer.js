@@ -16,7 +16,7 @@ export default function renderPageServer(route) {
     ${rendering}
 
     export async function load() {
-        const res = await fetch('http://localhost:8000/db/v1/presentation/get-page-content?id=${route.id}');
+        const res = await fetch('http://localhost:8000/db/v1/presentation/get-route-page?id=${route.id}');
     
        if (res.ok) {
             const data = await res.json();

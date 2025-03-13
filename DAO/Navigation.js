@@ -8,7 +8,46 @@ class Navigation {
 
     static async getMenuItems() {
         try {
-            const result = await god.query('SELECT * FROM navigation.route');
+            const result = await god.query(`
+                SELECT
+                    r.*,
+                    u.full_url,
+                    u.breadcrumbs
+                FROM
+                    navigation.route r
+                LEFT JOIN
+                    navigation.url u
+                ON
+                    r.url_uuid = u.url_uuid
+                WHERE
+                    u.primary_url = TRUE;
+                `);
+            return result.rows;
+        } catch (error) {
+            console.error('Database query error:', error);
+            return { error: 'Database query error' };
+        }
+    }
+
+    static async getMenuItemFrontById(id) {
+        try {
+            const result = await god.query(`
+                SELECT
+                    r.title,
+                    r.meta_description,
+                    r.meta_keywords,
+                    u.breadcrumbs
+                FROM
+                    navigation.route r
+                LEFT JOIN
+                    navigation.url u
+                ON
+                    r.url_uuid = u.url_uuid
+                WHERE
+                    r.id = $1
+                AND
+                    u.primary_url = TRUE;
+                `, [id]);
             return result.rows;
         } catch (error) {
             console.error('Database query error:', error);
@@ -29,7 +68,7 @@ class Navigation {
             return { error: 'Database query error' };
         }
     }
-    // obsolete for now
+
     static async insertBatchURL(routeURLs, topicURLs) {
 
         routeURLs = routeURLs.map(row => ({
@@ -45,8 +84,6 @@ class Navigation {
             primary_url: true,
             breadcumbs: topic.breadcrumbs
         }));
-
-        
         
         const formattedValues = arrayOfObjectsToVALUES([...routeURLs, ...topicURLs]);
 

@@ -1,4 +1,4 @@
-import { god, readonly } from '#clients';
+import { god } from '#clients';
 
 import { generateLayoutSchema, generateTemplateSchema } from "./functions/presentation.js";
 class Presentation {
@@ -51,6 +51,36 @@ class Presentation {
         }
     }
 
+    static async getTopicLayoutById(id) {
+        try {
+            const {rows: [content]} = await god.query(`
+                SELECT
+                    ltyp.url_name
+                FROM
+                    presentation.topic_instance ti
+                LEFT JOIN
+                    presentation.topic_layout tl
+                ON
+                    ti.topic_layout_id = tl.id
+                LEFT JOIN
+                    types.layout_schema lsch
+                ON
+                    tl.layout_schema_id = lsch.id
+                LEFT JOIN
+                    types.layout_type ltyp
+                ON
+                    lsch.layout_type_id = ltyp.id
+                WHERE
+                    route_id = $1
+                LIMIT 1;
+                `, [id]);
+            return content;
+        } catch (error) {
+            console.error('Database error:', error);
+            return { error: 'Databse error' };
+        }
+    }
+
     static async getTopicByRouteId(id) {
         try {
             const {rows: content} = await god.query(`
@@ -74,7 +104,7 @@ class Presentation {
                 ON
                     lsch.layout_type_id = ltyp.id
                 WHERE
-                    route_id = $1;
+                    tl.route_id = $1;
                 `, [id]);
             return content;
         } catch (error) {
@@ -112,20 +142,34 @@ class Presentation {
     static async getTopicById(id) {
         try {
             const {rows: content} = await god.query(`
-                SELECT 
-                    ti.slug, 
-                    ti.json_data, 
-                    ltyp.url_name 
-                FROM 
+                SELECT
+                    ti.id,
+                    ti.slug,
+                    ti.title,
+                    ti.json_data,
+                    ti.url_uuid,
+                    u.full_url,
+                    ltyp.url_name
+                FROM
                     presentation.topic_instance ti
-                LEFT JOIN 
-                    presentation.topic_layout tl ON ti.topic_layout_id = tl.id
-                LEFT JOIN 
-                    types.layout_schema lsch ON tl.layout_schema_id = lsch.id
-                LEFT JOIN 
-                    types.layout_type ltyp ON lsch.layout_type_id = ltyp.id
-                WHERE 
-                    ti.id = $1;
+                LEFT JOIN
+                    presentation.topic_layout tl
+                ON
+                    ti.topic_layout_id = tl.id
+                LEFT JOIN
+                    types.layout_schema lsch
+                ON
+                    tl.layout_schema_id = lsch.id
+                LEFT JOIN
+                    types.layout_type ltyp
+                ON
+                    lsch.layout_type_id = ltyp.id
+                LEFT JOIN
+                    navigation.url u
+                ON
+                    ti.url_uuid = u.url_uuid
+                WHERE
+                    route_id = $1 AND u.primary_url = TRUE;
                 `, [id]);
             return content;
         } catch (error) {

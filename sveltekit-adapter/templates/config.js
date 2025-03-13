@@ -1,3 +1,9 @@
-const apiURL = 'http://localhost:8000/db/v1';
+const config = {
+    apiURL: 'http://localhost:8000/db/v1/clinet',
+    avoid: [
+        'api'
+    ]
 
-export {apiURL}
+}
+
+export default config;

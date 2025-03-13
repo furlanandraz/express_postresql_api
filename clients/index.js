@@ -20,14 +20,6 @@ const admin = new Pool({
     database: process.env.PG_SERVICE_NAME,
 });
 
-const customer = new Pool({
-    user: process.env.PG_CUSTOMER_USER,
-    password: process.env.PG_CUSTOMER_PASSWORD,
-    host: process.env.PG_SERVICE_HOST,
-    port: process.env.PG_SERVICE_PORT,
-    database: process.env.PG_SERVICE_NAME,
-});
-
 const readonly = new Pool({
     user: process.env.PG_READONLY_USER,
     password: process.env.PG_READONLY_PASSWORD,
@@ -36,4 +28,4 @@ const readonly = new Pool({
     database: process.env.PG_SERVICE_NAME,
 });
 
-export { god, admin, customer, readonly };
+export { god, admin, readonly };

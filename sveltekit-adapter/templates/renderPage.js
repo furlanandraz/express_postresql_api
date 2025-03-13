@@ -1,27 +1,28 @@
-import Presentation from '#DAO/Presentation.js';
+import Client from '#DAO/Client.js';
 export default async function renderPage(route) { 
     
-    const data = await Presentation.getRouteContentById(route.id);
+    const data = await Client.pageBuild(route.id);
     
+    if (!Object.entries(data).length) return null;
 
-    if (!data?.length) return null;
+    let imports, segments = '';
     
-    const imports = Object.values(data).reduce((acc, template) => 
+    if (Object.values(data.template).length) {
+
+        const templates = new Set(Object.values(data.template));
+        imports = [...templates].reduce((acc, template) => 
         acc += `import ${template.url_name.replace('.svelte', '')} from '$templates/${template.url_name}';\n`, 
         ''
-    );
-    const segments = Object.entries(data).map(([key, value]) => {
+        );
+
+        segments = Object.entries(data.template).map(([key, value]) => {
         const componentName = value.url_name.replace('.svelte', '');
         return `<${componentName} data={data[${key}].json_data} />`;
-    }).join('\n');
-      
-    return `
-    <svelte:head>
-        <title>${route.title}</title>
-        ${route.meta_description && `<meta name="description" content="${route.meta_description}" />`}
-        ${route.meta_keywords && `<meta name="keywords" content="${route.meta_keywords}" />`}
-    </svelte:head>
+        }).join('\n');
+        
+    };
     
+    return `    
     <script>
         ${imports}
         let {data} = $props();

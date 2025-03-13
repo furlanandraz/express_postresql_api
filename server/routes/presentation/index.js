@@ -3,11 +3,11 @@ import Presentation from '#DAO/Presentation.js';
 
 const router = expres.Router();
 
-router.get('/get-route-content', async (req, res) => {
+router.get('/get-route-page', async (req, res) => {
     const id = req.query.id;
     try {
-        const pageContent = await Presentation.getRouteContentById(id);
-        res.json(pageContent);
+        const data = await Presentation.getRouteContentById(id);
+        res.json(data);
     } catch (error) {
         res.status(500);
     }
@@ -16,18 +16,28 @@ router.get('/get-route-content', async (req, res) => {
 router.get('/get-route-layout', async (req, res) => {
     const id = req.query.id;
     try {
-        const pageContent = await Presentation.getRouteLayoutById(id);
-        res.json(pageContent);
+        const data = await Presentation.getRouteLayoutById(id);
+        res.json(data);
     } catch (error) {
         res.status(500);
     }
 });
 
-router.get('/get-route-topic', async (req, res) => {
+router.get('/get-topic-layout', async (req, res) => {
     const id = req.query.id;
     try {
-        const pageContent = await Presentation.getTopicByRouteId(id);
-        res.json(pageContent);
+        const data = await Presentation.getTopicLayoutById(id);
+        res.json(data);
+    } catch (error) {
+        res.status(500);
+    }
+});
+
+router.get('/get-route-topics', async (req, res) => {
+    const id = req.query.id;
+    try {
+        const data = await Presentation.getTopicByRouteId(id);
+        res.json(data);
     } catch (error) {
         res.status(500);
     }
@@ -36,8 +46,8 @@ router.get('/get-route-topic', async (req, res) => {
 router.get('/get-topic', async (req, res) => {
     const id = req.query.id;
     try {
-        const pageContent = await Presentation.getTopicById(id);
-        res.json(pageContent);
+        const data = await Presentation.getTopicById(id);
+        res.json(data);
     } catch (error) {
         res.status(500);
     }
