@@ -53,4 +53,25 @@ router.get('/topic-grid', async (req, res) => {
     }
 });
 
+router.get('/topic-build', async (req, res) => {
+    const id = req.query.id;
+    try {
+        const data = await Client.topicBuild(id);
+        res.json(data);
+    } catch (error) {
+        res.status(500);
+    }
+});
+
+router.get('/topic-data', async (req, res) => {
+    const url = decodeURIComponent(req.query.url);
+    
+    try {
+        const data = await Client.topicData(url);
+        res.json(data);
+    } catch (error) {
+        res.status(500);
+    }
+});
+
 export default router;

@@ -183,12 +183,73 @@ class Client {
     }
 
     static async topicBuild(id) {
-        
+
+        const res = {};
+
+        try {
+
+            let rows;
+
+            ({ rows } = await readonly.query(`
+                SELECT
+                    ltyp.url_name
+                FROM
+                    presentation.topic_instance ti
+                LEFT JOIN
+                    presentation.topic_layout tl
+                ON
+                    ti.topic_layout_id = tl.id
+                LEFT JOIN
+                    types.layout_schema lsch
+                ON
+                    tl.layout_schema_id = lsch.id
+                LEFT JOIN
+                    types.layout_type ltyp
+                ON
+                    lsch.layout_type_id = ltyp.id
+                WHERE
+                    route_id = $1
+                LIMIT 1;
+                `, [id]));
+            
+            if (rows[0]?.url_name) res.template = rows;
+
+            return res;
+        } catch (error) {
+            console.error('Database error:', error);
+            return { error: 'Database error' };
+        }
     }
 
-    static async topicData(id) {
-        
+    static async topicData(url) {
+
+        const res = {};
+
+        try {
+            
+            const {rows} = await readonly.query(`
+                SELECT
+                    ti.json_data
+                FROM
+                    presentation.topic_instance ti
+                LEFT JOIN
+                    navigation.url u
+                ON
+                    ti.url_uuid = u.url_uuid
+                WHERE
+                    u.full_url LIKE $1;
+                `, [url]);
+            
+            if (rows.length > 0) res.props = rows.map(row => row.json_data);
+            
+            return res;
+        } catch (error) {
+            console.error('Database error:', error);
+            return { error: 'Databse error' };
+        }
     }
+
+
 }
 
 export default Client;

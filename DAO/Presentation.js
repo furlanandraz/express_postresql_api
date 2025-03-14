@@ -171,6 +171,7 @@ class Presentation {
                 WHERE
                     route_id = $1 AND u.primary_url = TRUE;
                 `, [id]);
+            
             return content;
         } catch (error) {
             console.error('Database error:', error);
