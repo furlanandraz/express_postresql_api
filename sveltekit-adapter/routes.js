@@ -30,14 +30,15 @@ async function buildFiles(route, parentId, buildPath) {
     }
     
     const pageContent = await renderPage(route);
-    if (pageContent) {
-        const page = path.join(buildPath, '+page.svelte');
-        fs.writeFileSync(page, pageContent);
-        
+    const page = path.join(buildPath, '+page.svelte');
+    fs.writeFileSync(page, pageContent);
+
+    if (pageContent){
         const pageServerContent = renderPageServer(route);
         const pageServer = path.join(buildPath, '+page.server.js');
         fs.writeFileSync(pageServer, pageServerContent);
     }
+    
 
     
     
@@ -53,9 +54,13 @@ async function buildSlug(route, buildPath) {
         const layout = path.join(slugPath, '+layout@.svelte');
         fs.writeFileSync(layout, slugContent);
         
-        const layoutServerContent = renderLayoutServer(route);
-        const layoutServer = path.join(slugPath, '+layout.server.js');
-        fs.writeFileSync(layoutServer, layoutServerContent);
+        const slugServerContent = renderSlugServer();
+        const slugServer = path.join(slugPath, '+layout.server.js');
+        fs.writeFileSync(slugServer, slugServerContent);
+
+        const slugPage = path.join(slugPath, '+page.svelte');
+        fs.writeFileSync(slugPage, '');
+
     }
     
 }

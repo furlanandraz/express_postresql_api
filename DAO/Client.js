@@ -26,6 +26,28 @@ class Client {
             
             if (rows[0]?.url_name) res.layout = { url_name: rows[0].url_name };
 
+            ({ rows } = await readonly.query(`
+                SELECT
+                    COUNT(*) as count
+                FROM 
+                    presentation.topic_instance ti
+                LEFT JOIN 
+                    presentation.topic_layout tl ON ti.topic_layout_id = tl.id
+                LEFT JOIN 
+                    navigation.route r ON tl.route_id = r.id
+                LEFT JOIN 
+                    navigation.url u ON ti.url_uuid = u.url_uuid
+                WHERE 
+                    tl.route_id = $1
+                AND
+                    u.primary_url = TRUE;
+                `, [id]));
+            
+            
+
+            if (rows[0]?.count > 0) res.grid = true;
+
+            
             return res;
 
         } catch (error) {
@@ -70,6 +92,47 @@ class Client {
                 `, [id]));
             
             if (rows[0]?.json_data) res.props = rows[0].json_data;
+
+            ({rows} = await readonly.query(`
+                SELECT
+                    ti.title,
+                    u.full_url
+                FROM
+                    presentation.topic_instance ti
+                LEFT JOIN
+                    presentation.topic_layout tl
+                ON
+                    ti.topic_layout_id = tl.id
+                LEFT JOIN
+                    navigation.route r
+                ON
+                    tl.route_id = r.id
+                LEFT JOIN
+                    navigation.url u
+                ON
+                    ti.url_uuid = u.url_uuid
+                WHERE
+                    tl.route_id = $1
+                AND
+                    u.primary_url = TRUE;
+                `, [id]));
+            
+            if (rows[0]) res.grid = rows;
+
+            if (id == 1) {
+                ({ rows } = await readonly.query(`
+                SELECT
+                    cache_json
+                FROM
+                    cache.navigation_cache
+                WHERE
+                    cache_name
+                LIKE
+                    'menu_tree';
+                `));
+
+                if (rows[0]?.cache_json) res.menu = rows[0].cache_json[0];
+            }
 
             return res;
         } catch (error) {
@@ -141,47 +204,6 @@ class Client {
         }
     }
 
-    static async topicGrid(id) {
-
-        const res = {};
-
-        try {
-            let rows;
-
-            ({rows} = await readonly.query(`
-                SELECT
-                    ti.title,
-                    u.full_url
-                FROM
-                    presentation.topic_instance ti
-                LEFT JOIN
-                    presentation.topic_layout tl
-                ON
-                    ti.topic_layout_id = tl.id
-                LEFT JOIN
-                    navigation.route r
-                ON
-                    tl.route_id = r.id
-                LEFT JOIN
-                    navigation.url u
-                ON
-                    ti.url_uuid = u.url_uuid
-                WHERE
-                    tl.route_id = $1
-                AND
-                    u.primary_url = TRUE;
-                `, [id]));
-            
-            if (rows[0]) res.grid = rows;
-
-            return res;
-        } catch (error) {
-            console.error('Database error:', error);
-            return { error: 'Databse error' };
-        }
-        
-    }
-
     static async topicBuild(id) {
 
         const res = {};
@@ -212,7 +234,7 @@ class Client {
                 LIMIT 1;
                 `, [id]));
             
-            if (rows[0]?.url_name) res.template = rows;
+            if (rows[0]?.url_name) res.layout = {url_name: rows[0].url_name};
 
             return res;
         } catch (error) {
@@ -226,8 +248,21 @@ class Client {
         const res = {};
 
         try {
+
+            let rows;
+
+            ({ rows } = await readonly.query(`
+                SELECT
+                    breadcrumbs
+                FROM
+                    navigation.url
+                WHERE
+                    full_url LIKE $1;
+                `, [url]));
             
-            const {rows} = await readonly.query(`
+            if (rows[0]?.breadcrumbs) res.breadcrumbs = rows[0].breadcrumbs;
+            
+            ({rows} = await readonly.query(`
                 SELECT
                     ti.json_data
                 FROM
@@ -238,9 +273,9 @@ class Client {
                     ti.url_uuid = u.url_uuid
                 WHERE
                     u.full_url LIKE $1;
-                `, [url]);
+                `, [url]));
             
-            if (rows.length > 0) res.props = rows.map(row => row.json_data);
+            if (rows[0]?.json_data) res.props = rows[0].json_data;
             
             return res;
         } catch (error) {

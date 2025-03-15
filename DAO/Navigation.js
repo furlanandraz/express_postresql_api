@@ -28,6 +28,29 @@ class Navigation {
             return { error: 'Database query error' };
         }
     }
+    static async getMenuItemsSimple() {
+        try {
+            const result = await god.query(`
+                SELECT
+                    r.id,
+                    r.parent_id,
+                    r.title,
+                    u.full_url
+                FROM
+                    navigation.route r
+                LEFT JOIN
+                    navigation.url u
+                ON
+                    r.url_uuid = u.url_uuid
+                WHERE
+                    u.primary_url = TRUE;
+                `);
+            return result.rows;
+        } catch (error) {
+            console.error('Database query error:', error);
+            return { error: 'Database query error' };
+        }
+    }
 
     static async getMenuItemFrontById(id) {
         try {

@@ -1,7 +1,7 @@
-import { god, readonly } from '#clients';
+import { god } from '#clients';
 
 
-class Types extends Static {
+class Types {
 
     static async jsonSchemaInsertMany(jsonSchemaName, arrayOfObjects) {
 

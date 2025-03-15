@@ -42,7 +42,7 @@ schemaDirectories.forEach(async directory => {
     console.log(allValues);
     
     try {
-        await Types.setClient('god').jsonSchemaInsertMany(directory.tableName, allValues);
+        await Types.jsonSchemaInsertMany(directory.tableName, allValues);
     } catch (error) {
         console.log(error);
     }

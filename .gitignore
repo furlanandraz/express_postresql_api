@@ -134,3 +134,6 @@ helperFiles
 
 # rendered routes
 sveltekit-adapter/routes
+
+# test json schema files
+json

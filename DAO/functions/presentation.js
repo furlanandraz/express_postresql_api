@@ -21,7 +21,7 @@ export async function generateTemplateSchema(schema) {
     for (const [key, _] of Object.entries(mainProperties.components.properties)) {
         const property = mainProperties.components.properties[key];
         const propertyId = property.component_id;
-        console.log
+        
         const [componentPath] = resultComponents.filter(component => component.id === propertyId);
         mainProperties.components.properties[key] = JSON.parse(fs.readFileSync(componentPath.json_ref, 'utf-8'));
     }
@@ -30,10 +30,10 @@ export async function generateTemplateSchema(schema) {
 }
 
 export async function generateLayoutSchema(schema) {
-    console.log('in generateLayoutSchema');
+    
     const mainProperties = schema.properties;
 
-    let ids = { layout: mainProperties.layout.layout_id};
+    let ids = { layout: mainProperties.layout.layout_id };
     
     if (mainProperties.templates.properties) {
         ids = {
@@ -94,8 +94,12 @@ export async function generateLayoutSchema(schema) {
         }
     }
 
+    
     let { rows: [result] } = await god.query('SELECT json_ref FROM types.layout_type WHERE id=$1 LIMIT 1;', [ids.layout]);
-    mainProperties.layout = JSON.parse(fs.readFileSync(result.json_ref, 'utf-8'));
+    mainProperties.layout = fs.readFileSync(result.json_ref, 'utf-8');
+ 
+    if (mainProperties.layout !== '') JSON.parse(mainProperties.layout);
+    else mainProperties.layout = '{}';
 
     
 

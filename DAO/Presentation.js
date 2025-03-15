@@ -193,10 +193,10 @@ class Presentation {
     }
 
     static async renderLayoutSchemaById(id) {
+        
         try {
             const { rows: [result] } = await god.query('SELECT json_preset FROM types.layout_schema WHERE id = $1 LIMIT 1', [id]);
             const schema = await generateLayoutSchema(result.json_preset);
-            // write to db or just send out?
             await god.query('UPDATE types.layout_schema SET json_form = $1::jsonb WHERE id = $2', [JSON.stringify(schema), id]);
             return schema;
         } catch (error) {

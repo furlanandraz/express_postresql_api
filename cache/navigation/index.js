@@ -16,9 +16,9 @@ subscriber.notifications.on('route_change', async (payload) => {
         
     try {
 
-        const result = await Navigation.setClient('god').getMenuItems();
+        const result = await Navigation.getMenuItemsSimple();
         const menuTree = buildMenuTree(result);
-        await Cache.setClient('god').cacheMenuTree(menuTree)
+        await Cache.cacheMenuTree(menuTree)
 
         
 

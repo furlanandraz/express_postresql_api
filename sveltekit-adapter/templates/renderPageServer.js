@@ -1,3 +1,4 @@
+import config from "./config.js";
 export default function renderPageServer(route) {
 
     let rendering;
@@ -16,7 +17,7 @@ export default function renderPageServer(route) {
     ${rendering}
 
     export async function load() {
-        const res = await fetch('http://localhost:8000/db/v1/presentation/get-route-page?id=${route.id}');
+        const res = await fetch('${config.apiURL}/page-data?id=${route.id}');
     
        if (res.ok) {
             const data = await res.json();

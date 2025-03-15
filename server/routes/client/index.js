@@ -1,5 +1,6 @@
 import expres from 'express';
 import Client from '#DAO/Client.js';
+import Cache from '#DAO/Cache.js';
 
 const router = expres.Router();
 
@@ -15,8 +16,10 @@ router.get('/layout-build', async (req, res) => {
 
 router.get('/layout-data', async (req, res) => {
     const id = req.query.id;
+    const menu = req.query.menu;
     try {
         const data = await Client.layoutData(id);
+        const menuData = await Cache
         res.json(data);
     } catch (error) {
         res.status(500);
@@ -37,16 +40,6 @@ router.get('/page-data', async (req, res) => {
     const id = req.query.id;
     try {
         const data = await Client.pageData(id);
-        res.json(data);
-    } catch (error) {
-        res.status(500);
-    }
-});
-
-router.get('/topic-grid', async (req, res) => {
-    const id = req.query.id;
-    try {
-        const data = await Client.topicGrid(id);
         res.json(data);
     } catch (error) {
         res.status(500);

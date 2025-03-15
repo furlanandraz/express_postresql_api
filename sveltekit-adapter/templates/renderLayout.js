@@ -1,13 +1,17 @@
+import config from "./config.js";
 import Client from '#DAO/Client.js';
 export default async function renderLayout(route) { 
     
+    // const res = await fetch(`${config.apiURL}/layout-build?id=${route.id}`);
+    // const data = await res.json();
+
     const data = await Client.layoutBuild(route.id);
 
     let imports = '';
 
     route.parent_id !== null ? imports += `import Breadcrumbs from '$layouts/Breadcrumbs.svelte'` : '';
 
-    data?.layout?.url_name ? imports += `\n\t\timport ${data.layout.url_name.replace('.svelte', '')} from '$layouts/${data.layout.url_name}';\n` : `;\n`;
+    data?.layout?.url_name ? imports += `\n\t\t\timport ${data.layout.url_name.replace('.svelte', '')} from '$layouts/${data.layout.url_name}';\n` : `;\n`;
       
     return `    
         ${imports ? `
@@ -24,6 +28,7 @@ export default async function renderLayout(route) {
 
         ${route.parent_id !== null ? '<Breadcrumbs data={data.breadcrumbs} />' : ''}
 
-        ${data?.layout?.url_name ? `<${data.layout.url_name.replace('.svelte', '')} data={data.props} {children} />` : '{@render children ()}'}`; 
+        ${data?.layout?.url_name ? `<${data.layout.url_name.replace('.svelte', '')} {data} {children} />` : '{@render children ()}'}
+        `; 
 
 };

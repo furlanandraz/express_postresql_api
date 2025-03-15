@@ -1,9 +1,13 @@
+import config from "./config.js";
 import Client from '#DAO/Client.js';
 export default async function renderPage(route) { 
     
+    // const res = await fetch(`${config.apiURL}/page-build?id=${route.id}`);
+    // const data = await res.json();
+
     const data = await Client.pageBuild(route.id);
     
-    if (!Object.entries(data).length) return null;
+    if (!Object.entries(data).length) return '';
 
     let imports, segments = '';
     
@@ -17,7 +21,7 @@ export default async function renderPage(route) {
 
         segments = Object.entries(data.template).map(([key, value]) => {
         const componentName = value.url_name.replace('.svelte', '');
-        return `<${componentName} data={data[${key}].json_data} />`;
+        return `<${componentName} data={data.props[${key}].json_data} />`;
         }).join('\n');
         
     };
