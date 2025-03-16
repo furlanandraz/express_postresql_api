@@ -1,51 +1,56 @@
-import {WebSocketServer} from 'ws';
-import getSysInfo from '#serverFunctions/getSysInfo.js';
+import { WebSocketServer } from 'ws';
 
+import sysInfo from '#serverFunctions/sysInfo.js';
+import redisSubscriber from '#serverFunctions/redisSubscriber.js';
 
 export default function services(server) {
-    new WebSocketService(server, 'sysinfo', getSysInfo, 1000);
+    const service1 = new WebSocketService(server);
+    // const service2 = new WebSocketService(server);
+
+    // service1.register('sys-info', sysInfo);
+    service1.register('cms-notif', redisSubscriber);
 }
 
 class WebSocketService {
-    constructor(server, path, callback, interval = null){
+    constructor(server){
         this.server = server;
-        this.path = typeof path === 'string' ? path : path.join('/');
-        this.callback = callback;
-        this.interval = interval;
-        this.timer = null;
-        this.start();
+        this.routes = {};
+        this.wss = new WebSocketServer({ noServer: true });
+        this.#start();
     }
 
-    start() {
-        const wss = new WebSocketServer({ noServer: true, path: `/${this.path}` });
+    register(channel, callback) {
+        this.routes[channel] = callback;
+        console.log(this.routes)
+    }
+
+    #start() {
+
+        this.server.on('error', (err) => console.log('Server error:', err))
 
         this.server.on('upgrade', (req, socket, head) => {
             this.server.on('error', (err) => console.log('Pre-Upgrade Error:', err));
-            wss.handleUpgrade(req, socket, head, (ws) => {
-                wss.emit('connection', ws, req);
-            });
+
+            const path = req.url.replace(/^\/+/g, '');
+
+            if (this.routes[path]) {
+                this.wss.handleUpgrade(req, socket, head, (ws) => {
+                    this.wss.emit('connection', ws, req, path);
+                });
+            } else {
+                console.log(`WebSocket path ${path} not found`);
+                socket.destroy();
+            }
         });
 
-        wss.on('connection', async (ws) => {
-            console.log('Client connected to /sysinfo WebSocket');
+        this.wss.on('connection', async (ws, req, path) => {
+            console.log(`Client connected to /${path}`);
             if (ws.readyState === ws.OPEN) {
-                this.callback()
+                console.log(path)
+                this.routes[path](ws);
             }
-
-            if (this.interval) {
-                this.timer = setInterval(async () => {
-                    ws.send(JSON.stringify(await this.callback()));
-                }, this.interval); 
-            } else {
-                ws.send(JSON.stringify(await this.callback()));
-            }
-            
             ws.on('error', (err) => console.log('Post-Upgrade Error:', err));
-    
-            ws.on('close', () => {
-                if (timer) clearInterval(this.timer);
-                console.log('Client disconnected from /sysinfo');
-            });
+            ws.on('close', () => console.log(`Client disconnected from ${path}`));
         });
     }
 }

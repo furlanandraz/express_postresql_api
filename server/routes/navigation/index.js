@@ -1,9 +1,11 @@
 import expres from 'express';
 import Navigation from '#DAO/Navigation.js';
+import Notifications from '#notifications';
 
 const router = expres.Router();
 
 router.get('/get-menu-items', async (req, res) => {
+    Notifications.error({ message: 'omg' });
     try {
         const menuItems = await Navigation.getMenuItems();
         res.json(menuItems);

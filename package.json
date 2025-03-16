@@ -8,9 +8,9 @@
     "init:db": "node sql/init.js",
     "init:cache": "npx pm2 start ecosystem.config.cjs --only server:cache:listener --silent && node cache/_global/notify.js && pm2 stop all",
     "reinit:cache": "npx pm2 start ecosystem.config.cjs --only server:cache:listener --silent && node cache/_global/notify.js",
-    "server:start": "npx pm2 start ecosystem.config.cjs --no-daemon",
-    "server:stop": "npx pm2 stop all",
-    "server:restart": "npx pm2 restart all --no-daemon",
+    "server:start": "docker start redis-container && npx pm2 start ecosystem.config.cjs --no-daemon",
+    "server:stop": "docker stop redis-container && npx pm2 stop all",
+    "server:restart": "docker restart redis-container && npx pm2 restart all --no-daemon",
     "server:status": "npx pm2 list",
     "init:types": "node json/parse.js",
     "routes:build": "node sveltekit-adapter/routes.js"
@@ -38,6 +38,7 @@
     "pg": "^8.13.1",
     "pg-listen": "^1.7.0",
     "pm2": "^5.4.3",
+    "redis": "^4.7.0",
     "svelte": "^5.20.2",
     "systeminformation": "^5.25.11",
     "ws": "^8.18.0"
@@ -46,6 +47,7 @@
     "#clients": "./clients/index.js",
     "#middleware/*": "./server/middleware/*",
     "#DAO/*": "./DAO/*",
-    "#serverFunctions/*": "./server/functions/*"
+    "#serverFunctions/*": "./server/functions/*",
+    "#notifications": "./notifications/index.js"
   }
 }
