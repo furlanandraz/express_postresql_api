@@ -3,7 +3,7 @@ module.exports = {
     {
       name: 'server:api',
       script: 'server/index.js',
-      watch: true,
+      watch: ['cache', 'clients', 'DAO', 'notifications', 'server'],
       autorestart: true,
       env: {
         NODE_ENV: 'production'
@@ -12,7 +12,7 @@ module.exports = {
     {
       name: 'server:cache:listener',
       script: 'cache/index.js',
-      watch: true,
+      watch: ['cache', 'clients', 'DAO', 'notifications', 'server'],
       autorestart: true,
       env: {
         NODE_ENV: 'production'

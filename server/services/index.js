@@ -4,11 +4,10 @@ import sysInfo from '#serverFunctions/sysInfo.js';
 import redisSubscriber from '#serverFunctions/redisSubscriber.js';
 
 export default function services(server) {
-    const service1 = new WebSocketService(server);
-    // const service2 = new WebSocketService(server);
+    const service = new WebSocketService(server);
 
-    // service1.register('sys-info', sysInfo);
-    service1.register('cms-notif', redisSubscriber);
+    service.register('sys-info', sysInfo);
+    service.register('cms-notif', redisSubscriber);
 }
 
 class WebSocketService {
@@ -21,7 +20,6 @@ class WebSocketService {
 
     register(channel, callback) {
         this.routes[channel] = callback;
-        console.log(this.routes)
     }
 
     #start() {
@@ -46,7 +44,6 @@ class WebSocketService {
         this.wss.on('connection', async (ws, req, path) => {
             console.log(`Client connected to /${path}`);
             if (ws.readyState === ws.OPEN) {
-                console.log(path)
                 this.routes[path](ws);
             }
             ws.on('error', (err) => console.log('Post-Upgrade Error:', err));

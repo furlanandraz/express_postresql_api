@@ -15,7 +15,7 @@ export function arrayOfObjectsToVALUES(arrayOfObjects) {
             .map(value => {
                 if (value === null) return "NULL";
                 if (typeof (value) === 'boolean') return value ? "TRUE" : "FALSE";
-                if (typeof (value) === 'string') return `'${value}'`;
+                if (typeof (value) === 'string') return `'${value.replace(/'/g, "''")}'`;
                 if (typeof (value) === 'array' || 'object') return `'${JSON.stringify(value)}'`;
                 return value;
             })

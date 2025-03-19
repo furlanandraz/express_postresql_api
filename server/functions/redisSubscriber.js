@@ -14,7 +14,7 @@ export default async function redisSubscriber(ws) {
             console.error("Redis Subscriber Error:", err);
         });
 
-        const channels = ["error", "warning", "info", "success"]; // List of channels to subscribe to
+        const channels = ["error", "warning", "info", "success"];
 
         channels.forEach(channel => {
             client.subscribe(channel, (message) => {
@@ -25,8 +25,7 @@ export default async function redisSubscriber(ws) {
         });
 
         ws.on("close", async () => {
-            console.log("Client disconnected from /notifications WebSocket");
-            await client.quit(); // Close Redis connection
+            await client.quit();
         });
 
     } catch (error) {

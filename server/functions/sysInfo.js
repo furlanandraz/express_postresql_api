@@ -33,8 +33,7 @@ export default async function sysInfo(ws) {
             ws.send(JSON.stringify(sysInfo));
         }, 1000); 
         ws.on('close', () => {
-                if (timer) clearInterval(timer);
-                console.log('Client disconnected from /sysinfo');
+            if (timer) clearInterval(timer);
         });
     } catch (error) {
         console.error("Error fetching system info:", error);

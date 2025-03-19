@@ -137,3 +137,7 @@ sveltekit-adapter/routes
 
 # test json schema files
 json
+
+# static
+static/images/*
+!/static/images/.gitkeep
