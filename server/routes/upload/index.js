@@ -1,37 +1,24 @@
-import expres from 'express';
-import multer from 'multer';
-import fs from 'fs';
-import path from 'path';
+import express from 'express';
+import processUploadImage from './ProcessUploadImage.js';
+import { processImage } from './processImage.js';
 
-import Media from '#DAO/Media.js';
-import UploadHandler from './UploadHandler.js';
+const router = express.Router();
 
-const router = expres.Router();
+console.log("Upload route initialized"); // ✅ Debugging
 
-router.post("/images", UploadHandler.Image.array("files", 10), async (req, res) => {
-    try {
+router.post("/images", processUploadImage().array("files", 10), async (req, res) => {
+    console.log("Multer processed files:", req.files); // ✅ Debugging
 
-        const tags = JSON.parse(req.body.tags) || [];
-        
-        console.log(typeof (tags), tags);
-        if (!req.files || req.files.length === 0) {
-            return res.status(400).json({ error: "No files uploaded" });
-        }
-
-        const filePaths = req.files.map(file => ({
-            originalName: file.originalname,
-            storedName: file.filename,
-            path: `/static/uploads/images/${file.filename}`
-        }));
-
-        await Media.insertImages(filePaths.map(file => file.path), tags);
-
-        res.json({ success: "Files uploaded successfully", files: filePaths, tags });
-    } catch (error) {
-        console.error("Upload error:", error);
-        res.status(500).json({ error: "Internal server error" });
+    if (!req.files || req.files.length === 0) {
+        console.error("No files received");
+        return res.status(400).json({ error: "No files uploaded" });
     }
-});
 
+    for (const file of req.files) {
+        await processImage(file.buffer, file.originalname.replace(/\.[^/.]+$/, ""));
+    }
+
+    res.json({ success: "Files uploaded successfully", files: req.files });
+});
 
 export default router;

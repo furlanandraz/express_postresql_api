@@ -139,5 +139,7 @@ sveltekit-adapter/routes
 json
 
 # static
+static/*
+!/static/.gitkeep
 static/images/*
 !/static/images/.gitkeep
