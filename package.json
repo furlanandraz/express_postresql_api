@@ -49,7 +49,6 @@
     "#clients": "./clients/index.js",
     "#middleware/*": "./server/middleware/*",
     "#DAO/*": "./DAO/*",
-    "#serverFunctions/*": "./server/functions/*",
-    "#notifications": "./notifications/index.js"
+    "#serverFunctions/*": "./server/functions/*"
   }
 }

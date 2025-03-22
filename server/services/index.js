@@ -1,7 +1,7 @@
 import { WebSocketServer } from 'ws';
 
-import sysInfo from '#serverFunctions/sysInfo.js';
-import redisSubscriber from '#serverFunctions/redisSubscriber.js';
+import sysInfo from '#serverFunctions/pollers/sysInfo.js';
+import redisSubscriber from '#serverFunctions/subscribers/redisSubscriber.js';
 
 export default function services(server) {
     const service = new WebSocketService(server);

@@ -1,11 +1,12 @@
 import expres from 'express';
 import Navigation from '#DAO/Navigation.js';
-import Notifications from '#notifications';
+import publish from '#serverFunctions/subscribers/redisPublisher.js';
 
 const router = expres.Router();
 
 router.get('/get-menu-items', async (req, res) => {
-    Notifications.error({ message: 'omg' });
+    
+    publish.info({ message: 'refactored' });
     try {
         const menuItems = await Navigation.getMenuItems();
         res.json(menuItems);

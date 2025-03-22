@@ -1,6 +1,6 @@
 import express from 'express';
-import processUploadImage from './ProcessUploadImage.js';
-import { processImage } from './processImage.js';
+import processUploadImage from '../../functions/modifiers/uploadImage.js';
+import { processImage } from '../../functions/processors/processImage.js';
 
 const router = express.Router();
 
