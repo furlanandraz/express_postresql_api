@@ -94,17 +94,12 @@ export async function generateLayoutSchema(schema) {
         }
     }
 
-    
     let { rows: [result] } = await god.query('SELECT json_ref FROM types.layout_type WHERE id=$1 LIMIT 1;', [ids.layout]);
     mainProperties.layout = fs.readFileSync(result.json_ref, 'utf-8');
- 
+
     if (mainProperties.layout !== '') JSON.parse(mainProperties.layout);
     else mainProperties.layout = '{}';
-
     
-
-   
-
     return { ...schema, properties: mainProperties };
 }
 

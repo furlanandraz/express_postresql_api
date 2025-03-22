@@ -1,7 +1,7 @@
-import { god, readonly } from "#clients";
+import { god } from "#clients";
 import Presentation from "./Presentation.js";
-import { buildRouteURL, buildTopicURL } from "./functions/navigation.js";
-import { arrayOfObjectsToVALUES } from "./functions/helpers.js";
+import { buildRouteURL, buildTopicURL } from "./functions/builders/navigation.js";
+import { arrayOfObjectsToVALUES } from "./functions/transformers/generic.js";
 
 
 class Navigation {

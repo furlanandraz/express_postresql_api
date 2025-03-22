@@ -1,6 +1,6 @@
 import { god } from '#clients';
 
-import { generateLayoutSchema, generateTemplateSchema } from "./functions/presentation.js";
+import { generateLayoutSchema, generateTemplateSchema } from "./functions/builders/presentation.js";
 class Presentation {
 
     static async getRouteContentById(id) {
