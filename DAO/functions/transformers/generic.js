@@ -1,3 +1,6 @@
+import pkg from 'he';
+const { encode } = pkg;
+
 export function arrayOfObjectsToVALUES(arrayOfObjects) {
     
     if (!Array.isArray(arrayOfObjects) || arrayOfObjects.length === 0) {
@@ -15,7 +18,7 @@ export function arrayOfObjectsToVALUES(arrayOfObjects) {
             .map(value => {
                 if (value === null) return "NULL";
                 if (typeof (value) === 'boolean') return value ? "TRUE" : "FALSE";
-                if (typeof (value) === 'string') return `'${value.replace(/'/g, "''")}'`;
+                if (typeof value === 'string') return `'${encode(value)}'`;
                 if (typeof (value) === 'array' || 'object') return `'${JSON.stringify(value)}'`;
                 return value;
             })
