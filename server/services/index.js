@@ -19,7 +19,7 @@ class WebSocketService {
     }
 
     register(channel, callback) {
-        this.routes[channel] = callback;
+        this.routes[`services/${channel}`] = callback;
     }
 
     #start() {

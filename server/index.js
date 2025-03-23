@@ -1,8 +1,11 @@
 import express from 'express';
 import dotenv from 'dotenv';
+import path from 'path';
+
 import routes from './routes/index.js';
-import getClientMiddleware from '#middleware/clientType.js';
 import services from './services/index.js';
+
+
 
 dotenv.config();
 
@@ -15,12 +18,9 @@ const PORT = process.env.API_SERVER_PORT||8000;
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-app.use((req, res, next) => {
-  req.locals = req.locals || {};
-  next();
-});
+app.use('/static', express.static(path.join(process.cwd(), 'static')));
 
-app.use(getClientMiddleware);
+// app.use(getClientMiddleware);
 
 app.use(base, routes);
 
@@ -28,5 +28,4 @@ const server = app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);
 });
 
-// sysInfoWebSocket(server);
 services(server);
