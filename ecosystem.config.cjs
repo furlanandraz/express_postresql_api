@@ -1,18 +1,18 @@
 module.exports = {
   apps: [
     {
-      name: 'server:api',
+      name: 'app:server',
       script: 'server/index.js',
-      watch: ['cache', 'clients', 'DAO', 'notifications', 'server'],
+      watch: ['clients', 'DAO', 'notifications', 'server'],
       autorestart: true,
       env: {
         NODE_ENV: 'production'
       }
     },
     {
-      name: 'server:cache:listener',
+      name: 'cache:listen',
       script: 'cache/index.js',
-      watch: ['cache', 'clients', 'DAO', 'notifications', 'server'],
+      watch: ['cache'],
       autorestart: true,
       env: {
         NODE_ENV: 'production'
