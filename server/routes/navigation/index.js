@@ -11,7 +11,7 @@ router.get('/get-menu-items', async (req, res) => {
         const menuItems = await Navigation.getMenuItems();
         res.json(menuItems);
     } catch (error) {
-        res.status(500);
+        res.status(500).end();
     }
 });
 
@@ -20,7 +20,7 @@ router.put('/generate-links', async (req, res) => {
         const links = await Navigation.generateURLs();
         res.json(links);
     } catch (error) {
-        res.status(500);
+        res.status(500).end();
     }
 });
 
