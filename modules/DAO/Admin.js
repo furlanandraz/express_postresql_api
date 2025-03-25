@@ -6,9 +6,7 @@ class Admin {
 
     static async login(email, password) {
         const client = await god.connect();
-        try {
-            console.log('in')
-            
+        try {            
             await client.query(format(`SET session "app.current_user_email" = %L`, email));
             const { rows } = await client.query(`
                 SELECT id, password, role FROM admin.user WHERE email = $1

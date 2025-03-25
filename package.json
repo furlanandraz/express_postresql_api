@@ -5,14 +5,14 @@
   "main": "index.js",
   "type": "module",
   "scripts": {
-    "init:db": "node sql/init.js",
+    "init:db": "node modules/sql/init.js",
     "app:start": "docker start redis-container && npx pm2 start ecosystem.config.cjs && pm2 logs",
     "app:stop": "docker stop redis-container && npx pm2 stop all",
     "app:restart": "docker restart redis-container && npx pm2 restart all && pm2 logs",
     "app:status": "npx pm2 list",
     "cache:notify": "node cache/_global/notify.js",
-    "types:init": "node json/parse.js",
-    "routes:build": "node sveltekit-adapter/routes.js"
+    "types:init": "node modules/json/parse.js",
+    "routes:build": "node modules/sveltekit-adapter/routes.js"
   },
   "repository": {
     "type": "git",
@@ -26,6 +26,7 @@
   "homepage": "https://github.com/furlanandraz/express_postresql_api#readme",
   "dependencies": {
     "bcrypt": "^5.1.1",
+    "cookie": "^1.0.2",
     "cookie-parser": "^1.4.7",
     "dotenv": "^16.4.7",
     "execa": "^9.5.2",
@@ -44,9 +45,10 @@
     "ws": "^8.18.0"
   },
   "imports": {
-    "#clients": "./clients/index.js",
+    "#clients": "./modules/clients/index.js",
     "#middleware/*": "./server/middleware/*",
-    "#DAO/*": "./DAO/*",
-    "#serverFunctions/*": "./server/functions/*"
+    "#DAO/*": "./modules/DAO/*",
+    "#serverFunctions/*": "./server/functions/*",
+    "#serverConfig/*": "./server/config/*"
   }
 }

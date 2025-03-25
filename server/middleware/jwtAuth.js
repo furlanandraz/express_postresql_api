@@ -1,10 +1,12 @@
 import jwt from "jsonwebtoken";
 import dotenv from 'dotenv';
 
+import {accessTokenSettings} from '#serverConfig/cookies.js'
 
 dotenv.config();
 
 const secret = process.env.JWT_SECRET;
+const accessTokenTTL = process.env.JWT_ACCESS_TTL;
 
 export default function jwtAuth(options = {  base: '', skip: []}) {
     return function (req, res, next) {
@@ -34,15 +36,10 @@ export default function jwtAuth(options = {  base: '', skip: []}) {
                 const newAccessToken = jwt.sign(
                     { id: refreshDecoded.id, role: refreshDecoded.role },
                     secret,
-                    { expiresIn: '1h' }
+                    { expiresIn: accessTokenTTL }
                 );
 
-                res.cookie('accessToken', newAccessToken, {
-                    httpOnly: false,
-                    secure: false,
-                    sameSite: 'Strict',
-                    maxAge: 15 * 60 * 1000
-                });
+                res.cookie('accessToken', newAccessToken, accessTokenSettings);
 
                 req.user = {
                     id: refreshDecoded.id,

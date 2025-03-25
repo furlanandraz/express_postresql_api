@@ -19,7 +19,7 @@ export function arrayOfObjectsToVALUES(arrayOfObjects) {
                 if (value === null) return "NULL";
                 if (typeof (value) === 'boolean') return value ? "TRUE" : "FALSE";
                 if (typeof value === 'string') return `'${encode(value)}'`;
-                if (typeof (value) === 'array' || 'object') return `'${JSON.stringify(value)}'`;
+                if (Array.isArray(value) || typeof value === 'object') return `'${JSON.stringify(value)}'`;
                 return value;
             })
             .join(', ');
