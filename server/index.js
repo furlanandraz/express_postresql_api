@@ -1,5 +1,6 @@
 import express from 'express';
 import cookieParser from 'cookie-parser';
+import cors from 'cors';
 import dotenv from 'dotenv';
 import path from 'path';
 
@@ -17,6 +18,10 @@ const entry = 'db';
 const base = `/${entry}/v${v}`;
 const PORT = process.env.API_SERVER_PORT||8000;
 
+app.use(cors({
+    origin: true,
+    credentials: true
+}));
 
 
 app.use(express.json());
