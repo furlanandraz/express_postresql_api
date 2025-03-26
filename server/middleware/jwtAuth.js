@@ -48,6 +48,7 @@ export default function jwtAuth(options = {  base: '', skip: []}) {
 
                 return next();
             } catch (refreshErr) {
+                console.log(err, refreshErr);
                 return res.status(403).json({ error: 'Session expired' });
             }
         }

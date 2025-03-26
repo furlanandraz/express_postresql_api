@@ -3,7 +3,8 @@ import jwt from 'jsonwebtoken';
 import dotenv from 'dotenv';
 
 import Admin from '#DAO/Admin.js';
-import { accessTokenSettings, refreshTokenSettings } from '#serverConfig/cookies.js';
+import { accessTokenSettings, refreshTokenSettings, permissionCookieSettings } from '#serverConfig/cookies.js';
+import permissions from '#serverConfig/permissions.js';
 
 const router = expres.Router();
 dotenv.config()
@@ -26,25 +27,41 @@ router.post('/login', async (req, res) => {
         );
 
         const refreshToken = jwt.sign(
-            { id: user.id },
+            { id: user.id, role: user.role },
             jwtSecret,
             { expiresIn: refreshTokenTTL }
         );
 
-        res.cookie('accessToken', accessToken, delete accessTokenSettings.maxAge);
+        res.cookie('accessToken', accessToken, accessTokenSettings);
 
-        res.cookie('refreshToken', refreshToken, delete refreshTokenSettings.maxAge);
+        res.cookie('refreshToken', refreshToken, refreshTokenSettings);
 
-        res.status(200).json({message: `Welcome user ${email}`});
+        res.cookie('permissions', JSON.stringify(permissions.find(option => option.role === user.role)?.permissions), permissionCookieSettings);
+
+        res.status(200).json({message: `Welcome user ${email} - ${JSON.stringify(user.role)}`});
     } catch (error) {
         console.log(error);
         res.status(500).end();
     }
 });
 
+router.get('/permission-check', (req, res) => {
+    const route = req.query.route;
+
+    if (!route) return res.status(400).json({ error: 'No route specified' });
+
+    const list = permissions.find(option => option.role === req.user.role)?.permissions || [];
+    const grant = list.includes(route);
+
+    if (grant) return res.status(200).end()
+    return res.status(403).json({ error: 'Access denied' });
+
+});
+
 router.post('/logout', (req, res) => {
     res.clearCookie('accessToken', {...accessTokenSettings, maxAge: undefined});
     res.clearCookie('refreshToken', {refreshTokenSettings, maxAge: undefined});
+    res.clearCookie('permissions', {permissionCookieSettings, maxAge: undefined});
     res.status(200).json({ message: 'Logout successful' });
 });
 

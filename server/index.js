@@ -33,7 +33,7 @@ app.use('/static', express.static(path.join(process.cwd(), 'static')));
 app.use(jwtAuth({
     base,
     skip: [
-        '/admin/login',
+        '/auth/login',
         '/client'
     ]    
 }));

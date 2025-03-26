@@ -19,3 +19,10 @@ export const refreshTokenSettings = {
     sameSite: 'Strict',
     maxAge: ms(refreshTokenTTL)
 }
+
+export const permissionCookieSettings = {
+    httpOnly: false,
+    secure: false,
+    sameSite: 'Strict',
+    maxAge: ms(refreshTokenTTL)
+}
