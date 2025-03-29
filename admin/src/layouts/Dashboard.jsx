@@ -1,27 +1,22 @@
-import { useNavigate } from "react-router-dom";
+import { Outlet } from "react-router-dom";
 
-const apiBaseURL = import.meta.env.VITE_API_BASE_URL;
+import Header from "../blocks/Header";
+import Footer from "../blocks/Footer";
+import SideMenu from '../blocks/SideMenu';
+
+import './Dashboard.css'
 
 export default function Dashboard() {
-    const navigate = useNavigate();
     
-    async function Logout() {
-        const res = await fetch(`${apiBaseURL}/auth/logout`, {
-            method: 'POST',
-            credentials: 'include',
-        });
-        if (!res.ok) {
-                const json = await res.json()
-                console.log(`Logout Failed: ${json.error}`);
-                return;
-            }
-        navigate('/');
-    }
 
     return (
-        <div>
-            <p>dashboard</p>
-            <button onClick={Logout}>Logout</button>
+        <div className="dashboard">
+            <Header  />
+            <SideMenu />
+            <main>
+                <Outlet />
+            </main>
+            <Footer />
         </div>
     );
 }

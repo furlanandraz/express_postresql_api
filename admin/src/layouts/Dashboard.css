@@ -1,0 +1,59 @@
+header {
+    grid-area: header;
+}
+
+aside {
+    grid-area: sidebar;
+}
+
+main {
+    grid-area: main;
+}
+
+footer {
+    grid-area: footer;
+}
+
+.dashboard {
+    height: 100%;
+    width: 100%;
+    position: relative;
+    display: grid;
+    grid-template-rows: 5% 90% 5%;
+    grid-template-columns: clamp(240px, 20%, 300px) 1fr;
+    grid-template-areas:
+            "header header header"
+            "sidebar main main"
+            "footer footer footer";
+    overflow: hidden;
+}
+
+@media screen and (max-width: 768px) {
+    .dashboard {
+        grid-template-columns: 100%;
+        grid-template-rows: 5% 90% 5%;
+        grid-template-areas:
+            "header"
+            "main"
+            "footer";
+    }
+
+    aside {
+        position: absolute;
+        top: 5%;
+        bottom: 5%;
+        left: 0;
+        width: clamp(240px, 70vw, 300px);
+        z-index: 10;
+        transform: translateX(-105%);
+        transition: transform 0.3s ease;
+    }
+
+    aside.open {
+        transform: translateX(0);
+    }
+}
+
+
+
+

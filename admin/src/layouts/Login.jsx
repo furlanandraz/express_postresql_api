@@ -1,8 +1,7 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Navigate } from "react-router-dom";
 
-import { usePermissions } from "../context/AuthContext";
-
+import { useUser } from "../context/AuthContext";
 
 const apiBaseURL = import.meta.env.VITE_API_BASE_URL;
 
@@ -10,9 +9,10 @@ export default function Login() {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
-    const navigate = useNavigate();
 
-    const [permissions, setPermissions] = usePermissions();
+    const [user, setUser] = useUser();
+    
+    const navigate = useNavigate();
 
     async function handleSubmit(event) {
         event.preventDefault();
@@ -40,7 +40,7 @@ export default function Login() {
                 return;
             }
 
-            setPermissions(json.data.permissions);
+            setUser(json.data.user);
 
             navigate('/dashboard');
 
@@ -48,6 +48,10 @@ export default function Login() {
             setError("Something went wrong");
             console.error(err);
         }
+    }
+
+    if (user?.email) {
+        return <Navigate to="/dashboard" replace />;
     }
 
     return (

@@ -10,60 +10,50 @@ const secret = process.env.JWT_SECRET;
 const accessTokenTTL = process.env.JWT_ACCESS_TTL;
 
 export default function jwtAuth(options = { base: '', skip: [] }) {
-    
-    
-    return function (req, res, next) {
-      console.log('in')
-        if (options.skip.length > 0 && options.skip.some((path) => req.path.replace(options.base, '').startsWith(path))) {
-            return next();
-        }
+  return function (req, res, next) {
+    const accessToken = req.cookies.accessToken;
+    const refreshToken = req.cookies.refreshToken;
 
-        const accessToken = req.cookies.accessToken;
-        const refreshToken = req.cookies.refreshToken;
-
-        try {
-            const decodeAccess = jwt.verify(accessToken, secret);
-            if (decodeAccess) {
-                req.user = decodeAccess;
-                return next();
-            }
-        } catch (err) {
-
-            if (!refreshToken) {
-                return res.status(401).json({
-                    error: 'Authentication required',
-                    data: {
-                        redirect: 'login'
-                    }
-                });
-            }
-
-            try {
-                const refreshDecoded = jwt.verify(refreshToken, secret);
-
-                const newAccessToken = jwt.sign(
-                    { id: refreshDecoded.id, role: refreshDecoded.role },
-                    secret,
-                    { expiresIn: accessTokenTTL }
-                );
-
-                res.cookie('accessToken', newAccessToken, accessTokenSettings);
-
-                req.user = {
-                    id: refreshDecoded.id,
-                    role: refreshDecoded.role
-                };
-
-                return next();
-            } catch (refreshErr) {
-                console.log(err, refreshErr);
-                return res.status(403).json({
-                    error: 'Session expired',
-                    data: {
-                        redirect: 'login'
-                    }
-                 });
-            }
-        }
+    if (
+      options.skip.length > 0 &&
+      options.skip.some((path) =>
+        req.path.replace(options.base, '').startsWith(path)
+      )
+    ) {
+      return next();
     }
+
+    // ✅ First try access token
+    if (accessToken) {
+      try {
+        const decoded = jwt.verify(accessToken, secret);
+        req.user = decoded;
+        return next();
+      } catch (err) {
+        console.log('[JWT] Access token invalid:', err.message);
+      }
+    }
+
+    if (refreshToken) {
+      try {
+        const decodedRefresh = jwt.verify(refreshToken, secret);
+        const { exp, iat, ...payload } = decodedRefresh;
+
+        const newAccessToken = jwt.sign(payload, secret, {
+          expiresIn: accessTokenTTL,
+        });
+
+        res.cookie('accessToken', newAccessToken, accessTokenSettings);
+        req.user = payload;
+
+        return next();
+      } catch (err) {
+        console.error('[JWT] Refresh token invalid:', err.message);
+        return res.status(403).json({ error: 'Session expired' });
+      }
+    }
+
+    return res.status(401).json({ error: 'Authentication required' });
+  };
 }
+

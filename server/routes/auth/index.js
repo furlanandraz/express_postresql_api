@@ -19,13 +19,12 @@ router.post('/login', async (req, res) => {
     const password = req.body.password;
     try {
         const user = await Admin.login(email, password);
+        const userPermissions = JSON.stringify(permissions.find(option => option.role === user.role)?.permissions);
 
         if (!user) return res.status(400).json({ error: 'Login Failed' });
         if (!user.emailOk) return res.status(404).json({ error: 'User not found' });
         if (!user.passOk) return res.status(404).json({ error: 'Invalid password' });
         
-
-
         const accessToken = jwt.sign(
             { id: user.id, role: user.role, email: user.email },
             jwtSecret,
@@ -42,17 +41,18 @@ router.post('/login', async (req, res) => {
 
         res.cookie('refreshToken', refreshToken, refreshTokenSettings);
 
-        const userPermissions = JSON.stringify(permissions.find(option => option.role === user.role)?.permissions)
-
         res.cookie('permissions', userPermissions, permissionCookieSettings);
 
         res.status(200).json({
             message: `Welcome user ${email}`,
             data: {
-                email: user.email,
-                permissions: userPermissions
+                user: {
+                    email: user.email,
+                    permissions: userPermissions
+                }
             }
         });
+        
     } catch (error) {
         console.log(error);
         res.status(500).json({error: 'Login Failed'});
@@ -75,8 +75,15 @@ router.get('/permission-check', (req, res) => {
 router.get('/refresh', (req, res) => {
   
     const user = req.user;
+    const userPermissions = JSON.stringify(permissions.find(option => option.role === user.role)?.permissions);
     res.status(200).json({
-        message: `Hello there ${user.email}`
+        message: `Hello there ${user.email}`,
+        data: {
+            user: {
+                email: user.email,
+                permissions: userPermissions
+            }
+        }
     });
 });
 
