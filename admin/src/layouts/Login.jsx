@@ -1,6 +1,8 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
+import { usePermissions } from "../context/AuthContext";
+
 
 const apiBaseURL = import.meta.env.VITE_API_BASE_URL;
 
@@ -9,6 +11,8 @@ export default function Login() {
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
     const navigate = useNavigate();
+
+    const [permissions, setPermissions] = usePermissions();
 
     async function handleSubmit(event) {
         event.preventDefault();
@@ -19,7 +23,7 @@ export default function Login() {
         };
 
         try {
-            const res = await fetch(`${apiBaseURL}/admin/login`, {
+            const res = await fetch(`${apiBaseURL}/auth/login`, {
                 method: 'POST',
                 credentials: 'include',
                 headers: {
@@ -28,11 +32,15 @@ export default function Login() {
                 body: JSON.stringify(body)
             });
 
+            const json = await res.json()
+
             if (!res.ok) {
-                const json = await res.json()
+                
                 setError(`Login Failed: ${json.error}`);
                 return;
             }
+
+            setPermissions(json.data.permissions);
 
             navigate('/dashboard');
 

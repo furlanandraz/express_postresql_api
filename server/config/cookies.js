@@ -14,7 +14,7 @@ export const accessTokenSettings = {
 }
 
 export const refreshTokenSettings = {
-    httpOnly: true,
+    httpOnly: false,
     secure: false,
     sameSite: 'Strict',
     maxAge: ms(refreshTokenTTL)

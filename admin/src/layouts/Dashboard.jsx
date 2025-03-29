@@ -6,7 +6,7 @@ export default function Dashboard() {
     const navigate = useNavigate();
     
     async function Logout() {
-        const res = await fetch(`${apiBaseURL}/admin/logout`, {
+        const res = await fetch(`${apiBaseURL}/auth/logout`, {
             method: 'POST',
             credentials: 'include',
         });

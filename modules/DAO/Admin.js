@@ -11,6 +11,7 @@ class Admin {
             const { rows } = await client.query(`
                 SELECT
                     u.id,
+                    u.email,
                     u.password,
                     r.name AS role
                 FROM
@@ -23,22 +24,26 @@ class Admin {
                     email = $1
             `, [email]);
             
-            if (rows.length !== 1) return { error: 'Invalid credentials' };
+             if (rows.length !== 1) {
+                return { emailOk: false };
+            }
 
             const user = rows[0];
-            
             const match = await bcrypt.compare(password, user.password);
 
-            if (!match) return { error: 'Invalid credentials' };
+            if (!match) return {emailOk: true, passOk: false};
 
             return {
+                emailOk: true,
+                passOk: true,
                 id: user.id,
+                email: user.email,
                 role: user.role
             };
 
         } catch (error) {
             console.error('Database error:', error);
-            return { error: 'Database error' };
+            return null;
         } finally {
             client.release();
         }

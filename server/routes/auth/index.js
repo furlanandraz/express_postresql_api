@@ -20,14 +20,20 @@ router.post('/login', async (req, res) => {
     try {
         const user = await Admin.login(email, password);
 
+        if (!user) return res.status(400).json({ error: 'Login Failed' });
+        if (!user.emailOk) return res.status(404).json({ error: 'User not found' });
+        if (!user.passOk) return res.status(404).json({ error: 'Invalid password' });
+        
+
+
         const accessToken = jwt.sign(
-            { id: user.id, role: user.role },
+            { id: user.id, role: user.role, email: user.email },
             jwtSecret,
             { expiresIn: accessTokenTTL }
         );
 
         const refreshToken = jwt.sign(
-            { id: user.id, role: user.role },
+            { id: user.id, role: user.role, email: user.email },
             jwtSecret,
             { expiresIn: refreshTokenTTL }
         );
@@ -36,12 +42,20 @@ router.post('/login', async (req, res) => {
 
         res.cookie('refreshToken', refreshToken, refreshTokenSettings);
 
-        res.cookie('permissions', JSON.stringify(permissions.find(option => option.role === user.role)?.permissions), permissionCookieSettings);
+        const userPermissions = JSON.stringify(permissions.find(option => option.role === user.role)?.permissions)
 
-        res.status(200).json({message: `Welcome user ${email} - ${JSON.stringify(user.role)}`});
+        res.cookie('permissions', userPermissions, permissionCookieSettings);
+
+        res.status(200).json({
+            message: `Welcome user ${email}`,
+            data: {
+                email: user.email,
+                permissions: userPermissions
+            }
+        });
     } catch (error) {
         console.log(error);
-        res.status(500).end();
+        res.status(500).json({error: 'Login Failed'});
     }
 });
 
@@ -56,6 +70,14 @@ router.get('/permission-check', (req, res) => {
     if (grant) return res.status(200).end()
     return res.status(403).json({ error: 'Access denied' });
 
+});
+
+router.get('/refresh', (req, res) => {
+  
+    const user = req.user;
+    res.status(200).json({
+        message: `Hello there ${user.email}`
+    });
 });
 
 router.post('/logout', (req, res) => {
