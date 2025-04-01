@@ -24,7 +24,17 @@ class WebSocketService {
         this.routes = {};
         this.wss = new WebSocketServer({ noServer: true });
         this.#start();
+
+        setInterval(() => {
+            this.wss.clients.forEach((ws) => {
+                if (!ws.isAlive) return ws.terminate();
+                ws.isAlive = false;
+                ws.ping();
+            });
+        }, 30000);
     }
+
+    
 
     register(channel, callback) {
         this.routes[`services/${channel}`] = callback;
@@ -76,8 +86,21 @@ class WebSocketService {
             if (ws.readyState === ws.OPEN) {
                 this.routes[path](ws);
             }
-            ws.on('error', (err) => console.log('Connection Error:', err));
-            ws.on('close', () => console.log(`Client disconnected from ${path}`));
+
+            ws.isAlive = true;
+
+            ws.on('pong', () => {
+                ws.isAlive = true;
+            });
+
+            ws.on('error', (err) => {
+                console.log('Connection Error:', err);
+                
+            });
+            ws.on('close', () => {
+                console.log(`Client disconnected from ${path}`);
+                
+            });
         });
     }
 }

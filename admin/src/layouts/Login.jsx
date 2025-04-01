@@ -1,18 +1,16 @@
 import { useState } from "react";
-import { useNavigate, Navigate } from "react-router-dom";
+// import { useNavigate, Navigate } from "react-router-dom";
 
-import { useUser } from "../context/AuthContext";
+// import { useUser } from "../context/AuthContext";
+import { useLogin } from "../hooks/useLogin";
 
 const apiBaseURL = import.meta.env.VITE_API_BASE_URL;
 
 export default function Login() {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
-    const [error, setError] = useState('');
 
-    const [user, setUser] = useUser();
-    
-    const navigate = useNavigate();
+    const { login, loading, error } = useLogin();
 
     async function handleSubmit(event) {
         event.preventDefault();
@@ -22,37 +20,10 @@ export default function Login() {
             password
         };
 
-        try {
-            const res = await fetch(`${apiBaseURL}/auth/login`, {
-                method: 'POST',
-                credentials: 'include',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(body)
-            });
+        await login(body);
 
-            const json = await res.json()
-
-            if (!res.ok) {
-                
-                setError(`Login Failed: ${json.error}`);
-                return;
-            }
-
-            setUser(json.data.user);
-
-            navigate('/dashboard');
-
-        } catch (err) {
-            setError("Something went wrong");
-            console.error(err);
-        }
     }
 
-    if (user?.email) {
-        return <Navigate to="/dashboard" replace />;
-    }
 
     return (
         <form onSubmit={handleSubmit}>

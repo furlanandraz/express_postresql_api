@@ -17,8 +17,12 @@ const refreshTokenTTL = process.env.JWT_REFRESH_TTL;
 router.post('/login', async (req, res) => {
     const email = req.body.email;
     const password = req.body.password;
+    
+    if (!email || !password) return res.status(404).json({ error: 'Missing credentials' });
+
     try {
         const user = await Admin.login(email, password);
+        console.log(user)
         const userPermissions = JSON.stringify(permissions.find(option => option.role === user.role)?.permissions);
 
         if (!user) return res.status(400).json({ error: 'Login Failed' });

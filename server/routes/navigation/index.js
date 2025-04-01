@@ -15,6 +15,17 @@ router.get('/get-menu-items', async (req, res) => {
     }
 });
 
+router.get('/get-menu-tree', async (req, res) => {
+    
+    publish.info({ message: 'refactored' });
+    try {
+        const menuItems = await Navigation.getMenuTree();
+        res.json(menuItems);
+    } catch (error) {
+        res.status(500).end();
+    }
+});
+
 router.put('/generate-links', async (req, res) => {
     try {
         const links = await Navigation.generateURLs();

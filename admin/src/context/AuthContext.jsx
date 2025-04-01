@@ -10,7 +10,9 @@ export function AuthProvider({ children }) {
   const navigate = useNavigate();
 
   useEffect(() => {
-     
+    
+    if (user?.email) return;
+
     fetch(`${apiBaseURL}/auth/refresh`, {
       credentials: 'include'
     })

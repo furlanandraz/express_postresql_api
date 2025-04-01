@@ -1,13 +1,8 @@
-import { useState, useEffect } from 'react';
-import { useLocation } from 'react-router-dom';
-import { useUser } from '../context/AuthContext';
 import { useSysInfo } from '../hooks/useSysInfo';
 
 export default function Footer() {
 
     const [info, connected] = useSysInfo();
-
-    const location = useLocation();
 
     return (
         <footer>

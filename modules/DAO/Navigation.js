@@ -28,6 +28,26 @@ class Navigation {
             return { error: 'Database query error' };
         }
     }
+
+    static async getMenuTree() {
+        try {
+            const result = await god.query(`
+                SELECT
+                    cache_json
+                FROM
+                    cache.navigation_cache   
+                WHERE
+                    cache_name = 'menu_tree';
+                `);
+            if(result.rows) return result.rows[0].cache_json;
+            return { error: 'No cache found' };
+        } catch (error) {
+            console.error('Database query error:', error);
+            return { error: 'Database query error' };
+        }
+    }
+
+
     static async getMenuItemsSimple() {
         try {
             const result = await god.query(`

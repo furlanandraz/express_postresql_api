@@ -21,7 +21,7 @@ class Admin {
                 ON
                     u.role = r.id
                 WHERE
-                    email = $1
+                    u.email = $1
             `, [email]);
             
              if (rows.length !== 1) {
