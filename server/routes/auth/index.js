@@ -22,7 +22,7 @@ router.post('/login', async (req, res) => {
 
     try {
         const user = await Admin.login(email, password);
-        console.log(user)
+        
         const userPermissions = JSON.stringify(permissions.find(option => option.role === user.role)?.permissions);
 
         if (!user) return res.status(400).json({ error: 'Login Failed' });

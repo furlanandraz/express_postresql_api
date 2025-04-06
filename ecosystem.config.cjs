@@ -9,7 +9,7 @@ module.exports = {
         NODE_ENV: 'production'
       }
     },
-    {
+    /*{
       name: 'cache:listen',
       script: 'cache/index.js',
       watch: ['cache'],
@@ -17,6 +17,6 @@ module.exports = {
       env: {
         NODE_ENV: 'production'
       }
-    },
+    },*/
   ]
 };

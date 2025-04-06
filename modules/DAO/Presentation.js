@@ -165,11 +165,11 @@ class Presentation {
                 ON
                     lsch.layout_type_id = ltyp.id
                 LEFT JOIN
-                    navigation.url u
+                    navigation.url_primary u
                 ON
                     ti.url_uuid = u.url_uuid
                 WHERE
-                    route_id = $1 AND u.primary_url = TRUE;
+                    route_id = $1;
                 `, [id]);
             
             return content;

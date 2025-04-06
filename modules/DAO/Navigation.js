@@ -6,7 +6,7 @@ import { arrayOfObjectsToVALUES } from "./functions/transformers/generic.js";
 
 class Navigation {
 
-    static async getMenuItems() {
+    static async getRouteItems() {
         try {
             const result = await god.query(`
                 SELECT
@@ -16,11 +16,9 @@ class Navigation {
                 FROM
                     navigation.route r
                 LEFT JOIN
-                    navigation.url u
+                    navigation.url_primary u
                 ON
                     r.url_uuid = u.url_uuid
-                WHERE
-                    u.primary_url = TRUE;
                 `);
             return result.rows;
         } catch (error) {
@@ -29,7 +27,7 @@ class Navigation {
         }
     }
 
-    static async getMenuTree() {
+    static async getRouteTree() {
         try {
             const result = await god.query(`
                 SELECT
@@ -37,7 +35,7 @@ class Navigation {
                 FROM
                     cache.navigation_cache   
                 WHERE
-                    cache_name = 'menu_tree';
+                    cache_name = 'route_tree';
                 `);
             if(result.rows) return result.rows[0].cache_json;
             return { error: 'No cache found' };
@@ -59,11 +57,9 @@ class Navigation {
                 FROM
                     navigation.route r
                 LEFT JOIN
-                    navigation.url u
+                    navigation.url_primary u
                 ON
-                    r.url_uuid = u.url_uuid
-                WHERE
-                    u.primary_url = TRUE;
+                    r.url_uuid = u.url_uui;
                 `);
             return result.rows;
         } catch (error) {
@@ -83,13 +79,11 @@ class Navigation {
                 FROM
                     navigation.route r
                 LEFT JOIN
-                    navigation.url u
+                    navigation.url_primary u
                 ON
                     r.url_uuid = u.url_uuid
                 WHERE
-                    r.id = $1
-                AND
-                    u.primary_url = TRUE;
+                    r.id = $1;
                 `, [id]);
             return result.rows;
         } catch (error) {
@@ -100,7 +94,7 @@ class Navigation {
 
     static async generateURLs() {
         try {
-            const menuItems = await Navigation.getMenuItems();
+            const menuItems = await Navigation.getRouteItems();
             const topicItems = await Presentation.getTopicItems();
             const routeURLs = buildRouteURL(menuItems);
             const topicURLs = buildTopicURL(routeURLs, topicItems);
@@ -117,22 +111,26 @@ class Navigation {
         routeURLs = routeURLs.map(row => ({
             url_uuid: row.url_uuid,
             full_url: row.full_url,
-            primary_url: true,
             breadcumbs: row.breadcrumbs
         }));
 
         topicURLs = topicURLs.map(topic => ({
             url_uuid: topic.url_uuid,
             full_url: topic.full_url,
-            primary_url: true,
             breadcumbs: topic.breadcrumbs
         }));
         
         const formattedValues = arrayOfObjectsToVALUES([...routeURLs, ...topicURLs]);
 
+        
         const qstr = `
-            INSERT INTO navigation.url (url_uuid, full_url, primary_url, breadcrumbs) 
-            VALUES ${formattedValues};
+            INSERT INTO navigation.url_primary (url_uuid, full_url, breadcrumbs) 
+            VALUES ${formattedValues}
+            ON CONFLICT (url_uuid)
+            DO UPDATE SET 
+                full_url = EXCLUDED.full_url,
+                breadcrumbs = EXCLUDED.breadcrumbs;
+            ;
         `;
 
         try {

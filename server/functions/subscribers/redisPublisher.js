@@ -2,7 +2,7 @@ import { createClient } from "redis";
 import dotenv from "dotenv";
 dotenv.config();
 
-const channels = ["error", "warning", "info", "success"];
+const types = ["error", "warning", "info", "success"];
 
 const client = createClient({
     url: `redis://${process.env.HOST}:${process.env.REDIS_PORT}`
@@ -19,7 +19,7 @@ client.on("error", (err) => {
 const publish = async (type, message) => {
     try {
         if (!client) throw new Error("No Redis client available");
-        if (!channels.includes(type)) throw new Error(`Channel "${type}" not recognized`);
+        if (!types.includes(type)) throw new Error(`Channel "${type}" not recognized`);
         if (typeof message !== "object" || message === null) {
             throw new Error("Message must be a non-null object");
         }

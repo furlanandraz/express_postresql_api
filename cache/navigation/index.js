@@ -15,11 +15,13 @@ const subscriber = createSubscriber({
 subscriber.notifications.on('route_change', async (payload) => {
         
     try {
-
-        const result = await Navigation.getMenuItemsSimple();
+        /*
+        const result = await Navigation.getRouteItems();
         const menuTree = buildMenuTree(result);
         await Cache.cacheMenuTree(menuTree)
-
+        */
+        
+        await Cache.updateRouteTree();
         
 
     } catch (error) {

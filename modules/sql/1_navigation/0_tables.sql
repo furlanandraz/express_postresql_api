@@ -13,15 +13,12 @@ CREATE TABLE navigation.route (
 CREATE UNIQUE INDEX idx_route_parent_id_unique ON navigation.route (parent_id)
 WHERE parent_id IS NULL;
 
-CREATE TABLE navigation.url (
+CREATE TABLE navigation.url_primary (
     id SERIAL PRIMARY KEY,
-    url_uuid UUID NOT NULL,
+    url_uuid UUID NOT NULL UNIQUE,
     full_url TEXT NOT NULL UNIQUE,
-    primary_url BOOLEAN DEFAULT FALSE,
-    breadcrumbs JSONB DEFAULT NULL
+    breadcrumbs JSONB NOT NULL UNIQUE
 );
-
-
 
 
 

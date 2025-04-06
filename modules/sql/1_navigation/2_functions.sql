@@ -24,32 +24,32 @@ $route_change$;
 -- END;
 -- $check_anchor_parent_static$;
 
-CREATE OR REPLACE FUNCTION navigation.enforce_single_primary_url() 
-RETURNS TRIGGER
-LANGUAGE plpgsql AS $enforce_single_primary_url$
-BEGIN
-    IF NEW.primary_url = TRUE AND EXISTS (
-        SELECT 1 FROM navigation.url 
-        WHERE url_uuid = NEW.url_uuid 
-        AND primary_url = TRUE
-    ) THEN
-        RAISE EXCEPTION 'Only one primary_url = TRUE is allowed per url_uuid';
-    END IF;
+-- CREATE OR REPLACE FUNCTION navigation.enforce_single_primary_url() 
+-- RETURNS TRIGGER
+-- LANGUAGE plpgsql AS $enforce_single_primary_url$
+-- BEGIN
+--     IF NEW.primary_url = TRUE AND EXISTS (
+--         SELECT 1 FROM navigation.url 
+--         WHERE url_uuid = NEW.url_uuid 
+--         AND primary_url = TRUE
+--     ) THEN
+--         RAISE EXCEPTION 'Only one primary_url = TRUE is allowed per url_uuid';
+--     END IF;
     
-    RETURN NEW;
-END;
-$enforce_single_primary_url$;
+--     RETURN NEW;
+-- END;
+-- $enforce_single_primary_url$;
 
-CREATE OR REPLACE FUNCTION navigation.prevent_deleting_primary_url() 
-RETURNS TRIGGER
-LANGUAGE plpgsql AS $prevent_deleting_primary_url$
-BEGIN
-    IF OLD.primary_url = TRUE THEN
-        RAISE EXCEPTION 'Primary URLs cannot be deleted';
-    END IF;
+-- CREATE OR REPLACE FUNCTION navigation.prevent_deleting_primary_url() 
+-- RETURNS TRIGGER
+-- LANGUAGE plpgsql AS $prevent_deleting_primary_url$
+-- BEGIN
+--     IF OLD.primary_url = TRUE THEN
+--         RAISE EXCEPTION 'Primary URLs cannot be deleted';
+--     END IF;
     
-    RETURN OLD;
-END;
-$prevent_deleting_primary_url$;
+--     RETURN OLD;
+-- END;
+-- $prevent_deleting_primary_url$;
 
 

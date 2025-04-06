@@ -50,6 +50,15 @@ export function buildTopicURL(routeURLs, topicItems) {
     });
 }
 
+export function buildRouteTree(items, parentId = null) {
+    return items
+        .filter(item => item.parent_id === parentId)
+        .map(item => ({
+            ...item,
+            children: buildRouteTree(items, item.id),
+        }));
+}
+
 
 
 

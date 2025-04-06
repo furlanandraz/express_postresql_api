@@ -36,11 +36,9 @@ class Client {
                 LEFT JOIN 
                     navigation.route r ON tl.route_id = r.id
                 LEFT JOIN 
-                    navigation.url u ON ti.url_uuid = u.url_uuid
+                    navigation.url_primary u ON ti.url_uuid = u.url_uuid
                 WHERE 
                     tl.route_id = $1
-                AND
-                    u.primary_url = TRUE;
                 `, [id]));
             
             
@@ -70,13 +68,11 @@ class Client {
                 FROM
                     navigation.route r
                 LEFT JOIN
-                    navigation.url u
+                    navigation.url_primary u
                 ON
                     r.url_uuid = u.url_uuid
                 WHERE
-                    r.id = $1
-                AND
-                    u.primary_url = TRUE;
+                    r.id = $1;
                 `, [id]));
             
             if (rows[0]?.breadcrumbs) res.breadcrumbs = rows[0].breadcrumbs;
@@ -108,13 +104,11 @@ class Client {
                 ON
                     tl.route_id = r.id
                 LEFT JOIN
-                    navigation.url u
+                    navigation.url_primary u
                 ON
                     ti.url_uuid = u.url_uuid
                 WHERE
-                    tl.route_id = $1
-                AND
-                    u.primary_url = TRUE;
+                    tl.route_id = $1;
                 `, [id]));
             
             if (rows[0]) res.grid = rows;
@@ -268,7 +262,7 @@ class Client {
                 FROM
                     presentation.topic_instance ti
                 LEFT JOIN
-                    navigation.url u
+                    navigation.url_primary u
                 ON
                     ti.url_uuid = u.url_uuid
                 WHERE

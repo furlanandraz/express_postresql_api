@@ -116,6 +116,7 @@ function cleanup(dir) {
         }
     });
         const { rows: routes } = await god.query("SELECT * FROM navigation.route ORDER BY id;");
+        // can be replaced with Navigation.getRouteItems();
         
         const success = await buildRoutes(routes);
         if (success) {
