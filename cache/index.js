@@ -1,15 +1,8 @@
-import navigationSubscriberInit from './navigation/index.js';
+import { Cache } from './server/dao/Cache.js';
 
-(async () => {
-    try {
-        await navigationSubscriberInit();
-        console.log('Subscriber initialized.');
-    } catch (err) {
-        console.error('Error in root initialization:', err);
-    }
-})();
-
-// process.on('exit', async () => {
-//     console.log('Closing subscriber...');
-//     await subscriber.close();
-// });
+for (const [key, fn] of Object.entries(Cache)) {
+  if (typeof fn === 'function') {
+    console.log(`Running cache method: ${key}`);
+    await fn();
+  }
+}
