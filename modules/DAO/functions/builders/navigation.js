@@ -31,7 +31,6 @@ export function buildRouteURL(items, parentId = null, parentPath = '', URLs = []
 export function buildTopicURL(routeURLs, topicItems) {
     return topicItems.map(topic => {
         const route = routeURLs.find(route => route.route_id === topic.route_id);
-        console.log(topic)
         return {
             route_id: topic.route_id,
             topic_id: topic.id,

@@ -3,7 +3,7 @@ module.exports = {
     {
       name: 'app:server',
       script: 'server/index.js',
-      watch: ['clients', 'modules', 'server'],
+      watch: [ 'server', 'modules/clients', 'modules/DAO'],
       autorestart: true,
       env: {
         NODE_ENV: 'production'

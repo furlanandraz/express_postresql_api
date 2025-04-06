@@ -39,10 +39,11 @@ router.get('/get-route-tree', async (req, res) => {
 router.put('/generate-urls', async (req, res) => {
     try {
         await Navigation.generateURLs();
-        await Cache.updateRouteTree();
-        res.status(200).end();
+        res.status(200).json({message: 'URLs generated successfully'});
     } catch (error) {
         res.status(500).end();
+    } finally {
+        await Cache.updateRouteTree();
     }
 });
 

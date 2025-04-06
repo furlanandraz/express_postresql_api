@@ -93,13 +93,14 @@ class Navigation {
     }
 
     static async generateURLs() {
+        
         try {
             const menuItems = await Navigation.getRouteItems();
             const topicItems = await Presentation.getTopicItems();
             const routeURLs = buildRouteURL(menuItems);
             const topicURLs = buildTopicURL(routeURLs, topicItems);
-            const formatted = await Navigation.insertBatchURL(routeURLs, topicURLs);
-            return formatted;
+            await Navigation.insertBatchURL(routeURLs, topicURLs);
+            return { success: true };
         } catch (error) {
             console.error('Database query error:', error);
             return { error: 'Database query error' };
@@ -121,7 +122,6 @@ class Navigation {
         }));
         
         const formattedValues = arrayOfObjectsToVALUES([...routeURLs, ...topicURLs]);
-
         
         const qstr = `
             INSERT INTO navigation.url_primary (url_uuid, full_url, breadcrumbs) 
