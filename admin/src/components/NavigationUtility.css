@@ -1,0 +1,10 @@
+.navigation-utility {
+    background-color: #e8e8e8;
+    border-radius: .5rem;
+    margin-bottom: .5rem;
+    padding: .5rem;
+    display: flex;
+    justify-content: end;
+    gap: 2px;
+        
+}

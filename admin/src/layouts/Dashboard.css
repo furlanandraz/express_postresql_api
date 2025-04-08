@@ -19,7 +19,7 @@ footer {
     width: 100%;
     position: relative;
     display: grid;
-    grid-template-rows: 5% 90% 5%;
+    grid-template-rows: 6% 88% 6%;
     grid-template-columns: clamp(240px, 20%, 300px) 1fr;
     grid-template-areas:
             "header header header"

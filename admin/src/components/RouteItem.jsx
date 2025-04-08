@@ -1,14 +1,13 @@
-import './RouteItem.css';
+import styles from './RouteItem.module.css';
 
-export default function RouteItem({ id, title }) {
+export default function RouteItem({ home, id, title, hasSiblings, deleteRouteItem, insertRouteItem }) {
     return (
-        <div>
-            <span>{id}</span>
-            <div>{title}</div>
-            <div>
-                <button>Insert</button>
+        <div className={`${styles.routeItem} ${home ? styles.mbNested : ''}`} id={`route_item_${id}`}>
+            <div className={styles.title}>{title}</div>
+            <div className={styles.actions}>
+                <button onClick={()=>insertRouteItem(id)}>Insert</button>
                 <button>Edit</button>
-                {id !== 1 && <button>Delete</button>}
+                {(id !== 1 && hasSiblings) && <button className='btn-danger' onClick={()=>deleteRouteItem(id)}>Delete</button>}
             </div>
         </div>
     );

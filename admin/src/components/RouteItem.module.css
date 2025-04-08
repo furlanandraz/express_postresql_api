@@ -1,0 +1,22 @@
+.routeItem {
+    display: flex;
+    padding: .25rem;  
+    background-color: #fff;
+    border-radius: .25rem;
+
+}
+
+.title {
+    flex: 0 1 25%;
+}
+
+.actions {
+    flex: 0 1 75%;
+    display: flex;
+    gap: 4px;
+    justify-content: end;
+}
+
+.mbNested{
+    margin-bottom: 10px;
+}

@@ -13,7 +13,7 @@ export default function Dashboard() {
             <Header  />
             <SideMenu />
             <main>
-                <Outlet />
+                <Outlet />     
             </main>
             <Footer />
         </div>

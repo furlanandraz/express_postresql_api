@@ -2,6 +2,8 @@ import { useNavigate } from "react-router-dom";
 
 import { useUser } from "../context/AuthContext";
 
+import styles from './Header.module.css'
+
 const apiBaseURL = import.meta.env.VITE_API_BASE_URL;
 
 export default function Header() {
@@ -25,9 +27,15 @@ export default function Header() {
     }
 
     return (
-        <header className='header'>
-            you are logged in as {user.email}
-            <button onClick={Logout}>Logout</button>
+        <header className={styles.header}>
+            <div className={styles.right}>
+                <span className={styles.userData}>
+                    you are logged in as <b>{user.email}</b>
+                </span>
+                <span className={styles.actions}>
+                    <button onClick={Logout}>Logout</button>
+                </span>
+            </div>
         </header>
     );
 }

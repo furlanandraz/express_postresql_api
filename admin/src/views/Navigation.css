@@ -1,3 +1,20 @@
-.pl-40px{
+.pl-nested{
     padding-left: 40px;
+}
+
+.pb-4{
+    padding-bottom: .25;
+}
+
+.wrapper{
+    padding: .5rem;
+    border-radius: .5rem;
+    background-color: #e8e8e8;
+    flex-grow: 1;
+}
+
+.container{
+    display: flex;
+    flex-direction: column;
+    height: 100%;
 }

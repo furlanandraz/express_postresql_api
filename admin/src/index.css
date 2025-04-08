@@ -21,4 +21,20 @@ html, body {
   padding: 0;
 }
 
+button{
+  display: inline-block;
+  border-radius: .175rem;
+  border: none;
+  padding: .5rem .75rem;
+  background-color: #a7e6ff;
+}
+
+.btn-danger{
+  background-color: #ffb65f;
+}
+
+.btn-ok{
+  background-color: #8bff00;
+}
+
 
