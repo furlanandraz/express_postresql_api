@@ -15,25 +15,6 @@ export function useMenuTree() {
         setTreeLatentPreprocess(processedTree);
     }
 
-    function addSiblingKeys(nodes) {
-        return nodes.map((node, _, siblings) => {
-            const updatedChildren = node.children
-                ? addSiblingKeys(node.children)
-                : [];
-
-            const isLeaf = updatedChildren.length === 0;
-            const hasSiblings = siblings.length > 1 || isLeaf;
-
-            return {
-                ...node,
-                hasSiblings,
-                children: updatedChildren
-            };
-        });
-    }
-
-
-
     useEffect(() => {
         
         async function getRouteTree() {
@@ -99,35 +80,34 @@ export function useMenuTree() {
     }
 
     function deleteRouteItem(id) {
-    function deleteRouteItemRecursive(id, nodes) {
-        return nodes
-            .map(node => {
-                if (node.children && node.children.length > 0) {
-                    return {
-                        ...node,
-                        children: deleteRouteItemRecursive(id, node.children)
-                    };
-                }
-                return node;
-            })
-            .filter(node => node.id !== id);
-    }
+        function deleteRouteItemRecursive(id, nodes) {
+            return nodes
+                .map(node => {
+                    if (node.children && node.children.length > 0) {
+                        return {
+                            ...node,
+                            children: deleteRouteItemRecursive(id, node.children)
+                        };
+                    }
+                    return node;
+                })
+                .filter(node => node.id !== id);
+        }
 
-    const updatedTree = deleteRouteItemRecursive(id, treeLatent);
-    setTreeLatent(updatedTree);
-    setChanged(true);
-}
+        const updatedTree = deleteRouteItemRecursive(id, treeLatent);
+        setTreeLatent(updatedTree);
+        setChanged(true);
+    }
 
         
     async function commitMenuTree() {
 
-        
         try {
             const res = await fetch(`${apiBaseURL}/navigation/update-route-items`, {
                 method: "POST",
                 credentials: "include",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ treeLatent: treeLatent, tree: tree }),
+                body: JSON.stringify({ treeLatent: removeSiblingKeys(treeLatent), tree: tree }),
             });
 
             if (!res.ok) throw new Error("Failed to save");
@@ -152,6 +132,39 @@ export function useMenuTree() {
 
     function forceRefresh() {
         setCommit(Date.now());
+    }
+
+    function addSiblingKeys(nodes) {
+        return nodes.map((node, _, siblings) => {
+            const updatedChildren = node.children
+                ? addSiblingKeys(node.children)
+                : [];
+
+            const isLeaf = updatedChildren.length === 0;
+            const hasSiblings = siblings.length > 1 || isLeaf;
+
+            return {
+                ...node,
+                hasSiblings,
+                children: updatedChildren
+            };
+        });
+    }
+
+
+    function removeSiblingKeys(nodes) {
+        return nodes.map((node) => {
+            const updatedChildren = node.children
+                ? removeSiblingKeys(node.children)
+                : [];
+
+            const { hasSiblings, ...rest } = node; // remove 'hasSiblings'
+
+            return {
+                ...rest,
+                children: updatedChildren
+            };
+        });
     }
 
     

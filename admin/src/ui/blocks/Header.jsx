@@ -1,6 +1,6 @@
 import { useNavigate } from "react-router-dom";
 
-import { useUser } from "../context/AuthContext";
+import { useUser } from "../../context/AuthContext";
 
 import styles from './Header.module.css'
 

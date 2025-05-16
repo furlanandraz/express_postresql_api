@@ -1,8 +1,10 @@
 import expres from 'express';
 import { diff as allDiff, addedDiff, deletedDiff, updatedDiff } from 'deep-object-diff';
+
 import Navigation from '#DAO/Navigation.js';
 import Cache from '#DAO/Cache.js';
 import publish from '#serverFunctions/subscribers/redisPublisher.js';
+
 
 const router = expres.Router();
 
@@ -19,7 +21,7 @@ router.get('/get-route-items', async (req, res) => {
 
 router.post('/update-route-items', async (req, res) => {
     console.log('hit')
-    console.log(req.body);
+    console.log(JSON.stringify(req.body, null, 2));
     try {
         const trueItems = await Navigation.getRouteTree();
         if (JSON.stringify(trueItems) !== JSON.stringify(req.body.tree))
@@ -32,7 +34,7 @@ router.post('/update-route-items', async (req, res) => {
         console.log('diff start')
         const diff = allDiff(req.body.tree, req.body.treeLatent);
         console.log('diff', JSON.stringify(diff, null, 2));
-        const added = addedDiff(req.body.tree, req.body.treeLatent);
+        let added = addedDiff(req.body.tree, req.body.treeLatent);
         console.log('added', JSON.stringify(added, null, 2));
         const deleted = deletedDiff(req.body.tree, req.body.treeLatent);
         console.log('deleted', JSON.stringify(deleted, null, 2));

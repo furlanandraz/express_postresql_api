@@ -1,4 +1,4 @@
-import { useSysInfo } from '../hooks/useSysInfo';
+import { useSysInfo } from '../../hooks/useSysInfo';
 
 export default function Footer() {
 
