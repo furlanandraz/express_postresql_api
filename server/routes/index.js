@@ -7,7 +7,7 @@ import client from './client/index.js';
 import upload from './upload/index.js';
 import auth from './auth/index.js'
 
-routes.use(`/navigation`, navigation);
+routes.use('/navigation', navigation);
 routes.use('/presentation', presentation);
 routes.use('/client', client);
 routes.use('/upload', upload);

@@ -14,20 +14,23 @@ export default function Navigation() {
   
   const [isOpen, setIsOpen] = useState(false);
   const [editRouteId, setEditRouteId] = useState(null);
+  const [editRouteItem, setEditRouteItem] = useState(null);
 
   function onRequestClose() {
     setEditRouteId(null);
+    setEditRouteItem(null);
     setIsOpen(false);
   }
 
-  function onEditRoute(id) {
+  function onEditRoute(id, item) {
     setEditRouteId(id);
+    setEditRouteItem(item)
     setIsOpen(true);
   }
 
   const {treeLatent, setTreeLatent, changed, setChanged, loading, insertRouteItem, deleteRouteItem, commitMenuTree, discardChanges, forceRefresh} = useMenuTree();
   
-  const renderItem = ({ item }) => <RouteItem id={item.id} title={item.title} hasSiblings={item.hasSiblings} deleteRouteItem={deleteRouteItem} insertRouteItem={insertRouteItem} onEditRoute={onEditRoute} />;
+  const renderItem = ({ item }) => <RouteItem id={item.id} item={item} title={item.title} hasSiblings={item.hasSiblings} deleteRouteItem={deleteRouteItem} insertRouteItem={insertRouteItem} onEditRoute={onEditRoute} />;
 
   function getParentByPath(tree, path) {
 
@@ -67,7 +70,7 @@ export default function Navigation() {
         {/* <NavigationUtility changed={changed} forceRefresh={forceRefresh} commitMenuTree={commitMenuTree} discardChanges={discardChanges}/> */}
         {(!loading && treeLatent.length > 0) && (
           <div className='wrapper'>
-            <RouteItem home={true} id={treeLatent[0].id} title={treeLatent[0].title} insertRouteItem={insertRouteItem}/>
+            <RouteItem home={true} id={treeLatent[0].id} item={treeLatent[0]} title={treeLatent[0].title} insertRouteItem={insertRouteItem}  onEditRoute={onEditRoute}/>
           <Nestable
             items={treeLatent[0].children}
             renderItem={renderItem}
@@ -77,7 +80,7 @@ export default function Navigation() {
         </div>
       )}
       </div>
-      <RouteEdit id={editRouteId}  isOpen={isOpen} onRequestClose={onRequestClose}></RouteEdit>
+      <RouteEdit id={editRouteId} item={editRouteItem}  isOpen={isOpen} onRequestClose={onRequestClose}></RouteEdit>
   </>
 );
 }
