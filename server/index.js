@@ -39,8 +39,6 @@ app.use(jwtAuth({
     ]    
 }));
 
-app.use(responseJSONParser());
-
 app.use(base, routes);
 
 const server = app.listen(PORT, () => {
