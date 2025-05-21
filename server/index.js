@@ -6,8 +6,9 @@ import path from 'path';
 
 import routes from './routes/index.js';
 import services from './services/index.js';
-import jwtAuth from '#middleware/jwtAuth.js';
 
+import jwtAuth from '#middleware/jwtAuth.js';
+import responseJSONParser from '#middleware/reponseJSONParser.js';
 
 
 dotenv.config();
@@ -37,6 +38,8 @@ app.use(jwtAuth({
         '/client'
     ]    
 }));
+
+app.use(responseJSONParser());
 
 app.use(base, routes);
 

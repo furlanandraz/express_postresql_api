@@ -2,7 +2,6 @@ import jwt from "jsonwebtoken";
 import dotenv from 'dotenv';
 
 import { accessTokenSettings } from '#serverConfig/cookies.js';
-import { paths } from "#serverConfig/paths.js";
 
 dotenv.config();
 

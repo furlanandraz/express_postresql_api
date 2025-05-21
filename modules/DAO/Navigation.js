@@ -1,31 +1,66 @@
 import { god } from "#clients";
 import Presentation from "./Presentation.js";
 import { buildRouteURL, buildTopicURL } from "./functions/builders/navigation.js";
-import { arrayOfObjectsToVALUES } from "./functions/transformers/generic.js";
+import { arrayOfObjectsToVALUES, JSON2SQL } from "./functions/transformers/generic.js";
 
 
 class Navigation {
 
-    static async getRouteItems() {
+    static async selectRouteItem(id = null) {
+
+        let query = `
+        SELECT
+            r.*,
+            u.full_url,
+            u.breadcrumbs
+        FROM
+            navigation.route r
+        LEFT JOIN
+            navigation.url_primary u
+            ON r.url_uuid = u.url_uuid
+        ;`;
+        
+        const params = [];
+        if (id) {
+            params.push(id);
+            query += ' WHERE r.id = $1';
+        };
+
+
         try {
-            const result = await god.query(`
-                SELECT
-                    r.*,
-                    u.full_url,
-                    u.breadcrumbs
-                FROM
-                    navigation.route r
-                LEFT JOIN
-                    navigation.url_primary u
-                ON
-                    r.url_uuid = u.url_uuid
-                `);
+            const result = await god.query(query, params);
             return result.rows;
         } catch (error) {
             console.error('Database query error:', error);
             return { error: 'Database query error' };
         }
     }
+
+    static async insertRouteItem(data) {
+
+
+        const [columns, values] = JSON2SQL({ input: data, allow: ['parent_id', 'meta_description'] });
+        
+
+        let query = `
+        INSERT INTO
+            navigation.route ${columns}
+        VALUES
+            ${values}
+        RETURNING id;`;
+
+        console.log(query);
+        return [];
+
+        try {
+            const result = await god.query(query);
+            return result.rows;
+        } catch (error) {
+            console.error('Database query error:', error);
+            return { error: 'Database query error' };
+        }
+    }
+
 
     static async getRouteTree() {
         try {
@@ -95,7 +130,7 @@ class Navigation {
     static async generateURLs() {
         
         try {
-            const menuItems = await Navigation.getRouteItems();
+            const menuItems = await Navigation.selectRouteItems();
             const topicItems = await Presentation.getTopicItems();
             const routeURLs = buildRouteURL(menuItems);
             const topicURLs = buildTopicURL(routeURLs, topicItems);

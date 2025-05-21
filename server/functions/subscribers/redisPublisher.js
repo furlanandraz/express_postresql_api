@@ -35,4 +35,7 @@ publish.warning = (message) => publish("warning", message);
 publish.info = (message) => publish("info", message);
 publish.success = (message) => publish("success", message);
 
+// add invalidation "method" for use with queries with schema/table payload
+// possibly simply invalidate queries by schema or by api endpoint
+
 export default publish;

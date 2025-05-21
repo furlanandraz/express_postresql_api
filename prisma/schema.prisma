@@ -1,0 +1,198 @@
+generator client {
+  provider        = "prisma-client-js"
+  output          = "../node_modules/.prisma/client"
+  previewFeatures = ["multiSchema"]
+}
+
+generator jsonSchema {
+  provider = "prisma-json-schema-generator"
+  output   = "../modules/validation/postgres"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+  schemas  = ["admin", "cache", "media", "navigation", "presentation", "public", "types"]
+}
+
+model role {
+  id                   Int    @id @default(autoincrement())
+  name                 String @db.VarChar(16)
+  user_user_roleTorole user[] @relation("user_roleTorole")
+
+  @@schema("admin")
+}
+
+model user {
+  id                   Int    @id @default(autoincrement())
+  email                String @unique(map: "idx_admin_user_email") @db.VarChar(255)
+  password             String @db.VarChar(255)
+  role                 Int?
+  role_user_roleTorole role?  @relation("user_roleTorole", fields: [role], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
+  @@schema("admin")
+}
+
+model navigation_cache {
+  id              Int       @id @default(autoincrement())
+  cache_name      String    @unique
+  cache_json      Json      @db.Json
+  cache_timestamp DateTime? @default(now()) @db.Timestamp(6)
+
+  @@schema("cache")
+}
+
+model image {
+  id   Int    @id @default(autoincrement())
+  name String @unique(map: "idx_image_name")
+  tags Json   @default("[]")
+
+  @@schema("media")
+}
+
+model route {
+  id                      Int                       @id @default(autoincrement())
+  parent_id               Int?
+  url_name                String                    @unique
+  title                   String
+  meta_description        String?
+  meta_keywords           String?
+  url_type                route_url_type?           @default(static)
+  render_method           route_render_method?      @default(SSR)
+  url_uuid                String?                   @unique @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  route                   route?                    @relation("routeToroute", fields: [parent_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  other_route             route[]                   @relation("routeToroute")
+  route_layout_instance   route_layout_instance?
+  route_template_instance route_template_instance[]
+  topic_layout            topic_layout?
+
+  @@schema("navigation")
+}
+
+model url_primary {
+  id          Int    @id @default(autoincrement())
+  url_uuid    String @unique @db.Uuid
+  full_url    String @unique
+  breadcrumbs Json   @unique
+
+  @@schema("navigation")
+}
+
+model route_layout_instance {
+  id             Int          @id @default(autoincrement())
+  route_id       Int?         @unique
+  layout_type_id Int?
+  json_data      Json         @default("{}") @db.Json
+  layout_type    layout_type? @relation(fields: [layout_type_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  route          route?       @relation(fields: [route_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@schema("presentation")
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+model route_template_instance {
+  id                      Int            @id @default(autoincrement())
+  route_id                Int?
+  template_type_id        Int?
+  template_instance_order Int
+  json_data               Json           @default("{}") @db.Json
+  route                   route?         @relation(fields: [route_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  template_type           template_type? @relation(fields: [template_type_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@unique([route_id, template_instance_order], map: "unique_route_order")
+  @@schema("presentation")
+}
+
+model topic_instance {
+  id              Int          @id @default(autoincrement())
+  topic_layout_id Int
+  slug            String       @db.VarChar(64)
+  json_data       Json         @default("{}") @db.Json
+  url_uuid        String?      @unique @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  title           String       @default("") @db.VarChar(64)
+  topic_layout    topic_layout @relation(fields: [topic_layout_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@unique([topic_layout_id, slug], map: "unique_route_slug")
+  @@schema("presentation")
+}
+
+model topic_layout {
+  id               Int              @id @default(autoincrement())
+  route_id         Int              @unique
+  layout_schema_id Int
+  topic_instance   topic_instance[]
+  layout_schema    layout_schema    @relation(fields: [layout_schema_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  route            route            @relation(fields: [route_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@schema("presentation")
+}
+
+model component_type {
+  id       Int    @id @default(autoincrement())
+  url_name String @unique @db.VarChar(64)
+  ui_name  String @db.VarChar(64)
+  json_ref String
+
+  @@unique([url_name, ui_name, json_ref], map: "unique_component_entry")
+  @@schema("types")
+}
+
+model layout_schema {
+  id             Int            @id @default(autoincrement())
+  layout_type_id Int
+  json_preset    Json           @db.Json
+  json_form      Json           @default("{}")
+  topic_layout   topic_layout[]
+  layout_type    layout_type    @relation(fields: [layout_type_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@schema("types")
+}
+
+model layout_type {
+  id                    Int                     @id @default(autoincrement())
+  url_name              String                  @unique @db.VarChar(64)
+  ui_name               String                  @db.VarChar(64)
+  json_ref              String                  @default("")
+  route_layout_instance route_layout_instance[]
+  layout_schema         layout_schema[]
+
+  @@unique([url_name, ui_name], map: "unique_layout_entry")
+  @@schema("types")
+}
+
+model template_schema {
+  id               Int           @id @default(autoincrement())
+  template_type_id Int
+  json_preset      Json          @db.Json
+  json_form        Json          @default("{}")
+  template_type    template_type @relation(fields: [template_type_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@schema("types")
+}
+
+model template_type {
+  id                      Int                       @id @default(autoincrement())
+  url_name                String                    @unique @db.VarChar(64)
+  ui_name                 String                    @db.VarChar(64)
+  json_ref                String
+  route_template_instance route_template_instance[]
+  template_schema         template_schema[]
+
+  @@unique([url_name, ui_name, json_ref], map: "unique_template_entry")
+  @@schema("types")
+}
+
+enum route_render_method {
+  SSR
+  SSG
+  CSR
+
+  @@schema("types")
+}
+
+enum route_url_type {
+  static
+  dynamic
+
+  @@schema("types")
+}

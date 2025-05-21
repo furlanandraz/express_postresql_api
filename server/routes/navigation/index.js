@@ -5,19 +5,22 @@ import Navigation from '#DAO/Navigation.js';
 import Cache from '#DAO/Cache.js';
 import publish from '#serverFunctions/subscribers/redisPublisher.js';
 
+import route from './route/index.js';
 
 const router = express.Router();
 
-router.get('/route-items', async (req, res) => {
+router.use('/route', route);
+
+// router.get('/route-items', async (req, res) => {
     
-    publish.info({ message: 'refactored' });
-    try {
-        const menuItems = await Navigation.getRouteItems();
-        res.json(menuItems);
-    } catch (error) {
-        res.status(500).end();
-    }
-});
+//     publish.info({ message: 'refactored' });
+//     try {
+//         const menuItems = await Navigation.getRouteItems();
+//         res.json(menuItems);
+//     } catch (error) {
+//         res.status(500).end();
+//     }
+// });
 
 // router.post('/update-route-items', async (req, res) => {
 //     console.log('hit')
@@ -73,6 +76,7 @@ router.put('/generate-urls', async (req, res) => {
     } catch (error) {
         res.status(500).end();
     } finally {
+        // possibly move to try because cache could also fail
         await Cache.updateRouteTree();
     }
 });
