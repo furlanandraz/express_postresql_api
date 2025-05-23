@@ -7,8 +7,10 @@ CREATE TABLE navigation.route (
     meta_description TEXT,
     meta_keywords TEXT,
     url_type types.route_url_type DEFAULT 'static',
-    render_method types.route_render_method DEFAULT 'SSR'   
+    render_method types.route_render_method DEFAULT 'SSR'
 );
+
+-- here the url_name TEXT NOT NULL UNIQUE, is not correct. must allow for /foo/foo just not on the same level
 
 CREATE UNIQUE INDEX idx_route_parent_id_unique ON navigation.route (parent_id)
 WHERE parent_id IS NULL;

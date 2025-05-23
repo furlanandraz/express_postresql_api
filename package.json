@@ -5,8 +5,9 @@
   "main": "index.js",
   "type": "module",
   "scripts": {
+    "init:packages": "npm install && cd admin && npm install",
     "init:db": "node modules/sql/init.js",
-    "init:types": "npx prisma db pull && npx prisma generate",
+    "init:types": "npx prisma db pull && npx prisma generate && node modules/validation/functions/JSON2formSchemas.js",
     "app:start": "docker start redis-container && npx pm2 start ecosystem.config.cjs && pm2 logs",
     "app:stop": "docker stop redis-container && npx pm2 stop all",
     "app:restart": "docker restart redis-container && npx pm2 restart all && pm2 logs",
@@ -27,6 +28,7 @@
   "homepage": "https://github.com/furlanandraz/express_postresql_api#readme",
   "dependencies": {
     "@prisma/client": "^6.8.2",
+    "@prisma/internals": "^6.8.2",
     "ajv": "^8.17.1",
     "bcrypt": "^5.1.1",
     "cookie": "^1.0.2",

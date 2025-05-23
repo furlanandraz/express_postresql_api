@@ -143,3 +143,8 @@ static/*
 !/static/.gitkeep
 static/images/*
 !/static/images/.gitkeep
+static/forms/*
+!/static/forms/.gitkeep
+
+#modules
+modules/validation/postgres/json-schema.json

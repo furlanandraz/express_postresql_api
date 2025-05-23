@@ -12,42 +12,7 @@ generator jsonSchema {
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
-  schemas  = ["admin", "cache", "media", "navigation", "presentation", "public", "types"]
-}
-
-model role {
-  id                   Int    @id @default(autoincrement())
-  name                 String @db.VarChar(16)
-  user_user_roleTorole user[] @relation("user_roleTorole")
-
-  @@schema("admin")
-}
-
-model user {
-  id                   Int    @id @default(autoincrement())
-  email                String @unique(map: "idx_admin_user_email") @db.VarChar(255)
-  password             String @db.VarChar(255)
-  role                 Int?
-  role_user_roleTorole role?  @relation("user_roleTorole", fields: [role], references: [id], onDelete: NoAction, onUpdate: NoAction)
-
-  @@schema("admin")
-}
-
-model navigation_cache {
-  id              Int       @id @default(autoincrement())
-  cache_name      String    @unique
-  cache_json      Json      @db.Json
-  cache_timestamp DateTime? @default(now()) @db.Timestamp(6)
-
-  @@schema("cache")
-}
-
-model image {
-  id   Int    @id @default(autoincrement())
-  name String @unique(map: "idx_image_name")
-  tags Json   @default("[]")
-
-  @@schema("media")
+  schemas  = ["navigation", "presentation", "public", "schemas", "types"]
 }
 
 model route {
