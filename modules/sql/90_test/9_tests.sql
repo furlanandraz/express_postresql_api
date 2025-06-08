@@ -1,35 +1,15 @@
 -- INSERT INTO navigation.route (
 --     id,
---     parent_id,
---     url_name,
---     title,
---     meta_description,
---     meta_keywords,
---     url_type
+--     parent_id
 -- ) VALUES (
 --     2,
---     3,
---     'contact',
---     'Contact',
---     'Ask me anything about my CMS',
---     'CMS, FAQ',
---     'static'
+--     3
 -- ), (
 --     3,
---     1,
---     'about',
---     'About',
---     'Ask me anything about my CMS',
---     'CMS, FAQ',
---     'static'
+--     1'
 -- ), (
 --     4,
---     1,
---     'services',
---     'Services',
---     'Other services',
---     '',
---     'dynamic'
+--     1
 -- );
 
 ------ npm run init:types
@@ -84,44 +64,44 @@
 
 -- add Main layout to index page
 
-INSERT INTO presentation.route_layout_instance (
-    id,
-    route_id,
-    layout_type_id,
-    json_data
-) VALUES (
-    1,
-    1,
-    1,
-    '{"layout":{"phone":"123123123","socials":[{"url":"www.facebook.com","platform":"facebook"}]},"templates":{"textPhoto":{"template":{"align":"left","background":false},"components":{"title":{"description":"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur"},"paragraph":{"largeTitle":"Large Title","smallTitle":"Small title"},"buttonLinkPrimary":{"variant":"primary"},"buttonLinkSecondary":{"variant":"primary"}}}},"components":{"buttonLinkPrimary":{"href":"www.google.com","text":"Button Link - Component","variant":"primary"}}}'
-);
+-- INSERT INTO presentation.route_layout_instance (
+--     id,
+--     route_id,
+--     layout_type_id,
+--     json_data
+-- ) VALUES (
+--     1,
+--     1,
+--     1,
+--     '{"layout":{"phone":"123123123","socials":[{"url":"www.facebook.com","platform":"facebook"}]},"templates":{"textPhoto":{"template":{"align":"left","background":false},"components":{"title":{"description":"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur"},"paragraph":{"largeTitle":"Large Title","smallTitle":"Small title"},"buttonLinkPrimary":{"variant":"primary"},"buttonLinkSecondary":{"variant":"primary"}}}},"components":{"buttonLinkPrimary":{"href":"www.google.com","text":"Button Link - Component","variant":"primary"}}}'
+-- );
 
--- add topic for dynamic routes
-INSERT INTO presentation.topic_layout (
-    id,
-    route_id,
-    layout_schema_id
-) VALUES (
-    1,
-    4,
-    2
-);
+-- -- add topic for dynamic routes
+-- INSERT INTO presentation.topic_layout (
+--     id,
+--     route_id,
+--     layout_schema_id
+-- ) VALUES (
+--     1,
+--     4,
+--     2
+-- );
 
-INSERT INTO presentation.topic_instance (
-    id,
-    topic_layout_id,
-    slug,
-    json_data
-) VALUES (
-    1,
-    1,
-    'plumbing',
-    '{"layout":{"serviceName":"Plumbing - from props"}}'
-), (
-    2,
-    1,
-    'wiring',
-    '{"layout":{"serviceName":"Wiring - from props"}}'
-);
+-- INSERT INTO presentation.topic_instance (
+--     id,
+--     topic_layout_id,
+--     slug,
+--     json_data
+-- ) VALUES (
+--     1,
+--     1,
+--     'plumbing',
+--     '{"layout":{"serviceName":"Plumbing - from props"}}'
+-- ), (
+--     2,
+--     1,
+--     'wiring',
+--     '{"layout":{"serviceName":"Wiring - from props"}}'
+-- );
 
 

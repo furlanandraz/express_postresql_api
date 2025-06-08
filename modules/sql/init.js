@@ -23,18 +23,18 @@ function sqlCrawler(directory) {
     const dirs = allFiles.filter(dir => fs.statSync(path.join(directory, dir)).isDirectory());
 
     files.sort((a, b) => {
-        a = parseInt(a.split('_')[0], 10);
-        b = parseInt(b.split('_')[0], 10);
-        return a - b;
+        const aNum = parseInt(a.split('_')[0], 10);
+        const bNum = parseInt(b.split('_')[0], 10);
+        return aNum - bNum;
     });
     files.forEach(file => {
         const fullPath = path.join(directory, file);
-        partial += fs.readFileSync(fullPath, 'utf-8') + '\n';
+        partial += fs.readFileSync(fullPath, 'utf8') + '\n';
     });
     dirs.sort((a, b) => {
-        a = parseInt(a.split('_')[0], 10);
-        b = parseInt(b.split('_')[0], 10);
-        return a - b;
+        const aNum = parseInt(a.split('_')[0], 10);
+        const bNum = parseInt(b.split('_')[0], 10);
+        return aNum - bNum;
     });
     dirs.forEach(dir => {
         const fullPath = path.join(directory, dir);
@@ -44,28 +44,15 @@ function sqlCrawler(directory) {
     return partial;
 }
 
-// function execPromise(command) {
-//     return new Promise((resolve, reject) => {
-//         exec(command, (error, stdout, stderr) => {
-//             if (error) {
-//                 reject(`Error executing psql: ${error.message}`);
-//                 return;
-//             }
-//             if (stderr) {
-//                 reject(`psql stderr: ${stderr}`);
-//                 return;
-//             }
-//             resolve(stdout);
-//         });
-//     });
-// }
-
 (async function init() {
     const combined = sqlCrawler(sqlDir);
-    await fs.promises.writeFile(tmpFile, combined, 'utf-8');
+    await fs.promises.writeFile(tmpFile, combined, 'utf8');
     try {
         const result = await execa("psql", ["-U", pgOwner, "-f", tmpFile], {
-            env: { PGPASSWORD: pgPassword }, // Set environment variables
+            env: {
+                PGPASSWORD: pgPassword,
+                PGCLIENTENCODING: "UTF8"
+            }, // Set environment variables
             stdio: "inherit", // Redirect stdout and stderr to the console
         });
         console.log(`psql stdout: ${result}`);
@@ -79,8 +66,9 @@ function sqlCrawler(directory) {
         if (fs.existsSync(tmpFile) && deleteTmp) {
             fs.unlinkSync(tmpFile);
         }
-        console.log('Builing done'); 
+        console.log('Building done'); 
     }
+        process.exit(0);
 })();
 
 
