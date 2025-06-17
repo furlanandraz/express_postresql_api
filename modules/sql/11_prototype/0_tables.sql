@@ -38,7 +38,7 @@ CREATE TABLE prototype.layout_type (
 
 CREATE TABLE prototype.layout_schema (
     id SERIAL PRIMARY KEY,
-	template_type_id INT NOT NULL REFERENCES prototype.layout_type(id) ON DELETE CASCADE, 
+	layout_type_id INT NOT NULL REFERENCES prototype.layout_type(id) ON DELETE CASCADE, 
     reference JSON NOT NULL,
     form JSON NOT NULL DEFAULT '{}'
 );

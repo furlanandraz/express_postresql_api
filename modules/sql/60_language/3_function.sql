@@ -7,13 +7,13 @@ BEGIN
     SELECT parent_id IS NULL
     INTO is_index_route
     FROM navigation.route
-    WHERE id = NEW.id;
+    WHERE id = NEW.route_id;
 
     IF is_index_route THEN
         
-        IF NEW.slug <> '' THEN
-            RAISE EXCEPTION 'Index routes must have an empty slug.';
-        END IF;
+        NEW.slug := '';
+        NEW.path := '';
+        NEW.path := '';
 
     ELSE
         
