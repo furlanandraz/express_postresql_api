@@ -21,7 +21,7 @@ export function useMenuTree() {
            
             setLoading(true);
             try {
-                const res = await fetch(`${apiBaseURL}/navigation/get-route-tree`, {
+                const res = await fetch(`${apiBaseURL}/navigation/route-tree`, {
                     credentials: 'include',
                 });
                 
@@ -48,7 +48,7 @@ export function useMenuTree() {
             id: 'created_' + Date.now(),
             parent_id: parentId,
             title: 'New Page',
-            url_name: 'new-page',
+            slug: 'new-page',
             meta_description: '',
             meta_keywords: '',
             children: []

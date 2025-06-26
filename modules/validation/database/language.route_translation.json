@@ -1,0 +1,60 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "language.route_translation",
+  "type": "object",
+  "properties": {
+    "route_id": {
+      "type": "integer",
+      "title": "Route Id"
+    },
+    "language_code": {
+      "type": "string",
+      "title": "Language Code"
+    },
+    "slug": {
+      "type": "string",
+      "title": "Slug"
+    },
+    "title": {
+      "type": "string",
+      "title": "Title"
+    },
+    "meta_description": {
+      "type": "string",
+      "title": "Meta Description"
+    },
+    "meta_keywords": {
+      "type": "string",
+      "title": "Meta Keywords"
+    },
+    "path": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "title": "Path"
+    },
+    "breadcrumbs": {
+      "type": [
+        "string",
+        "number",
+        "boolean",
+        "object",
+        "array",
+        "null"
+      ],
+      "title": "Breadcrumbs"
+    },
+    "label": {
+      "type": "string",
+      "title": "Label"
+    }
+  },
+  "required": [
+    "route_id",
+    "language_code",
+    "slug",
+    "title",
+    "label"
+  ]
+}

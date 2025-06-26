@@ -1,0 +1,35 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "prototype.layout_type",
+  "type": "object",
+  "properties": {
+    "id": {
+      "type": "integer",
+      "title": "Id"
+    },
+    "slug": {
+      "type": "string",
+      "title": "Slug"
+    },
+    "title": {
+      "type": "string",
+      "title": "Title"
+    },
+    "base": {
+      "type": [
+        "string",
+        "number",
+        "boolean",
+        "object",
+        "array",
+        "null"
+      ],
+      "title": "Base"
+    }
+  },
+  "required": [
+    "slug",
+    "title",
+    "base"
+  ]
+}

@@ -1,0 +1,22 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "settings.language",
+  "type": "object",
+  "properties": {
+    "code": {
+      "type": "string",
+      "title": "Code"
+    },
+    "is_default": {
+      "type": "boolean",
+      "title": "Is Default"
+    },
+    "is_enabled": {
+      "type": "boolean",
+      "title": "Is Enabled"
+    }
+  },
+  "required": [
+    "code"
+  ]
+}

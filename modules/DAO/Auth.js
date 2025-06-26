@@ -1,8 +1,8 @@
-import { god } from '#clients';
+import { god } from '#DAO/clients/index.js';
 import bcrypt from 'bcrypt';
 import format from 'pg-format';
 
-class Admin {
+class Auth {
 
     static async login(email, password) {
         const client = await god.connect();
@@ -15,9 +15,9 @@ class Admin {
                     u.password,
                     r.name AS role
                 FROM
-                    admin.user u
+                    auth.user u
                 INNER JOIN 
-                    admin.role r
+                    auth.role r
                 ON
                     u.role = r.id
                 WHERE
@@ -50,4 +50,4 @@ class Admin {
     }
 }
 
-export default Admin;
+export default Auth;

@@ -6,7 +6,7 @@ export function buildRouteURL(items, parentId = null, parentPath = '', URLs = []
 
             const fullUrl = parentId === null
                 ? ''
-                : `${parentPath}/${item.url_name}`;
+                : `${parentPath}/${item.slug}`;
             
             const fullBreadcrumbs = [
                 ...breadcrumbs,
@@ -20,7 +20,7 @@ export function buildRouteURL(items, parentId = null, parentPath = '', URLs = []
                 route_id: item.id,
                 url_uuid: item.url_uuid,
                 full_url: fullUrl,
-                route_url: item.url_name,
+                route_url: item.slug,
                 breadcrumbs: fullBreadcrumbs
             });
             buildRouteURL(items, item.id, fullUrl, URLs, fullBreadcrumbs);

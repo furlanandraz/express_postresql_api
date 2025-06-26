@@ -1,0 +1,41 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "public.template_schema",
+  "type": "object",
+  "properties": {
+    "id": {
+      "type": "integer",
+      "title": "Id"
+    },
+    "template_type_id": {
+      "type": "integer",
+      "title": "Template Type Id"
+    },
+    "reference": {
+      "type": [
+        "string",
+        "number",
+        "boolean",
+        "object",
+        "array",
+        "null"
+      ],
+      "title": "Reference"
+    },
+    "form": {
+      "type": [
+        "string",
+        "number",
+        "boolean",
+        "object",
+        "array",
+        "null"
+      ],
+      "title": "Form"
+    }
+  },
+  "required": [
+    "template_type_id",
+    "reference"
+  ]
+}

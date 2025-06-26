@@ -1,0 +1,23 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "presentation.route_layout_class",
+  "type": "object",
+  "properties": {
+    "id": {
+      "type": "integer",
+      "title": "Id"
+    },
+    "route_id": {
+      "type": "integer",
+      "title": "Route Id"
+    },
+    "layout_type_id": {
+      "type": "integer",
+      "title": "Layout Type Id"
+    }
+  },
+  "required": [
+    "route_id",
+    "layout_type_id"
+  ]
+}

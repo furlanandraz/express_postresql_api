@@ -1,0 +1,41 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "public.layout_schema",
+  "type": "object",
+  "properties": {
+    "id": {
+      "type": "integer",
+      "title": "Id"
+    },
+    "layout_type_id": {
+      "type": "integer",
+      "title": "Layout Type Id"
+    },
+    "reference": {
+      "type": [
+        "string",
+        "number",
+        "boolean",
+        "object",
+        "array",
+        "null"
+      ],
+      "title": "Reference"
+    },
+    "form": {
+      "type": [
+        "string",
+        "number",
+        "boolean",
+        "object",
+        "array",
+        "null"
+      ],
+      "title": "Form"
+    }
+  },
+  "required": [
+    "layout_type_id",
+    "reference"
+  ]
+}

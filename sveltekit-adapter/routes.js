@@ -2,7 +2,7 @@ import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
 
-import { god } from '#clients';
+import { god } from '#DAO/clients/index.js';
 import config from './templates/config.js';
 
 import renderLayoutServer from './templates/renderLayoutServer.js';
@@ -69,7 +69,7 @@ async function buildRoutes(routes, parentId = null, buildPath = outputDir) {
 
     try { 
         for (const route of routes.filter(route => route.parent_id === parentId)) {
-            const folderName = route.url_name;
+            const folderName = route.slug;
             const folderPath = path.join(buildPath, folderName);
             fs.mkdirSync(folderPath, { recursive: true });
 

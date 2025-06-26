@@ -30,12 +30,6 @@ export function arrayOfObjectsToVALUES(arrayOfObjects) {
     return result;
 }
 
-/**
- * @param {Object}   opts
- * @param {Object|Object[]} opts.input  — the row(s) to turn into SQL
- * @param {string[]} [opts.omit=[]]     — keys to strip out before building SQL
- * @returns {[string,string]|{error:string}}
- */
 export function JSON2SQL({ input, allow = [] }) {
     // 1) Normalize to an array of rows
     const rows = Array.isArray(input) ? input : [input];
@@ -96,7 +90,7 @@ export function JSON2SQL({ input, allow = [] }) {
       .join(', ');
   
     return [columns, values];
-  }
+}
   
   
 

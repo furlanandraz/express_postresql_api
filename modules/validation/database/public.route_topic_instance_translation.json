@@ -1,0 +1,72 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "public.route_topic_instance_translation",
+  "type": "object",
+  "properties": {
+    "route_topic_class_id": {
+      "type": "integer",
+      "title": "Route Topic Class Id"
+    },
+    "language_code": {
+      "type": "string",
+      "title": "Language Code"
+    },
+    "slug": {
+      "type": "string",
+      "title": "Slug"
+    },
+    "title": {
+      "type": "string",
+      "title": "Title"
+    },
+    "meta_description": {
+      "type": "string",
+      "title": "Meta Description"
+    },
+    "meta_keywords": {
+      "type": "string",
+      "title": "Meta Keywords"
+    },
+    "path": {
+      "type": "string",
+      "title": "Path"
+    },
+    "breadcrumbs": {
+      "type": [
+        "string",
+        "number",
+        "boolean",
+        "object",
+        "array",
+        "null"
+      ],
+      "title": "Breadcrumbs"
+    },
+    "data": {
+      "type": [
+        "string",
+        "number",
+        "boolean",
+        "object",
+        "array",
+        "null"
+      ],
+      "title": "Data"
+    },
+    "label": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "title": "Label"
+    }
+  },
+  "required": [
+    "route_topic_class_id",
+    "language_code",
+    "slug",
+    "title",
+    "path",
+    "breadcrumbs"
+  ]
+}

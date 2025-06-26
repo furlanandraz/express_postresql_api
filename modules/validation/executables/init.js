@@ -1,4 +1,3 @@
-// modules/processors/prisma-to-json-schemas.js
 import fs from 'fs';
 import path from 'path';
 import pkg from '@prisma/internals';
@@ -14,9 +13,7 @@ function toTitleCase(str) {
     .join(' ');
 }
 
-/**
- * Quick & dirty parser to extract @@schema("…") per model
- */
+/** Extract schema name from @@schema("...") directives in Prisma schema */
 function parseSchemaMap(prismaSchemaText) {
   const modelBlock = /model\s+(\w+)\s*{([\s\S]*?)}/g;
   const map = {};
@@ -29,85 +26,84 @@ function parseSchemaMap(prismaSchemaText) {
   return map;
 }
 
-/** Prisma→JSON-Schema type mapping */
-function mapType(prismaType) {
-  switch (prismaType) {
+/** Maps Prisma scalar type to JSON Schema type */
+function mapType(field) {
+  const t = field.type;
+  switch (t) {
     case 'String':   return 'string';
     case 'Int':      return 'integer';
     case 'Float':    return 'number';
     case 'Boolean':  return 'boolean';
     case 'DateTime': return 'string';
-    case 'Json':     return ['number','string','boolean','object','array','null'];
-    default:         return 'string';  // covers enums too
+    case 'Json': {
+      const pgType = field.dbNames?.[0] || 'json';
+      return pgType === 'jsonb'
+        ? ['object', 'array', 'string', 'number', 'boolean', 'null']
+        : ['string', 'number', 'boolean', 'object', 'array', 'null'];
+    }
+    default:
+      return 'string'; // fallback for enums or unknown types
   }
 }
 
 async function main() {
-  const root       = process.cwd();
+  const root         = process.cwd();
   const schemaPrisma = path.join(root, 'prisma', 'schema.prisma');
-  const outDir     = path.join(root, 'static', 'forms');
+  const outDir       = path.join(root, 'modules', 'validation', 'database');
 
-  // 1) read & parse schema.prisma
-  const prismaText = fs.readFileSync(schemaPrisma, 'utf-8');
-  const schemaMap  = parseSchemaMap(prismaText);
+  const prismaText   = fs.readFileSync(schemaPrisma, 'utf-8');
+  const schemaMap    = parseSchemaMap(prismaText);
+  const dmmf         = await getDMMF({ datamodel: prismaText });
 
-  // 2) get the DMMF (your Prisma models + fields)
-  const dmmf = await getDMMF({ datamodel: prismaText });
+  const enumMap = {};
+  for (const enumDef of dmmf.datamodel.enums) {
+    enumMap[enumDef.name] = enumDef.values.map(v => v.name);
+  }
 
-  // 3) ensure output folder
   fs.mkdirSync(outDir, { recursive: true });
 
-  // 4) for each model in your Prisma schema…
   for (const model of dmmf.datamodel.models) {
-    const modelName  = model.name;                // e.g. "Route"
+    const modelName  = model.name;
     const schemaName = schemaMap[modelName] || 'public';
     const props      = {};
     const required   = [];
 
-    // 4a) walk fields, pick only scalars/enums (skip relations)
     for (const field of model.fields) {
-      if (field.kind !== 'scalar') continue;
+      if (field.kind !== 'scalar' && field.kind !== 'enum') continue;
 
-      let jsType = mapType(field.type);
-      const prop = { type: jsType };
+      let type = mapType(field);
+      const prop = { type };
 
-      // enums → list allowed values
-      if (field.kind === 'enum') {
-        prop.enum = field.enumValues;
+      if (field.kind === 'enum' || enumMap[field.type]) {
+        prop.type = 'string';
+        prop.enum = enumMap[field.type];
+        prop.custom_type = field.type; // ← Add custom_type for enum name
       }
 
-      // literal defaults
-      if (field.hasDefaultValue && field.default?.kind === 'literal') {
-        prop.default = field.default.value;
-      }
-
-      // nullability
       if (!field.isRequired) {
-        // union with null
-        prop.type = Array.isArray(jsType) ? [...jsType, 'null'] : [jsType, 'null'];
+        prop.type = Array.isArray(prop.type)
+          ? [...new Set([...prop.type, 'null'])]
+          : [prop.type, 'null'];
       } else if (!field.hasDefaultValue) {
         required.push(field.name);
       }
 
-      // title-case the label
       prop.title = toTitleCase(field.name);
-
       props[field.name] = prop;
     }
 
-    // 4b) assemble JSON-Schema
     const schema = {
-      $schema:   'http://json-schema.org/draft-07/schema#',
-      title:     toTitleCase(modelName),
-      type:      'object',
-      properties: props,
+      $schema: 'http://json-schema.org/draft-07/schema#',
+      title: `${schemaName}.${modelName}`,
+      type: 'object',
+      properties: props
     };
+
     if (required.length) {
       schema.required = required;
     }
 
-    // 4c) write to static/types/jsons/<schema>_<model>.json
-    const fileName = `${schemaName.toLowerCase()}_${modelName}.json`;
+    const fileName = `${schemaName.toLowerCase()}.${modelName}.json`;
     const outPath  = path.join(outDir, fileName);
     fs.writeFileSync(outPath, JSON.stringify(schema, null, 2), 'utf-8');
     console.log(`✔ wrote ${path.relative(root, outPath)}`);

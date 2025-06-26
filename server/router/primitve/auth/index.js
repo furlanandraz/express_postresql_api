@@ -2,7 +2,7 @@ import expres from 'express';
 import jwt from 'jsonwebtoken';
 import dotenv from 'dotenv';
 
-import Admin from '#DAO/Admin.js';
+import Auth from '#DAO/Auth.js';
 import { accessTokenSettings, refreshTokenSettings, permissionCookieSettings } from '#serverConfig/cookies.js';
 import permissions from '#serverConfig/permissions.js';
 
@@ -21,7 +21,7 @@ router.post('/login', async (req, res) => {
     if (!email || !password) return res.status(404).json({ error: 'Missing credentials' });
 
     try {
-        const user = await Admin.login(email, password);
+        const user = await Auth.login(email, password);
         
         const userPermissions = JSON.stringify(permissions.find(option => option.role === user.role)?.permissions);
 

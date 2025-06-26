@@ -1,0 +1,28 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "presentation.route_template_class",
+  "type": "object",
+  "properties": {
+    "id": {
+      "type": "integer",
+      "title": "Id"
+    },
+    "route_id": {
+      "type": "integer",
+      "title": "Route Id"
+    },
+    "template_type_id": {
+      "type": "integer",
+      "title": "Template Type Id"
+    },
+    "template_order": {
+      "type": "integer",
+      "title": "Template Order"
+    }
+  },
+  "required": [
+    "route_id",
+    "template_type_id",
+    "template_order"
+  ]
+}

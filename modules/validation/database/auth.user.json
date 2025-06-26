@@ -1,0 +1,42 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "auth.user",
+  "type": "object",
+  "properties": {
+    "id": {
+      "type": "integer",
+      "title": "Id"
+    },
+    "role": {
+      "type": "integer",
+      "title": "Role"
+    },
+    "email": {
+      "type": "string",
+      "title": "Email"
+    },
+    "password": {
+      "type": "string",
+      "title": "Password"
+    },
+    "created_at": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "title": "Created At"
+    },
+    "updated_at": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "title": "Updated At"
+    }
+  },
+  "required": [
+    "role",
+    "email",
+    "password"
+  ]
+}

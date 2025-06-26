@@ -1,4 +1,4 @@
-import { readonly } from '#clients';
+import { readonly } from '#DAO/clients/index.js';
 
 class Client {
 

@@ -4,11 +4,10 @@ import cors from 'cors';
 import dotenv from 'dotenv';
 import path from 'path';
 
-import routes from './routes/index.js';
+import router from './router/index.js';
 import services from './services/index.js';
 
 import jwtAuth from '#middleware/jwtAuth.js';
-import responseJSONParser from '#middleware/reponseJSONParser.js';
 
 
 dotenv.config();
@@ -39,7 +38,7 @@ app.use(jwtAuth({
     ]    
 }));
 
-app.use(base, routes);
+app.use(base, router);
 
 const server = app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);

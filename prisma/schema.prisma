@@ -6,145 +6,240 @@ generator client {
 
 generator jsonSchema {
   provider = "prisma-json-schema-generator"
-  output   = "../modules/validation/postgres"
+  output   = "../modules/validation/database"
 }
 
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
-  schemas  = ["navigation", "presentation", "public", "schemas", "types"]
+  schemas  = ["auth", "cache", "language", "media", "navigation", "presentation", "prototype", "public", "settings"]
+}
+
+model role {
+  id                   Int    @id @default(autoincrement())
+  name                 String @unique @db.VarChar(16)
+  permission_view      Json?  @default("[]")
+  permission_edit      Json?  @default("[]")
+  user_user_roleTorole user[] @relation("user_roleTorole")
+
+  @@schema("auth")
+}
+
+model user {
+  id                   Int       @id @default(autoincrement())
+  role                 Int
+  email                String    @unique @db.VarChar(255)
+  password             String    @db.VarChar(255)
+  created_at           DateTime? @default(now()) @db.Timestamp(6)
+  updated_at           DateTime? @default(now()) @db.Timestamp(6)
+  role_user_roleTorole role      @relation("user_roleTorole", fields: [role], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
+  @@schema("auth")
+}
+
+model navigation_cache {
+  id              Int       @id @default(autoincrement())
+  cache_name      String    @unique
+  cache_json      Json      @db.Json
+  cache_timestamp DateTime? @default(now()) @db.Timestamp(6)
+
+  @@schema("cache")
+}
+
+model image {
+  id   Int    @id @default(autoincrement())
+  name String @unique(map: "idx_image_name")
+  tags Json   @default("[]")
+
+  @@schema("media")
 }
 
 model route {
-  id                      Int                       @id @default(autoincrement())
-  parent_id               Int?
-  url_name                String                    @unique
-  title                   String
-  meta_description        String?
-  meta_keywords           String?
-  url_type                route_url_type?           @default(static)
-  render_method           route_render_method?      @default(SSR)
-  url_uuid                String?                   @unique @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  route                   route?                    @relation("routeToroute", fields: [parent_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
-  other_route             route[]                   @relation("routeToroute")
-  route_layout_instance   route_layout_instance?
-  route_template_instance route_template_instance[]
-  topic_layout            topic_layout?
+  id                   Int                    @id @default(autoincrement())
+  parent_id            Int?
+  render_type          route_render_type      @default(page)
+  render_method        route_render_method    @default(SSR)
+  route_translation    route_translation[]
+  route                route?                 @relation("routeToroute", fields: [parent_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  other_route          route[]                @relation("routeToroute")
+  route_layout_class   route_layout_class[]
+  route_template_class route_template_class[]
+  route_topic_class    route_topic_class[]
 
   @@schema("navigation")
 }
 
-model url_primary {
-  id          Int    @id @default(autoincrement())
-  url_uuid    String @unique @db.Uuid
-  full_url    String @unique
-  breadcrumbs Json   @unique
+model route_layout_class {
+  id                                Int                                 @id @default(autoincrement())
+  route_id                          Int
+  layout_type_id                    Int
+  route_layout_instance_translation route_layout_instance_translation[]
+  layout_type                       layout_type                         @relation(fields: [layout_type_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  route                             route                               @relation(fields: [route_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
 
-  @@schema("navigation")
-}
-
-model route_layout_instance {
-  id             Int          @id @default(autoincrement())
-  route_id       Int?         @unique
-  layout_type_id Int?
-  json_data      Json         @default("{}") @db.Json
-  layout_type    layout_type? @relation(fields: [layout_type_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
-  route          route?       @relation(fields: [route_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
-
+  @@unique([route_id, layout_type_id])
   @@schema("presentation")
 }
 
 /// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
-model route_template_instance {
-  id                      Int            @id @default(autoincrement())
-  route_id                Int?
-  template_type_id        Int?
-  template_instance_order Int
-  json_data               Json           @default("{}") @db.Json
-  route                   route?         @relation(fields: [route_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
-  template_type           template_type? @relation(fields: [template_type_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+model route_template_class {
+  id                                  Int                                   @id @default(autoincrement())
+  route_id                            Int
+  template_type_id                    Int
+  template_order                      Int
+  route_template_instance_translation route_template_instance_translation[]
+  route                               route                                 @relation(fields: [route_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  template_type                       template_type                         @relation(fields: [template_type_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
 
-  @@unique([route_id, template_instance_order], map: "unique_route_order")
+  @@unique([route_id, template_type_id, template_order])
   @@schema("presentation")
 }
 
-model topic_instance {
-  id              Int          @id @default(autoincrement())
-  topic_layout_id Int
-  slug            String       @db.VarChar(64)
-  json_data       Json         @default("{}") @db.Json
-  url_uuid        String?      @unique @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  title           String       @default("") @db.VarChar(64)
-  topic_layout    topic_layout @relation(fields: [topic_layout_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+model route_topic_class {
+  id                               Int                                @id @default(autoincrement())
+  route_id                         Int
+  layout_schema_id                 Int
+  route_topic_instance_translation route_topic_instance_translation[]
+  layout_schema                    layout_schema                      @relation(fields: [layout_schema_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  route                            route                              @relation(fields: [route_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
 
-  @@unique([topic_layout_id, slug], map: "unique_route_slug")
-  @@schema("presentation")
-}
-
-model topic_layout {
-  id               Int              @id @default(autoincrement())
-  route_id         Int              @unique
-  layout_schema_id Int
-  topic_instance   topic_instance[]
-  layout_schema    layout_schema    @relation(fields: [layout_schema_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
-  route            route            @relation(fields: [route_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
-
+  @@unique([route_id, layout_schema_id])
   @@schema("presentation")
 }
 
 model component_type {
-  id       Int    @id @default(autoincrement())
-  url_name String @unique @db.VarChar(64)
-  ui_name  String @db.VarChar(64)
-  json_ref String
+  id    Int    @id @default(autoincrement())
+  slug  String @unique @db.VarChar(64)
+  title String @unique @db.VarChar(64)
+  base  Json
 
-  @@unique([url_name, ui_name, json_ref], map: "unique_component_entry")
-  @@schema("types")
+  @@schema("prototype")
 }
 
 model layout_schema {
-  id             Int            @id @default(autoincrement())
-  layout_type_id Int
-  json_preset    Json           @db.Json
-  json_form      Json           @default("{}")
-  topic_layout   topic_layout[]
-  layout_type    layout_type    @relation(fields: [layout_type_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  id                Int                 @id @default(autoincrement())
+  layout_type_id    Int
+  reference         Json                @db.Json
+  form              Json                @default("{}") @db.Json
+  route_topic_class route_topic_class[]
+  layout_type       layout_type         @relation(fields: [layout_type_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "layout_schema_template_type_id_fkey")
 
-  @@schema("types")
+  @@schema("prototype")
 }
 
 model layout_type {
-  id                    Int                     @id @default(autoincrement())
-  url_name              String                  @unique @db.VarChar(64)
-  ui_name               String                  @db.VarChar(64)
-  json_ref              String                  @default("")
-  route_layout_instance route_layout_instance[]
-  layout_schema         layout_schema[]
+  id                 Int                  @id @default(autoincrement())
+  slug               String               @unique @db.VarChar(64)
+  title              String               @unique @db.VarChar(64)
+  base               Json
+  route_layout_class route_layout_class[]
+  layout_schema      layout_schema[]
 
-  @@unique([url_name, ui_name], map: "unique_layout_entry")
-  @@schema("types")
+  @@schema("prototype")
 }
 
 model template_schema {
   id               Int           @id @default(autoincrement())
   template_type_id Int
-  json_preset      Json          @db.Json
-  json_form        Json          @default("{}")
+  reference        Json          @db.Json
+  form             Json          @default("{}") @db.Json
   template_type    template_type @relation(fields: [template_type_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
 
-  @@schema("types")
+  @@schema("prototype")
 }
 
 model template_type {
-  id                      Int                       @id @default(autoincrement())
-  url_name                String                    @unique @db.VarChar(64)
-  ui_name                 String                    @db.VarChar(64)
-  json_ref                String
-  route_template_instance route_template_instance[]
-  template_schema         template_schema[]
+  id                   Int                    @id @default(autoincrement())
+  slug                 String                 @unique @db.VarChar(64)
+  title                String                 @unique @db.VarChar(64)
+  base                 Json
+  route_template_class route_template_class[]
+  template_schema      template_schema[]
 
-  @@unique([url_name, ui_name, json_ref], map: "unique_template_entry")
-  @@schema("types")
+  @@schema("prototype")
+}
+
+model language {
+  code                                String                                @id @db.VarChar(2)
+  is_default                          Boolean                               @default(false)
+  is_enabled                          Boolean                               @default(false)
+  global_translation                  global_translation[]
+  route_layout_instance_translation   route_layout_instance_translation[]
+  route_template_instance_translation route_template_instance_translation[]
+  route_topic_instance_translation    route_topic_instance_translation[]
+  route_translation                   route_translation[]
+
+  @@schema("settings")
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+model global_translation {
+  key           String   @db.VarChar(64)
+  language_code String   @db.VarChar(2)
+  value         String
+  language      language @relation(fields: [language_code], references: [code], onDelete: Cascade, onUpdate: NoAction)
+
+  @@id([key, language_code])
+  @@schema("language")
+}
+
+model route_layout_instance_translation {
+  route_layout_class_id Int
+  language_code         String             @db.VarChar(2)
+  data                  Json               @default("{}") @db.Json
+  language              language           @relation(fields: [language_code], references: [code], onDelete: Cascade, onUpdate: NoAction)
+  route_layout_class    route_layout_class @relation(fields: [route_layout_class_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@id([route_layout_class_id, language_code])
+  @@schema("language")
+}
+
+model route_template_instance_translation {
+  route_template_class_id Int
+  language_code           String               @db.VarChar(2)
+  data                    Json                 @default("{}") @db.Json
+  route_template_class    route_template_class @relation(fields: [route_template_class_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "route_template_instance_translatio_route_template_class_id_fkey")
+  language                language             @relation(fields: [language_code], references: [code], onDelete: Cascade, onUpdate: NoAction)
+
+  @@id([route_template_class_id, language_code])
+  @@schema("language")
+}
+
+model route_topic_instance_translation {
+  route_topic_class_id Int
+  language_code        String            @db.VarChar(2)
+  slug                 String            @db.VarChar(64)
+  title                String            @db.VarChar(64)
+  meta_description     String            @default("")
+  meta_keywords        String            @default("")
+  path                 String
+  breadcrumbs          Json              @db.Json
+  data                 Json              @default("{}") @db.Json
+  label                String?
+  language             language          @relation(fields: [language_code], references: [code], onDelete: Cascade, onUpdate: NoAction)
+  route_topic_class    route_topic_class @relation(fields: [route_topic_class_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@id([route_topic_class_id, language_code])
+  @@unique([language_code, path])
+  @@schema("language")
+}
+
+model route_translation {
+  route_id         Int
+  language_code    String   @db.VarChar(2)
+  slug             String
+  title            String
+  meta_description String   @default("")
+  meta_keywords    String   @default("")
+  path             String?
+  breadcrumbs      Json?    @db.Json
+  label            String
+  language         language @relation(fields: [language_code], references: [code], onDelete: Cascade, onUpdate: NoAction)
+  route            route    @relation(fields: [route_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@id([route_id, language_code])
+  @@unique([language_code, path])
+  @@schema("language")
 }
 
 enum route_render_method {
@@ -152,12 +247,12 @@ enum route_render_method {
   SSG
   CSR
 
-  @@schema("types")
+  @@schema("public")
 }
 
-enum route_url_type {
-  static
-  dynamic
+enum route_render_type {
+  page
+  topic
 
-  @@schema("types")
+  @@schema("public")
 }

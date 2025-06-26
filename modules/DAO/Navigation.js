@@ -6,19 +6,13 @@ import { arrayOfObjectsToVALUES, JSON2SQL } from "./functions/transformers/gener
 
 class Navigation {
 
-    static async selectRouteItem(id = null) {
+    static async select(id = null) {
 
         let query = `
         SELECT
-            r.*,
-            u.full_url,
-            u.breadcrumbs
+            *
         FROM
-            navigation.route r
-        LEFT JOIN
-            navigation.url_primary u
-            ON r.url_uuid = u.url_uuid
-        ;`;
+            navigation.route r`;
         
         const params = [];
         if (id) {
@@ -29,7 +23,7 @@ class Navigation {
 
         try {
             const result = await god.query(query, params);
-            return result.rows;
+            return {rows: result.rows};
         } catch (error) {
             console.error('Database query error:', error);
             return { error: 'Database query error' };
@@ -130,7 +124,7 @@ class Navigation {
     static async generateURLs() {
         
         try {
-            const menuItems = await Navigation.selectRouteItems();
+            const menuItems = await Navigation.selectRouteItem();
             const topicItems = await Presentation.getTopicItems();
             const routeURLs = buildRouteURL(menuItems);
             const topicURLs = buildTopicURL(routeURLs, topicItems);

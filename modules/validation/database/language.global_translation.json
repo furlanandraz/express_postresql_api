@@ -1,0 +1,24 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "language.global_translation",
+  "type": "object",
+  "properties": {
+    "key": {
+      "type": "string",
+      "title": "Key"
+    },
+    "language_code": {
+      "type": "string",
+      "title": "Language Code"
+    },
+    "value": {
+      "type": "string",
+      "title": "Value"
+    }
+  },
+  "required": [
+    "key",
+    "language_code",
+    "value"
+  ]
+}

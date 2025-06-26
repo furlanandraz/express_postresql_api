@@ -2,7 +2,7 @@ CREATE VIEW
     public.route_item
 AS SELECT
     r.*,
-	l.code,
+	l.code AS language_code,
     COALESCE(t.slug, '') AS slug,
     COALESCE(t.title, '') AS title,
     COALESCE(t.label, '') AS label,
@@ -18,5 +18,5 @@ LEFT JOIN
     language.route_translation t
 ON
     r.id = t.route_id AND l.code = t.language_code
-WHERE l.is_enabled = TRUE
+WHERE l.is_enabled = TRUE;
 

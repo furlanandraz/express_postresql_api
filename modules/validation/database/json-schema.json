@@ -1,0 +1,674 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "definitions": {
+    "role": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer"
+        },
+        "name": {
+          "type": "string"
+        },
+        "permission_view": {
+          "type": [
+            "number",
+            "string",
+            "boolean",
+            "object",
+            "array",
+            "null"
+          ]
+        },
+        "permission_edit": {
+          "type": [
+            "number",
+            "string",
+            "boolean",
+            "object",
+            "array",
+            "null"
+          ]
+        },
+        "user_user_roleTorole": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/user"
+          }
+        }
+      }
+    },
+    "user": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer"
+        },
+        "email": {
+          "type": "string"
+        },
+        "password": {
+          "type": "string"
+        },
+        "created_at": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "format": "date-time"
+        },
+        "updated_at": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "format": "date-time"
+        },
+        "role_user_roleTorole": {
+          "$ref": "#/definitions/role"
+        }
+      }
+    },
+    "navigation_cache": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer"
+        },
+        "cache_name": {
+          "type": "string"
+        },
+        "cache_json": {
+          "type": [
+            "number",
+            "string",
+            "boolean",
+            "object",
+            "array",
+            "null"
+          ]
+        },
+        "cache_timestamp": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "format": "date-time"
+        }
+      }
+    },
+    "image": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer"
+        },
+        "name": {
+          "type": "string"
+        },
+        "tags": {
+          "type": [
+            "number",
+            "string",
+            "boolean",
+            "object",
+            "array",
+            "null"
+          ]
+        }
+      }
+    },
+    "route": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer"
+        },
+        "render_type": {
+          "type": "string",
+          "default": "page",
+          "enum": [
+            "page",
+            "topic"
+          ]
+        },
+        "render_method": {
+          "type": "string",
+          "default": "SSR",
+          "enum": [
+            "SSR",
+            "SSG",
+            "CSR"
+          ]
+        },
+        "route_translation": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/route_translation"
+          }
+        },
+        "route": {
+          "anyOf": [
+            {
+              "$ref": "#/definitions/route"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "other_route": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/route"
+          }
+        },
+        "route_layout_class": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/route_layout_class"
+          }
+        },
+        "route_template_class": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/route_template_class"
+          }
+        },
+        "route_topic_class": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/route_topic_class"
+          }
+        }
+      }
+    },
+    "route_layout_class": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer"
+        },
+        "route_layout_instance_translation": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/route_layout_instance_translation"
+          }
+        },
+        "layout_type": {
+          "$ref": "#/definitions/layout_type"
+        },
+        "route": {
+          "$ref": "#/definitions/route"
+        }
+      }
+    },
+    "route_template_class": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer"
+        },
+        "template_order": {
+          "type": "integer"
+        },
+        "route_template_instance_translation": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/route_template_instance_translation"
+          }
+        },
+        "route": {
+          "$ref": "#/definitions/route"
+        },
+        "template_type": {
+          "$ref": "#/definitions/template_type"
+        }
+      }
+    },
+    "route_topic_class": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer"
+        },
+        "route_topic_instance_translation": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/route_topic_instance_translation"
+          }
+        },
+        "layout_schema": {
+          "$ref": "#/definitions/layout_schema"
+        },
+        "route": {
+          "$ref": "#/definitions/route"
+        }
+      }
+    },
+    "component_type": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer"
+        },
+        "slug": {
+          "type": "string"
+        },
+        "title": {
+          "type": "string"
+        },
+        "base": {
+          "type": [
+            "number",
+            "string",
+            "boolean",
+            "object",
+            "array",
+            "null"
+          ]
+        }
+      }
+    },
+    "layout_schema": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer"
+        },
+        "reference": {
+          "type": [
+            "number",
+            "string",
+            "boolean",
+            "object",
+            "array",
+            "null"
+          ]
+        },
+        "form": {
+          "type": [
+            "number",
+            "string",
+            "boolean",
+            "object",
+            "array",
+            "null"
+          ]
+        },
+        "route_topic_class": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/route_topic_class"
+          }
+        },
+        "layout_type": {
+          "$ref": "#/definitions/layout_type"
+        }
+      }
+    },
+    "layout_type": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer"
+        },
+        "slug": {
+          "type": "string"
+        },
+        "title": {
+          "type": "string"
+        },
+        "base": {
+          "type": [
+            "number",
+            "string",
+            "boolean",
+            "object",
+            "array",
+            "null"
+          ]
+        },
+        "route_layout_class": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/route_layout_class"
+          }
+        },
+        "layout_schema": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/layout_schema"
+          }
+        }
+      }
+    },
+    "template_schema": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer"
+        },
+        "reference": {
+          "type": [
+            "number",
+            "string",
+            "boolean",
+            "object",
+            "array",
+            "null"
+          ]
+        },
+        "form": {
+          "type": [
+            "number",
+            "string",
+            "boolean",
+            "object",
+            "array",
+            "null"
+          ]
+        },
+        "template_type": {
+          "$ref": "#/definitions/template_type"
+        }
+      }
+    },
+    "template_type": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer"
+        },
+        "slug": {
+          "type": "string"
+        },
+        "title": {
+          "type": "string"
+        },
+        "base": {
+          "type": [
+            "number",
+            "string",
+            "boolean",
+            "object",
+            "array",
+            "null"
+          ]
+        },
+        "route_template_class": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/route_template_class"
+          }
+        },
+        "template_schema": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/template_schema"
+          }
+        }
+      }
+    },
+    "language": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "string"
+        },
+        "is_default": {
+          "type": "boolean",
+          "default": false
+        },
+        "is_enabled": {
+          "type": "boolean",
+          "default": false
+        },
+        "global_translation": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/global_translation"
+          }
+        },
+        "route_layout_instance_translation": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/route_layout_instance_translation"
+          }
+        },
+        "route_template_instance_translation": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/route_template_instance_translation"
+          }
+        },
+        "route_topic_instance_translation": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/route_topic_instance_translation"
+          }
+        },
+        "route_translation": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/route_translation"
+          }
+        }
+      }
+    },
+    "global_translation": {
+      "type": "object",
+      "properties": {
+        "key": {
+          "type": "string"
+        },
+        "value": {
+          "type": "string"
+        },
+        "language": {
+          "$ref": "#/definitions/language"
+        }
+      }
+    },
+    "route_layout_instance_translation": {
+      "type": "object",
+      "properties": {
+        "data": {
+          "type": [
+            "number",
+            "string",
+            "boolean",
+            "object",
+            "array",
+            "null"
+          ]
+        },
+        "language": {
+          "$ref": "#/definitions/language"
+        },
+        "route_layout_class": {
+          "$ref": "#/definitions/route_layout_class"
+        }
+      }
+    },
+    "route_template_instance_translation": {
+      "type": "object",
+      "properties": {
+        "data": {
+          "type": [
+            "number",
+            "string",
+            "boolean",
+            "object",
+            "array",
+            "null"
+          ]
+        },
+        "route_template_class": {
+          "$ref": "#/definitions/route_template_class"
+        },
+        "language": {
+          "$ref": "#/definitions/language"
+        }
+      }
+    },
+    "route_topic_instance_translation": {
+      "type": "object",
+      "properties": {
+        "slug": {
+          "type": "string"
+        },
+        "title": {
+          "type": "string"
+        },
+        "meta_description": {
+          "type": "string",
+          "default": ""
+        },
+        "meta_keywords": {
+          "type": "string",
+          "default": ""
+        },
+        "path": {
+          "type": "string"
+        },
+        "breadcrumbs": {
+          "type": [
+            "number",
+            "string",
+            "boolean",
+            "object",
+            "array",
+            "null"
+          ]
+        },
+        "data": {
+          "type": [
+            "number",
+            "string",
+            "boolean",
+            "object",
+            "array",
+            "null"
+          ]
+        },
+        "label": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "language": {
+          "$ref": "#/definitions/language"
+        },
+        "route_topic_class": {
+          "$ref": "#/definitions/route_topic_class"
+        }
+      }
+    },
+    "route_translation": {
+      "type": "object",
+      "properties": {
+        "slug": {
+          "type": "string"
+        },
+        "title": {
+          "type": "string"
+        },
+        "meta_description": {
+          "type": "string",
+          "default": ""
+        },
+        "meta_keywords": {
+          "type": "string",
+          "default": ""
+        },
+        "path": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "breadcrumbs": {
+          "type": [
+            "number",
+            "string",
+            "boolean",
+            "object",
+            "array",
+            "null"
+          ]
+        },
+        "label": {
+          "type": "string"
+        },
+        "language": {
+          "$ref": "#/definitions/language"
+        },
+        "route": {
+          "$ref": "#/definitions/route"
+        }
+      }
+    }
+  },
+  "type": "object",
+  "properties": {
+    "role": {
+      "$ref": "#/definitions/role"
+    },
+    "user": {
+      "$ref": "#/definitions/user"
+    },
+    "navigation_cache": {
+      "$ref": "#/definitions/navigation_cache"
+    },
+    "image": {
+      "$ref": "#/definitions/image"
+    },
+    "route": {
+      "$ref": "#/definitions/route"
+    },
+    "route_layout_class": {
+      "$ref": "#/definitions/route_layout_class"
+    },
+    "route_template_class": {
+      "$ref": "#/definitions/route_template_class"
+    },
+    "route_topic_class": {
+      "$ref": "#/definitions/route_topic_class"
+    },
+    "component_type": {
+      "$ref": "#/definitions/component_type"
+    },
+    "layout_schema": {
+      "$ref": "#/definitions/layout_schema"
+    },
+    "layout_type": {
+      "$ref": "#/definitions/layout_type"
+    },
+    "template_schema": {
+      "$ref": "#/definitions/template_schema"
+    },
+    "template_type": {
+      "$ref": "#/definitions/template_type"
+    },
+    "language": {
+      "$ref": "#/definitions/language"
+    },
+    "global_translation": {
+      "$ref": "#/definitions/global_translation"
+    },
+    "route_layout_instance_translation": {
+      "$ref": "#/definitions/route_layout_instance_translation"
+    },
+    "route_template_instance_translation": {
+      "$ref": "#/definitions/route_template_instance_translation"
+    },
+    "route_topic_instance_translation": {
+      "$ref": "#/definitions/route_topic_instance_translation"
+    },
+    "route_translation": {
+      "$ref": "#/definitions/route_translation"
+    }
+  }
+}
