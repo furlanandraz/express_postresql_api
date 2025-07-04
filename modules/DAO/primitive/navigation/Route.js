@@ -92,32 +92,35 @@ class Route {
         const paramsNext = [data.id, data.next_id];
 
         const update = `
-        UPDATE navigation.route
+        UPDATE
+            navigation.route
         SET
-            prev_id = $2::int,
-            next_id = $3::int,
-            render_type = $4::route_render_type,
-            render_method = $5::route_render_method
+            parent_id = $2::int,
+            prev_id = $3::int,
+            next_id = $4::int,
+            render_type = $5::route_render_type,
+            render_method = $6::route_render_method
         WHERE
             id = $1::int
         RETURNING * ;
         `;
 
-        const params = [data.id, data.prev_id, data.next_id, data.render_type, data.render_method];
+        const params = [data.id, data.parent_id, data.prev_id, data.next_id, data.render_type, data.render_method];
 
         try {
             await god.query('BEGIN');
             const current = await god.query(selectCurrent, [data.id]);
-            if (data.prev_id !== null) await god.query(updatePrev, paramsPrev);
-            if (data.next_id !== null) await god.query(updateNext, paramsNext);
             if (current.rows[0].parent_id !== data.parent_id) {
                 await god.query(updateCurrentPrev, paramsCurrentPrev);
                 await god.query(updateCurrentNext, paramsCurrentNext);
             }
+            if (data.prev_id !== null) await god.query(updatePrev, paramsPrev);
+            if (data.next_id !== null) await god.query(updateNext, paramsNext);
             const result = await god.query(update, params);
             await god.query('COMMIT');
             return {rows: result.rows};
         } catch (error) {
+            console.log(error);
             await god.query('ROLLBACK');
             return {
                 error: 'Database query error',

@@ -6,10 +6,6 @@ import {ValidateRouteItemInsert, ValidateRouteItemUpdate} from '#validation/api/
 
 const router = express.Router();
 
-
-
-// zod validation of route
-
 router.get('/', async (req, res) => {
     
     try {
@@ -46,6 +42,23 @@ router.post('/', async (req, res) => {
     try {
         ValidateRouteItemInsert.parse(payload);
         const result = await RouteItem.insert(payload);
+        if (result.error) return res.status(500).json(result);
+        return res.json({data: result});
+    } catch (error) {
+        if (error instanceof ZodError) return res.status(422).json({error: "Validation error", data: error.issues});
+        res.status(500).json({ error: 'Internal server error' });
+        console.log(error);
+    }
+    
+});
+
+router.put('/', async (req, res) => {
+
+    const payload = req.body;
+
+    try {
+        ValidateRouteItemUpdate.parse(payload);
+        const result = await RouteItem.update(payload);
         if (result.error) return res.status(500).json(result);
         return res.json({data: result});
     } catch (error) {

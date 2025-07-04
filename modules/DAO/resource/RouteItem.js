@@ -52,6 +52,24 @@ class RouteItem {
         }
     }
 
+    static async update(data) {
+
+        try {
+            const route = await Route.update(data);
+            if (route.error) return route;
+            const transation = await RouteTranslation.update(data.id, data.translation);
+            if (transation.error) return transation;
+            return transation;
+        } catch (error) {
+            return {
+                error: 'Database query error',
+                details: {
+                    method: 'RouteItem.update()' 
+                }
+            }
+        }
+    }
+
 }
 
 export default RouteItem;
