@@ -11,25 +11,13 @@ const router = express.Router();
 // zod validation of route
 
 router.get('/', async (req, res) => {
-
-    //res accepted 202 + ws 202
-
-    //use zod object
-
-    //err -> ws 422
-
-    //pass to db
-
-    //err -> ws 500
-
-    //publish.info({ message: 'refactored' }); // + invalidate querry
-
     
     try {
         const result = await RouteItem.select();
-        res.json({data: result});
+        if (result.error) return res.status(500).json(result);
+        res.json({data: result.rows});
     } catch (error) {
-        res.status(500).end();
+        res.status(500).json({ error: 'Internal server error' });
     }
     
 });
@@ -42,7 +30,8 @@ router.get('/:id', async (req, res) => {
     try {
         IdChecker.parse({ id });
         const result = await RouteItem.select(id);
-        return res.json({data: result});
+        if (result.error) return res.status(500).json(result);
+        return res.json({data: result.rows});
     } catch (error) {
         if (error instanceof ZodError) return res.status(422).json({error: "Validation error", data: error.issues});
         res.status(500).json({ error: 'Internal server error' });

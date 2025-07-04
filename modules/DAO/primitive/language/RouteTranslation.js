@@ -42,8 +42,6 @@ class RouteTranslation {
             language.route_translation ${columns}
         VALUES
             ${values}`;
-        
-        console.log(query);
 
         try {
             const result = await god.query(query);

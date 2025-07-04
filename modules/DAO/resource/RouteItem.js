@@ -3,8 +3,6 @@ import { god } from "#DAO/clients/index.js";
 import Route from '#DAO/primitive/navigation/Route.js';
 import RouteTranslation from '#DAO/primitive/language/RouteTranslation.js';
 
-import rows2insert from "#DAO/functions/transformers/rows2insert.js";
-
 class RouteItem {
 
     static async select(id = null) {
@@ -24,7 +22,7 @@ class RouteItem {
 
         try {
             const result = await god.query(query, params);
-            return result.rows;
+            return result;
         } catch (error) {
             return {
                 error: 'Database query error',
@@ -43,7 +41,7 @@ class RouteItem {
             const id = route.rows[0]?.id;
             const transation = await RouteTranslation.insert(id, [...data.translation]);
             if (transation.error) return transation;
-            return id;
+            return {id};
         } catch (error) {
             return {
                 error: 'Database query error',
