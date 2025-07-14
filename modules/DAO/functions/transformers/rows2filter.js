@@ -64,12 +64,3 @@ function castValue(val, pgType) {
   if (pgType === 'jsonb') return JSON.parse(val);
   return val;
 }
-
-rows2filter({
-    filters: {
-      parent_id: '5,14',
-      render_type: 'topic',
-      render_method: 'SSG'
-    },
-    table: 'navigation.route'
-  });

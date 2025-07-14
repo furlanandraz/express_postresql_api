@@ -1,6 +1,5 @@
 import { god } from "#clients";
-
-
+import pgError2HttpStatus from "#DAO/functions/formatters/pgError2HttpStatus.js";
 import rows2insert from "#DAO/functions/transformers/rows2insert.js";
 
 class RouteTranslation {
@@ -29,26 +28,12 @@ class RouteTranslation {
         }
     }
 
-    static async insert(id, data) {
+    static async insert(id, data, inheritedClient) {
+
+        const client = inheritedClient || await god.connect();
+        let hasError = false;
 
         data = data.map(translation => ({ route_id: id, ...translation }));
-
-        // let query = `
-        // INSERT INTO language.route_translation (
-        //     language_code,
-        //     slug,
-        //     title,
-        //     label,
-        //     meta_description,
-        //     meta_keywords
-        // ) VALUES (
-        //     $1::varchar(2),
-        //     $2::text,
-        //     $3::text,
-        //     $4::text,
-        //     $5::text,
-        //     $6::text
-        // )`;
         
         const {columns, values} = rows2insert(data, 'language.route_translation')
         
@@ -59,20 +44,25 @@ class RouteTranslation {
             ${values}`;
 
         try {
-            const result = await god.query(query);
+            if (!inheritedClient) await client.query('BEGIN');
+            const result = await client.query(query);
+            if (!inheritedClient) await client.query('COMMIT');
             return {rows: result.rows};
         } catch (error) {
-            console.error('Internal database error:', error);
-            return {
-                error: 'Database query error',
-                details: {
-                    method: 'RouteTranslation.insert()' 
-                }
+            hasError = true;
+            return pgError2HttpStatus(error, 'RouteTranslation.insert()');
+        } finally {
+            if (!inheritedClient) {
+                if (hasError) await client.query('ROLLBACK');
+                client.release();
             }
         }
     }
 
-    static async update(id, data) {
+    static async update(id, data, inheritedClient) {
+
+        const client = inheritedClient || await god.connect();
+        let hasError = false;
 
         data = data.map(translation => ({ route_id: id, ...translation }));
 
@@ -94,13 +84,13 @@ class RouteTranslation {
     
 
         try {
-            await god.query('BEGIN;');
+            if (!inheritedClient) await client.query('BEGIN;');
     
             const rows = [];
     
             for (const translation of data) {
                 
-                const result = await god.query(query, [
+                const result = await client.query(query, [
                     translation.route_id,
                     translation.language_code,
                     translation.slug,
@@ -112,19 +102,18 @@ class RouteTranslation {
                 rows.push(result.rows[0]);
             }
     
-            await god.query('COMMIT;');
+            if (!inheritedClient) await client.query('COMMIT;');
     
             return rows;
     
         } catch (error) {
-            await god.query('ROLLBACK;');
-            console.error('Internal database error:', error);
-            return {
-                error: 'Database query error',
-                details: {
-                    method: 'RouteTranslation.update()'
-                }
-            };
+            hasError = true;
+            return pgError2HttpStatus(error, 'RouteTranslation.update()');
+        } finally {
+            if (!inheritedClient) {
+                if(hasError) await client.query('ROLLBACK');
+                client.release();
+            }
         }
     }
     

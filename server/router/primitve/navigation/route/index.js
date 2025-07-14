@@ -15,10 +15,9 @@ router.get('/', async (req, res) => {
     
     try {
         const result = await Route.select();
-        if (result.error) return res.status(500).json(result);
+        if (result.error) return res.status(result.status || 500).json(result);
         return res.json({data: result.rows});
     } catch (error) {
-        if (error instanceof ZodError) return res.status(422).json({error: "Validation error", data: error.issues});
         res.status(500).json({ error: 'Internal server error' });
     }
     
@@ -33,7 +32,7 @@ router.get('/:id', async (req, res) => {
     try {
         IdChecker.parse({ id });
         const result = await Route.select(id);
-        if (result.error) return res.status(500).json(result);
+        if (result.error) return res.status(result.status || 500).json(result);
         return res.json({data: result.rows});
     } catch (error) {
         if (error instanceof ZodError) return res.status(422).json(error)

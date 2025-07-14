@@ -35,38 +35,46 @@ class RouteItem {
 
     static async insert(data) {
 
+        const client = await god.connect();
+        let hasError = false;
+
         try {
-            const route = await Route.insert({...data});
+            await client.query('BEGIN');
+            const route = await Route.insert(data, client);
             if (route.error) return route;
             const id = route.rows[0]?.id;
-            const transation = await RouteTranslation.insert(id, [...data.translation]);
+            const transation = await RouteTranslation.insert(id, [...data.translation], client);
             if (transation.error) return transation;
-            return {id};
+            await client.query('COMMIT');
+            return route;
         } catch (error) {
-            return {
-                error: 'Database query error',
-                details: {
-                    method: 'RouteItem.insert()' 
-                }
-            }
+            hasError = true;
+            return pgError2HttpStatus(error, 'RouteItem.insert()');
+        } finally {
+            if (hasError) await client.query('ROLLBACK');
+            client.release();
         }
     }
 
     static async update(data) {
 
+        const client = await god.connect();
+        let hasError = false;
+        
         try {
-            const route = await Route.update(data);
+            await client.query('BEGIN');
+            const route = await Route.update(data, client);
             if (route.error) return route;
-            const transation = await RouteTranslation.update(data.id, data.translation);
+            const transation = await RouteTranslation.update(data.id, data.translation, client);
             if (transation.error) return transation;
-            return transation;
+            await client.query('COMMIT');
+            return route;
         } catch (error) {
-            return {
-                error: 'Database query error',
-                details: {
-                    method: 'RouteItem.update()' 
-                }
-            }
+            hasError = true;
+            return pgError2HttpStatus(error, 'RouteItem.update()');
+        } finally {
+            if (hasError) await client.query('ROLLBACK');
+            client.release();
         }
     }
 

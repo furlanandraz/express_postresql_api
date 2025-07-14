@@ -1,8 +1,5 @@
 import { god } from "#clients";
-
-
-import rows2insert from "#DAO/functions/transformers/rows2insert.js";
-import rows2update from "#DAO/functions/transformers/rows2update.js";
+import pgError2HttpStatus from "#DAO/functions/formatters/pgError2HttpStatus.js";
 
 class Route {
 
@@ -35,7 +32,10 @@ class Route {
         }
     }
 
-    static async update(data) {
+    static async update(data, inheritedClient) {
+
+        const client = inheritedClient || await god.connect();
+        let hasError = false;
 
         const selectCurrent = `
         SELECT
@@ -57,8 +57,6 @@ class Route {
             id = $2::int;
         `;
 
-        const paramsCurrentPrev = [data.next_id, data.prev_id];
-
         const updateCurrentNext = `
         UPDATE
             navigation.route
@@ -67,8 +65,6 @@ class Route {
         WHERE
             id = $2::int;
         `;
-
-        const paramsCurrentNext = [data.prev_id, data.next_id];
 
         const updatePrev = `
         UPDATE
@@ -79,7 +75,7 @@ class Route {
             id = $2::int;
         `;
 
-        const paramsPrev = [data.id, data.prev_id,];
+        const paramsPrev = [data.id, data.prev_id];
         
         const updateNext = `
         UPDATE
@@ -108,30 +104,37 @@ class Route {
         const params = [data.id, data.parent_id, data.prev_id, data.next_id, data.render_type, data.render_method];
 
         try {
-            await god.query('BEGIN');
-            const current = await god.query(selectCurrent, [data.id]);
-            if (current.rows[0].parent_id !== data.parent_id) {
-                await god.query(updateCurrentPrev, paramsCurrentPrev);
-                await god.query(updateCurrentNext, paramsCurrentNext);
-            }
-            if (data.prev_id !== null) await god.query(updatePrev, paramsPrev);
-            if (data.next_id !== null) await god.query(updateNext, paramsNext);
-            const result = await god.query(update, params);
-            await god.query('COMMIT');
-            return {rows: result.rows};
+            if (!inheritedClient) await client.query('BEGIN');
+            let current = await client.query(selectCurrent, [data.id]);
+            current = current.rows[0];
+
+            await client.query(updateCurrentNext, [current?.prev_id, current?.next_id]);
+            await client.query(updateCurrentPrev, [current?.next_id, current?.prev_id]);
+            
+            if (data.prev_id !== null) await client.query(updatePrev, paramsPrev);
+            if (data.next_id !== null) await client.query(updateNext, paramsNext);
+
+            const result = await client.query(update, params);
+            
+            if (!inheritedClient) await client.query('COMMIT');
+            return { rows: result.rows };
         } catch (error) {
-            console.log(error);
-            await god.query('ROLLBACK');
-            return {
-                error: 'Database query error',
-                details: {
-                    method: 'Route.update()' 
-                }
+            console.error(error);
+            hasError = true;
+            return pgError2HttpStatus(error, 'Route.update()');
+        } finally {
+            if (!inheritedClient) {
+                if (hasError) await client.query('ROLLBACK');
+                client.release();
             }
         }
+        
     }
 
-    static async insert(data) {
+    static async insert(data, inheritedClient = null) {
+
+        const client = inheritedClient || await god.connect();
+        let hasError = false;
 
         const insert = `
         INSERT INTO navigation.route (
@@ -152,16 +155,19 @@ class Route {
         const params = [data.parent_id, null, null, data.render_type, data.render_method];
         
         try {
-            const result = await god.query(insert, params);
-            await Route.update({ id: result.rows[0].id, ...data });
+            if (!inheritedClient) await client.query('BEGIN');
+            const result = await client.query(insert, params);
+            await Route.update({ id: result.rows[0].id, ...data }, client);
+            if (!inheritedClient) await client.query('COMMIT');
             return {rows: result.rows};
         } catch (error) {
-            console.log(error);
-            return {
-                error: 'Database query error',
-                details: {
-                    method: 'Route.insert()' 
-                }
+            console.error(error);
+            hasError = true;
+            return pgError2HttpStatus(error, 'Route.insert()');
+        } finally {
+            if (!inheritedClient) {
+                if(hasError) await client.query('ROLLBACK');
+                client.release();
             }
         }
     }

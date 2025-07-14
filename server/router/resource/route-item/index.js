@@ -10,7 +10,7 @@ router.get('/', async (req, res) => {
     
     try {
         const result = await RouteItem.select();
-        if (result.error) return res.status(500).json(result);
+        if (result.error) return res.status(result.status || 500).json(result);
         res.json({data: result.rows});
     } catch (error) {
         res.status(500).json({ error: 'Internal server error' });
@@ -26,7 +26,7 @@ router.get('/:id', async (req, res) => {
     try {
         IdChecker.parse({ id });
         const result = await RouteItem.select(id);
-        if (result.error) return res.status(500).json(result);
+        if (result.error) return res.status(result.status || 500).json(result);
         return res.json({data: result.rows});
     } catch (error) {
         if (error instanceof ZodError) return res.status(422).json({error: "Validation error", data: error.issues});
@@ -42,7 +42,7 @@ router.post('/', async (req, res) => {
     try {
         ValidateRouteItemInsert.parse(payload);
         const result = await RouteItem.insert(payload);
-        if (result.error) return res.status(500).json(result);
+        if (result.error) return res.status(result.status || 500).json(result);
         return res.json({data: result});
     } catch (error) {
         if (error instanceof ZodError) return res.status(422).json({error: "Validation error", data: error.issues});
@@ -59,7 +59,7 @@ router.put('/', async (req, res) => {
     try {
         ValidateRouteItemUpdate.parse(payload);
         const result = await RouteItem.update(payload);
-        if (result.error) return res.status(500).json(result);
+        if (result.error) return res.status(result.status || 500).json(result);
         return res.json({data: result});
     } catch (error) {
         if (error instanceof ZodError) return res.status(422).json({error: "Validation error", data: error.issues});
