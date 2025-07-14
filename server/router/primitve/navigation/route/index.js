@@ -41,21 +41,21 @@ router.get('/:id', async (req, res) => {
 
 });
 
-router.put('/', async (req, res) => {
+router.delete('/:id', async (req, res) => {
+   
+    const id = Number(req.params.id);
 
-    const payload = req.body;
-    
     try {
-        ValidateRoute.parse(payload);
-        const result = await Route.update(payload);
+        IdChecker.parse({ id });
+        const result = await Route.delete(id);
         if (result.error) return res.status(result.status || 500).json(result);
-        return res.json({data: result.rows});
+        return res.json({ data: result.rows });
     } catch (error) {
-        console.error(error);
-        if (error instanceof ZodError) return res.status(422).json({error: "Validation error", details: error.issues});
+        console.log(error)
+        if (error instanceof ZodError) return res.status(422).json({ error: "Validation error", data: error.issues });
         res.status(500).json({ error: 'Internal server error' });
     }
-    
+
 });
 
 export default router;

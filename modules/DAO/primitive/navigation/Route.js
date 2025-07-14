@@ -119,7 +119,6 @@ class Route {
             if (!inheritedClient) await client.query('COMMIT');
             return { rows: result.rows };
         } catch (error) {
-            console.error(error);
             hasError = true;
             return pgError2HttpStatus(error, 'Route.update()');
         } finally {
@@ -166,58 +165,74 @@ class Route {
             return pgError2HttpStatus(error, 'Route.insert()');
         } finally {
             if (!inheritedClient) {
-                if(hasError) await client.query('ROLLBACK');
+                if (hasError) await client.query('ROLLBACK');
                 client.release();
             }
         }
     }
 
-    /*
-    static async update(data) {
-        
-        const query = `
+    static async delete(id, inheritedClient) {
+
+        const client = inheritedClient || await god.connect();
+        let hasError = false;
+
+        const select = `
+        SELECT
+            prev_id,
+            next_id
+        FROM
+            navigation.route
+        WHERE
+            id = $1::int;
+        `;
+
+        const updatePrev = `
         UPDATE
             navigation.route
         SET
-           parent_id = $1::int,
-           render_type = $2::route_render_type,
-           render_method = $3::route_render_method
-        WHERE id = $4
-        RETURNING *;`;
+            next_id = $1::int
+        WHERE
+            id = $2::int;
+        `;
 
-        const params = [
-            data.parent_id,
-            data.render_type,
-            data.render_method,
-            data.id
-        ];
-         
-        
+        const updateNext = `
+        UPDATE
+            navigation.route
+        SET
+            prev_id = $1::int
+        WHERE
+            id = $2::int;
+        `;
+
+        const del = `
+        DELETE FROM
+            navigation.route
+        WHERE
+            id = $1::int
+        RETURNING
+            id;
+        `;
+
         try {
-            const result = await god.query(query, params);
+            if (!inheritedClient) await client.query('BEGIN');
+            let current = await client.query(select, [id]);
+            current = current.rows[0];
+            await client.query(del, [id])
+            await client.query(updateNext, [current?.prev_id, current?.next_id]);
+            const result = await client.query(updatePrev, [current?.next_id, current?.prev_id]);
+            if (!inheritedClient) await client.query('COMMIT');
             return {rows: result.rows};
         } catch (error) {
-            if (error.code === 'P0001') {
-                return {
-                    error: 'Business rule violation',
-                    status: 422,
-                    details: {
-                        method: 'Route.update()',
-                        ...(error.message ? {message: error.message} : {})
-                    }
-                }
-            }
-            return {
-                error: 'Database query error',
-                details: {
-                    method: 'Route.update()',
-                    ...(error.message ? {message: error.message} : {})
-                }
+            console.log(error)
+            hasError = true;
+            return pgError2HttpStatus(error, 'Route.delete()');
+        } finally {
+            if (!inheritedClient) {
+                if (hasError) await client.query('ROLLBACK');
+                client.release();
             }
         }
     }
-    */
-    
 }
 
 export default Route;
