@@ -1,6 +1,6 @@
 import { z } from 'zod/v4';
  
-export const ValidateRoute = z.object({
+const ValidateRoute = z.object({
   id: z.number().min(1),
   parent_id: z.number().min(1).nullable(),
   prev_id: z.number().min(1).nullable(),
@@ -22,3 +22,5 @@ export const ValidateRoute = z.object({
     }
   
 );
+
+export default ValidateRoute;

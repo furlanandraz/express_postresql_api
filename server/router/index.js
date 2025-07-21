@@ -1,10 +1,11 @@
 import express from 'express';
-const router = express.Router();
+
 // primitive
 import navigation from './primitve/navigation/index.js';
 import presentation from './primitve/presentation/index.js';
 import client from './primitve/client/index.js';
 import auth from './primitve/auth/index.js';
+import settings from './primitve/settings/index.js';
 
 // resources
 import routeItem from './resource/route-item/index.js';
@@ -12,11 +13,16 @@ import routeItem from './resource/route-item/index.js';
 // upload
 import upload from './upload/index.js';
 
+//router
+const router = express.Router();
+
 // primitive
 router.use('/navigation', navigation);
 router.use('/presentation', presentation);
 router.use('/client', client);
+router.use('/settings', settings)
 
+// auth
 router.use('/auth', auth);
 
 //resources

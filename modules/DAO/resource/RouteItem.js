@@ -1,7 +1,8 @@
 import { god } from "#DAO/clients/index.js";
-
 import Route from '#DAO/primitive/navigation/Route.js';
 import RouteTranslation from '#DAO/primitive/language/RouteTranslation.js';
+import pgError2HttpStatus from "#DAO/functions/formatters/pgError2HttpStatus.js";
+import navigationRouteGenerateURL from "#DAO/functions/builders/navigationRouteGenerateURL.js";
 
 class RouteItem {
 
@@ -70,6 +71,30 @@ class RouteItem {
             await client.query('COMMIT');
             return route;
         } catch (error) {
+            
+            hasError = true;
+            return pgError2HttpStatus(error, 'RouteItem.update()');
+        } finally {
+            if (hasError) await client.query('ROLLBACK');
+            client.release();
+        }
+    }
+
+    static async generateURL(id = null) {
+
+        console.log('generateURL')
+        const client = await god.connect();
+        let hasError = false;
+        
+        try {
+            await client.query('BEGIN');
+            const generateURL = await navigationRouteGenerateURL(id);
+            if (generateURL.error) return generateURL;
+            // add write to db for each entry in result
+            await client.query('COMMIT');
+            return generateURL;
+        } catch (error) {
+            console.log(error)
             hasError = true;
             return pgError2HttpStatus(error, 'RouteItem.update()');
         } finally {

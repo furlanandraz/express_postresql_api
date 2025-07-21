@@ -42,13 +42,13 @@ INSERT INTO language.route_translation (
     'en',
     '',
     'Home',
-    'Foo&Bar Company'
+    'Home'
 ), (
     1,
     'sl',
     '',
     'Domov',
-    'Foo&Bar podjetje'
+    'Domov'
 ), (
     2,
     'en',

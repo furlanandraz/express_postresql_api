@@ -217,9 +217,9 @@ class Route {
             if (!inheritedClient) await client.query('BEGIN');
             let current = await client.query(select, [id]);
             current = current.rows[0];
-            await client.query(del, [id])
+            const result = await client.query(del, [id])
             await client.query(updateNext, [current?.prev_id, current?.next_id]);
-            const result = await client.query(updatePrev, [current?.next_id, current?.prev_id]);
+            await client.query(updatePrev, [current?.next_id, current?.prev_id]);
             if (!inheritedClient) await client.query('COMMIT');
             return {rows: result.rows};
         } catch (error) {
