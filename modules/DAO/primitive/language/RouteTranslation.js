@@ -116,6 +116,62 @@ class RouteTranslation {
             }
         }
     }
+
+    static async updateURL(data, inheritedClient) {
+
+        const client = inheritedClient || await god.connect();
+        let hasError = false;
+
+        const values = [];
+        const params = [];
+        
+        data.forEach((row, i) => {
+            values.push(`($${i * 4 + 1}, $${i * 4 + 2}, $${i * 4 + 3}, $${i * 4 + 4})`);
+            params.push(
+                row.route_id,
+                row.language_code,
+                row.path,
+                JSON.stringify(row.breadcrumbs)
+            );
+        });
+
+        const query = `
+            UPDATE
+                language.route_translation
+            AS
+                rt
+            SET
+                path = v.path::text,
+                breadcrumbs = v.breadcrumbs::json
+            FROM (
+                VALUES
+                    ${values.join(',\n')}
+            ) AS
+                v(route_id, language_code, path, breadcrumbs)
+            WHERE
+                rt.route_id::int = v.route_id::int
+            AND
+                rt.language_code::varchar(2) = v.language_code::varchar(2)
+            RETURNING
+                rt.*;
+        `;
+
+        try {
+            if (!inheritedClient) await client.query('BEGIN');
+            const update = await client.query(query, params);
+            if (update.error) return update;
+            if (!inheritedClient) await client.query('COMMIT');
+            return update;
+        } catch (error) {
+            hasError = true;
+            return pgError2HttpStatus(error, 'RouteItem.updateURL()');
+        } finally {
+            if (!inheritedClient) {
+                if(hasError) await client.query('ROLLBACK');
+                client.release();
+            }
+        }
+    }
     
 
     

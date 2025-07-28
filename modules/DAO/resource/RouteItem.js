@@ -2,7 +2,7 @@ import { god } from "#DAO/clients/index.js";
 import Route from '#DAO/primitive/navigation/Route.js';
 import RouteTranslation from '#DAO/primitive/language/RouteTranslation.js';
 import pgError2HttpStatus from "#DAO/functions/formatters/pgError2HttpStatus.js";
-import navigationRouteGenerateURL from "#DAO/functions/builders/navigationRouteGenerateURL.js";
+import resourceRouteItemURL from "#DAO/functions/builders/resourceRouteItemURL.js";
 
 class RouteItem {
 
@@ -46,6 +46,8 @@ class RouteItem {
             const id = route.rows[0]?.id;
             const transation = await RouteTranslation.insert(id, [...data.translation], client);
             if (transation.error) return transation;
+            const url = await RouteItem.generateURL(id, client);
+            if (url.error) return url;
             await client.query('COMMIT');
             return route;
         } catch (error) {
@@ -66,8 +68,10 @@ class RouteItem {
             await client.query('BEGIN');
             const route = await Route.update(data, client);
             if (route.error) return route;
-            const transation = await RouteTranslation.update(data.id, data.translation, client);
+            const transation = await RouteTranslation.update(data.id, data.route_translation, client);
             if (transation.error) return transation;
+            const url = await RouteItem.generateURL(data.id, client);
+            if (url.error) return url;
             await client.query('COMMIT');
             return route;
         } catch (error) {
@@ -80,26 +84,29 @@ class RouteItem {
         }
     }
 
-    static async generateURL(id = null) {
+    static async generateURL(id = null, inheritedClient) {
 
-        console.log('generateURL')
-        const client = await god.connect();
+        const client = inheritedClient ?? await god.connect();
         let hasError = false;
+
         
+
         try {
-            await client.query('BEGIN');
-            const generateURL = await navigationRouteGenerateURL(id);
+            if (!inheritedClient) await client.query('BEGIN');
+            const generateURL = await resourceRouteItemURL(id);
             if (generateURL.error) return generateURL;
-            // add write to db for each entry in result
-            await client.query('COMMIT');
+            const update = await RouteTranslation.updateURL(generateURL, client);
+            if (update.error) return update;
+            if (!inheritedClient) await client.query('COMMIT');
             return generateURL;
         } catch (error) {
-            console.log(error)
             hasError = true;
             return pgError2HttpStatus(error, 'RouteItem.update()');
         } finally {
-            if (hasError) await client.query('ROLLBACK');
-            client.release();
+            if (!inheritedClient) {
+                if(hasError) await client.query('ROLLBACK');
+                client.release();
+            }
         }
     }
 

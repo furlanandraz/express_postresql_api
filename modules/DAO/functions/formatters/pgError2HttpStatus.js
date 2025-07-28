@@ -12,7 +12,6 @@ const pgErrorMap = {
   '25P02': { status: 500, error: 'Current transaction is aborted, commands ignored' },
 };
 
-// 🔥 Add system-level Node.js connection errors
 const nodeErrorMap = {
   ECONNREFUSED: { status: 503, error: 'Database connection refused' },
   ENOTFOUND: { status: 503, error: 'Database host not found' },
@@ -20,19 +19,25 @@ const nodeErrorMap = {
 };
 
 function pgError2HttpStatus(error, method = 'Unknown', details = {}) {
-  const mapped =
-    (error.code && (pgErrorMap[error.code] || nodeErrorMap[error.code])) || {
-      status: 500,
-      error: 'Unhandled database or connection error',
+  if (error?.code && (pgErrorMap[error.code] || nodeErrorMap[error.code])) {
+    const mapped = pgErrorMap[error.code] || nodeErrorMap[error.code];
+
+    return {
+      status: mapped.status,
+      error: mapped.error,
+      details: {
+        method,
+        ...details
+      }
     };
+  }
+
 
   return {
-    error: mapped.error,
-    status: mapped.status,
+    error: error.message || 'Unhandled error',
     details: {
-      method,
-      ...details
-    },
+      method
+    }
   };
 }
 

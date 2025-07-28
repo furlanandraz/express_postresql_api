@@ -12,4 +12,4 @@ BEGIN
     END IF;
 
     RETURN NEW;
-END $enforce_default_language_rules$ ;
+END $enforce_default_language_rules$;

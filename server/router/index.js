@@ -9,6 +9,7 @@ import settings from './primitve/settings/index.js';
 
 // resources
 import routeItem from './resource/route-item/index.js';
+import routeTree from './resource/route-tree/index.js';
 
 // upload
 import upload from './upload/index.js';
@@ -27,6 +28,7 @@ router.use('/auth', auth);
 
 //resources
 router.use('/resource/route-item', routeItem);
+router.use('/resource/route-tree', routeTree);
 
 // upload
 router.use('/upload', upload);

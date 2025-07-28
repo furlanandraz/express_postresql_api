@@ -223,7 +223,6 @@ class Route {
             if (!inheritedClient) await client.query('COMMIT');
             return {rows: result.rows};
         } catch (error) {
-            console.log(error)
             hasError = true;
             return pgError2HttpStatus(error, 'Route.delete()');
         } finally {

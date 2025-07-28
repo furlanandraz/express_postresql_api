@@ -2,9 +2,8 @@ import RouteItem from '#DAO/resource/RouteItem.js';
 import Language from '#DAO/primitive/settings/Language.js';
 import pgError2HttpStatus from '#DAO/functions/formatters/pgError2HttpStatus.js';
 
-export default async function navigationRouteGenerateURL(id) {
+export default async function resourceRouteItemURL(id) {
 
-    console.log('navigationRouteGenerateURL')
     let result = [];
 
     try {
