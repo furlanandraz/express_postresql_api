@@ -164,7 +164,7 @@ class RouteTranslation {
             return update;
         } catch (error) {
             hasError = true;
-            return pgError2HttpStatus(error, 'RouteItem.updateURL()');
+            return pgError2HttpStatus(error, 'RouteTranslation.updateURL()');
         } finally {
             if (!inheritedClient) {
                 if(hasError) await client.query('ROLLBACK');
@@ -174,6 +174,27 @@ class RouteTranslation {
     }
     
 
+    static async checkSlugAndLabelMissing(language_code) {
+        const query = `            
+            SELECT
+                id,
+                label
+            FROM
+                language.route_translation
+            WHERE
+                language_code = $1
+            AND
+               (label = '' OR slug = '');
+        `;
+
+        try {
+            const result = await client.query(query, [language_code]);
+            return {rows: result.rows};
+        } catch (error) {
+            return pgError2HttpStatus(error, 'RouteTranslation.checkSlugAndLabelMissing()');
+        }
+    
+    }
     
 }
 

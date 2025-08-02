@@ -1,5 +1,6 @@
 import { god } from "#clients";
 import pgError2HttpStatus from '#DAO/functions/formatters/pgError2HttpStatus.js';
+import RouteTranslation from '#DAO/primitive/language/RouteTranslation.js';
 class Language{
 
     static async select(options) {
@@ -115,6 +116,12 @@ class Language{
         `;
 
         try {
+            const checkMissing = await RouteTranslation.checkSlugAndLabelMissing(code);
+            if (checkMissing.rows.length) return {
+                error: true,
+                status: 422,
+                message: `Following routes are missing translation for ${code} on routes: ${rows.map(route => route.id).join(', ')}`
+            }
             client = await god.connect();
             await client.query('BEGIN');
             const enabled = await Language.setEnabled(code, true, client);
