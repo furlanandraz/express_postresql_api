@@ -15,6 +15,8 @@ export default async function resourceRouteItemURL(id) {
         const languages = await Language.select({ is_enabled: true });
         if (languages.error) return languages;
 
+        console.log('resourceRouteItemURL', routes.rows, languages.rows )
+
         for (const language of languages.rows) {
             const language_code = language.code;
             const languageRoutes = routes.rows.filter(r => r.language_code === language_code);

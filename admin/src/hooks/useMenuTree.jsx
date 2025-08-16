@@ -4,16 +4,11 @@ const apiBaseURL = import.meta.env.VITE_API_BASE_URL;
 
 export function useMenuTree() {
     const [tree, setTree] = useState([]);
-    const [treeLatent, setTreeLatentPreprocess] = useState([]);
-    const [commit, setCommit] = useState(0);
+    const [item, setItem] = useState({});
+    const [languageDefault, setLanguageDefault] = useState('');
+    const [languageEnabled, setLanguageEnabled] = useState([]);
     const [loading, setLoading] = useState(false);
     const [changed, setChanged] = useState(false);
-    
-
-    function setTreeLatent(treeLatent) {
-        const processedTree = addSiblingKeys(treeLatent);
-        setTreeLatentPreprocess(processedTree);
-    }
 
     useEffect(() => {
         
@@ -21,153 +16,142 @@ export function useMenuTree() {
            
             setLoading(true);
             try {
-                const res = await fetch(`${apiBaseURL}/navigation/route-tree`, {
+                const res = await fetch(`${apiBaseURL}/resource/route-tree/simple`, {
                     credentials: 'include',
                 });
                 
-                const data = await res.json();
-
-                setTree(data);
-                setTreeLatent(data);
-                setChanged(false);
-                setLoading(false);
+                const json = await res.json();
                 
-
+                setTree(json.data.route_tree);
+                setLanguageDefault(json.data.language_default);
+                setLanguageEnabled(json.data.language_enabled);
+                
             } catch (err) {
                 console.error(err);
+            } finally {
+                setChanged(false);
                 setLoading(false);
             }
         }
 
         getRouteTree();
 
-    }, [commit]);
+    }, [changed]);
 
-    function insertRouteItem(parentId) {
-        const newItem = {
-            id: 'created_' + Date.now(),
-            parent_id: parentId,
-            title: 'New Page',
-            slug: 'new-page',
-            meta_description: '',
-            meta_keywords: '',
-            children: []
+    function getRouteItem(id) {
+
+        async function f(id) {
+           
+            try {
+                const res = await fetch(`${apiBaseURL}/resource/route-item/${id}?normalize=true`, {
+                    method: 'GET',
+                    credentials: 'include'
+                });
+                const json = await res.json();
+                setItem(json.data);
+                
+            } catch (err) {
+                console.log(err.code);
+            } finally {
+                setChanged(true);
+            }
         }
 
-        function insertItemRecursive(nodes, parentId, newItem) {
-            return nodes.map(node => {
-                if (node.id === parentId) {
-                    return {
-                        ...node,
-                        children: [...node.children, newItem]
-                    };
-                }
+        f(id);
+    }
 
-                if (node.children && node.children.length > 0) {
-                    return {
-                        ...node,
-                        children: insertItemRecursive(node.children, parentId, newItem)
-                    };
-                }
+    function moveRouteItem(item) {
 
-                return node;
-            });
+        async function f(item) {
+           
+            try {
+                await fetch(`${apiBaseURL}/navigation/route`, {
+                    method: 'PUT',
+                    credentials: 'include',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(item)
+                });
+                
+            } catch (err) {
+                console.log(err.code);
+            } finally {
+                setChanged(true);
+            }
         }
 
-        const updatedTree = insertItemRecursive(treeLatent, parentId, newItem);
-        setTreeLatent(updatedTree);
-        setChanged(true);
+        f(item);
+    }
+
+    function updateRouteItem(item) {
+
+        async function f(item) {
+           
+            try {
+                await fetch(`${apiBaseURL}/resource/route-item`, {
+                    method: 'PUT',
+                    credentials: 'include',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(item)
+                });
+                
+            } catch (err) {
+                console.log(err.code);
+            } finally {
+                setChanged(true);
+            }
+        }
+
+        f(item);
+    }
+
+    function createRouteItem(item) {
+        
+
+        async function f(item) {
+           
+            try {
+                await fetch(`${apiBaseURL}/resource/route-item`, {
+                    method: 'POST',
+                    credentials: 'include',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(item)
+                });
+                
+            } catch (err) {
+                console.log(err.code);
+            } finally {
+                setChanged(true);
+            }
+        }
+
+        f(item);
     }
 
     function deleteRouteItem(id) {
-        function deleteRouteItemRecursive(id, nodes) {
-            return nodes
-                .map(node => {
-                    if (node.children && node.children.length > 0) {
-                        return {
-                            ...node,
-                            children: deleteRouteItemRecursive(id, node.children)
-                        };
-                    }
-                    return node;
-                })
-                .filter(node => node.id !== id);
+
+        async function f(id) {
+           
+            try {
+                await fetch(`${apiBaseURL}/navigation/route/${id}`, {
+                    method: 'DELETE',
+                    credentials: 'include'
+                });
+                
+            } catch (err) {
+                console.log(err.code);
+            } finally {
+                setChanged(true);
+            }
         }
 
-        const updatedTree = deleteRouteItemRecursive(id, treeLatent);
-        setTreeLatent(updatedTree);
-        setChanged(true);
+        f(id);
     }
 
-        
-    async function commitMenuTree() {
-
-        try {
-            const res = await fetch(`${apiBaseURL}/navigation/update-route-items`, {
-                method: "POST",
-                credentials: "include",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ treeLatent: removeSiblingKeys(treeLatent), tree: tree }),
-            });
-
-            if (!res.ok) throw new Error("Failed to save");
-            return true;
-            
-        } catch (err) {
-            console.error("Commit failed:", err);
-            return false;
-        } finally {
-            setChanged(false);
-            setCommit(Date.now());
-        }
-        
-    }
-
-    function discardChanges() {
-        if (JSON.stringify(treeLatent) !== JSON.stringify(tree)) {
-            setChanged(false);
-            setTreeLatent(tree);
-        }
-    }
-
-    function forceRefresh() {
-        setCommit(Date.now());
-    }
-
-    function addSiblingKeys(nodes) {
-        return nodes.map((node, _, siblings) => {
-            const updatedChildren = node.children
-                ? addSiblingKeys(node.children)
-                : [];
-
-            const isLeaf = updatedChildren.length === 0;
-            const hasSiblings = siblings.length > 1 || isLeaf;
-
-            return {
-                ...node,
-                hasSiblings,
-                children: updatedChildren
-            };
-        });
-    }
-
-
-    function removeSiblingKeys(nodes) {
-        return nodes.map((node) => {
-            const updatedChildren = node.children
-                ? removeSiblingKeys(node.children)
-                : [];
-
-            const { hasSiblings, ...rest } = node; // remove 'hasSiblings'
-
-            return {
-                ...rest,
-                children: updatedChildren
-            };
-        });
-    }
-
-    
-
-    return {treeLatent, setTreeLatent, changed, setChanged, loading, insertRouteItem, deleteRouteItem, commitMenuTree, discardChanges, forceRefresh};
+    return { tree, item, setItem, languageDefault, languageEnabled, moveRouteItem, getRouteItem, updateRouteItem, createRouteItem, deleteRouteItem, loading };
 }

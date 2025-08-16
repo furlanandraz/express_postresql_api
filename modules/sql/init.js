@@ -55,7 +55,7 @@ function sqlCrawler(directory) {
             }, // Set environment variables
             stdio: "inherit", // Redirect stdout and stderr to the console
         });
-        console.log(`psql stdout: ${result}`);
+        
     } catch (error) {
         console.error(error);
         if (fs.existsSync(tmpFile)) {

@@ -1,4 +1,4 @@
-CREATE VIEW
+CREATE OR REPLACE VIEW
     public.route_item
 AS SELECT
     r.*,
@@ -19,4 +19,23 @@ LEFT JOIN
 ON
     r.id = t.route_id AND l.code = t.language_code
 WHERE l.is_enabled = TRUE;
+
+CREATE OR REPLACE VIEW
+    public.route_item_simple
+AS SELECT 
+    r.*,
+    t.label
+FROM
+    navigation.route r
+CROSS JOIN
+    settings.language l
+LEFT JOIN
+    language.route_translation t
+ON
+    r.id = t.route_id
+AND
+    l.code = t.language_code
+WHERE
+    l.is_default = TRUE;
+
 

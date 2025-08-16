@@ -43,7 +43,7 @@ class Navigation {
             ${values}
         RETURNING id;`;
 
-        console.log(query);
+       
         return [];
 
         try {

@@ -15,4 +15,16 @@ router.get('/', async (req, res) => {
     
 });
 
+router.get('/simple', async (req, res) => {
+
+    try {
+        const result = await RouteTree.select(true);
+        if (result.error) return res.status(result.status || 500).json(result);
+        res.json({ data: result });
+    } catch (error) {
+        res.status(500).json({ error: 'Internal server error' });
+    }
+    
+});
+
 export default router;

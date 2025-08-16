@@ -24,10 +24,11 @@ router.get('/', async (req, res) => {
 router.get('/:id', async (req, res) => {
   
     const id = Number(req.params.id);
+    const normalize = (req.query.normalize ?? 'true') === 'true';
 
     try {
         IdChecker.parse({ id });
-        const result = await RouteItem.select(id);
+        const result = await RouteItem.select(id, normalize);
         if (result.error) return res.status(result.status || 500).json(result);
         return res.json({data: result.rows});
     } catch (error) {
@@ -40,16 +41,17 @@ router.get('/:id', async (req, res) => {
 router.post('/', async (req, res) => {
 
     const payload = req.body;
-
+    console.log(payload);
     try {
         ValidateRouteItemInsert.parse(payload);
         const result = await RouteItem.insert(payload);
+        console.log(result);
         if (result.error) return res.status(result.status || 500).json(result);
         return res.json({data: result});
     } catch (error) {
+        console.error(error);
         if (error instanceof ZodError) return res.status(422).json({error: "Validation error", data: error.issues});
         res.status(500).json({ error: 'Internal server error' });
-        console.log(error);
     }
     
 });
@@ -80,10 +82,10 @@ router.post('/:id/generate-url', async (req, res) => {
         if (result.error) return res.status(result.status || 500).json(result);
         return res.json({data: result});
     } catch (error) {
-        console.log(error)
+        
         if (error instanceof ZodError) return res.status(422).json({error: "Validation error", data: error.issues});
         res.status(500).json({ error: 'Internal server error' });
-        console.log(error);
+        
     }
     
 });

@@ -48,6 +48,16 @@ class Route {
             id = $1::int;
         `;
 
+        const detachCurrent = `
+        UPDATE
+            navigation.route
+        SET
+            prev_id = NULL,
+            next_id = NULL
+        WHERE
+            id = $1::int;
+        `;
+
         const updateCurrentPrev = `
         UPDATE
             navigation.route
@@ -108,9 +118,11 @@ class Route {
             let current = await client.query(selectCurrent, [data.id]);
             current = current.rows[0];
 
+            await client.query(detachCurrent, [data.id]);
+
             await client.query(updateCurrentNext, [current?.prev_id, current?.next_id]);
             await client.query(updateCurrentPrev, [current?.next_id, current?.prev_id]);
-            
+
             if (data.prev_id !== null) await client.query(updatePrev, paramsPrev);
             if (data.next_id !== null) await client.query(updateNext, paramsNext);
 
@@ -135,6 +147,22 @@ class Route {
         const client = inheritedClient || await god.connect();
         let hasError = false;
 
+        // possibly find a route that is the last/first to append or unshift to
+        /*
+        const unshiftTarget = `
+        SELECT
+            id
+        FROM
+            navigation.route
+        WHERE
+            prev_id IS NULL
+        AND
+            parent_id = $1
+        `;
+
+        const unshiftTargetParams = [data.parent_id];
+        */
+
         const insert = `
         INSERT INTO navigation.route (
             parent_id,
@@ -157,6 +185,7 @@ class Route {
             if (!inheritedClient) await client.query('BEGIN');
             const result = await client.query(insert, params);
             await Route.update({ id: result.rows[0].id, ...data }, client);
+            // await Route.update({ id: result.rows[0].id, next_id: unshift.id, ...data }, client);
             if (!inheritedClient) await client.query('COMMIT');
             return {rows: result.rows};
         } catch (error) {

@@ -27,6 +27,7 @@ function pgError2HttpStatus(error, method = 'Unknown', details = {}) {
       error: mapped.error,
       details: {
         method,
+        full: error,
         ...details
       }
     };

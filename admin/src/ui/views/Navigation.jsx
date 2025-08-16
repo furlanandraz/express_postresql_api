@@ -2,8 +2,8 @@ import Nestable from 'react-nestable';
 import 'react-nestable/dist/styles/index.css';
 
 import RouteItem from '../components/RouteItem';
-// import NavigationUtility from '../components/NavigationUtility';
-import RouteEdit from '../modals/RouteEdit';
+import RouteItemEdit from '../modals/RouteItemEdit';
+import RouteItemInsert from '../modals/RouteItemInsert';
 import { useMenuTree } from '../../hooks/useMenuTree';
 
 import './Navigation.css';
@@ -11,76 +11,109 @@ import { useState } from 'react';
 
 export default function Navigation() {
 
-  
-  const [isOpen, setIsOpen] = useState(false);
-  const [editRouteId, setEditRouteId] = useState(null);
+  const { tree, item, languageEnabled, moveRouteItem, getRouteItem, deleteRouteItem, updateRouteItem, createRouteItem} = useMenuTree();
+
+  const [loading, setLoading] = useState(false);
+  const [isOpenEdit, setIsOpenEdit] = useState(false);
+  const [isOpenInsert, setIsOpenInsert] = useState(false);
   const [editRouteItem, setEditRouteItem] = useState(null);
+  const [editRouteitemHasChildren, setEditRouteitemHasChildren] = useState(false);
+  const [insertRouteItemParentId, setInsertRouteItemParentId] = useState(null);
 
-  function onRequestClose() {
-    setEditRouteId(null);
+  function onRequestCloseEdit() {
     setEditRouteItem(null);
-    setIsOpen(false);
+    setEditRouteitemHasChildren(false);
+    setIsOpenEdit(false);
   }
 
-  function onEditRoute(id, item) {
-    setEditRouteId(id);
-    setEditRouteItem(item)
-    setIsOpen(true);
+  function onRequestCloseInsert() {
+    setIsOpenInsert(false);
   }
 
+  function onEditRoute(id, hasChildren) {
+    getRouteItem(id)
+    setEditRouteItem(item);
+    setEditRouteitemHasChildren(hasChildren);
+    setIsOpenEdit(true);
+  }
+
+  function onInsertRoute(parentId) {
+    setInsertRouteItemParentId(parentId)
+    setIsOpenInsert(true);
+  }
+
+ 
+/*
   const {treeLatent, setTreeLatent, changed, setChanged, loading, insertRouteItem, deleteRouteItem, commitMenuTree, discardChanges, forceRefresh} = useMenuTree();
+  */
   
+ 
+  /*
   const renderItem = ({ item }) => <RouteItem id={item.id} item={item} title={item.title} hasSiblings={item.hasSiblings} deleteRouteItem={deleteRouteItem} insertRouteItem={insertRouteItem} onEditRoute={onEditRoute} />;
+  */
+  
+  const renderItem = ({ item }) => <RouteItem id={item.id} item={item} title={item.label} onEditRoute={onEditRoute} onInsertRoute={onInsertRoute} deleteRouteItem={deleteRouteItem} />;
+  
+  function getParentByPath(items, path) {
+    if (path.length <= 1) return null; // root level
 
-  function getParentByPath(tree, path) {
+    let current = items;
 
-    tree = [{ ...treeLatent[0], children: tree }];
-    path = [0, ...path];
-
-    let current = tree;
-    for (let i = 0; i < path.length - 1; i++) {
+    for (let i = 0; i < path.length - 2; i++) {
       const index = path[i];
-      if (!current || !Array.isArray(current)) return null;
-
-      const node = current[index];
-      if (!node) return null;
-
-      current = node.children || [];
-      if (i === path.length - 2) return node;
+      current = current[index]?.children ?? [];
     }
 
-    return null;
+    const parentIndex = path[path.length - 2];
+    return current[parentIndex] ?? null;
   }
-
 
   function updateTree(items, dragItem, targetPath) {
     const parent = getParentByPath(items, targetPath);
+    let parent_id = parent?.id ?? null;
 
-    console.log('dragItem:', dragItem.id);
-    console.log('newParent:', parent.id);
+    if (parent_id === null && dragItem.id !== 1) {
+      parent_id = 1;
+    }
 
-    if (!changed) setChanged(true);
+    const siblings = parent?.children ?? items;
+    const index = siblings.findIndex(item => item.id === dragItem.id);
 
-    setTreeLatent([{ ...treeLatent[0], children: items }]);
+    const prev_id = index > 0 ? siblings[index - 1].id : null;
+    const next_id = index < siblings.length - 1 ? siblings[index + 1].id : null;
+
+    moveRouteItem({
+      id: dragItem.id,
+      parent_id,
+      prev_id,
+      next_id,
+      render_method: dragItem.render_method,
+      render_type: dragItem.render_type
+    });
   }
+
+
+ 
 
   return (
     <>
       <div className='container'>
-        {/* <NavigationUtility changed={changed} forceRefresh={forceRefresh} commitMenuTree={commitMenuTree} discardChanges={discardChanges}/> */}
-        {(!loading && treeLatent.length > 0) && (
+        {/* <NavigationUtility /> */}
+        {(!loading && tree.length) && (
           <div className='wrapper'>
-            <RouteItem home={true} id={treeLatent[0].id} item={treeLatent[0]} title={treeLatent[0].title} insertRouteItem={insertRouteItem}  onEditRoute={onEditRoute}/>
           <Nestable
-            items={treeLatent[0].children}
-            renderItem={renderItem}
-            className="pl-nested"
-            onChange={({ items, dragItem, targetPath }) => updateTree(items, dragItem, targetPath)}
+              items={tree}
+              renderItem={renderItem}
+              className="pl-nested"
+              onChange={({ items, dragItem, targetPath }) => updateTree(items, dragItem, targetPath)}
+              disableDrag={({ item }) => item.id !== 1}
             />
-        </div>
+          </div>
+          
       )}
       </div>
-      <RouteEdit id={editRouteId} item={editRouteItem}  isOpen={isOpen} onRequestClose={onRequestClose}></RouteEdit>
+      <RouteItemEdit item={item} languageEnabled={languageEnabled} isOpen={isOpenEdit} onRequestClose={onRequestCloseEdit} editRouteitemHasChildren={editRouteitemHasChildren} onSubmit={updateRouteItem} />
+      <RouteItemInsert languageEnabled={languageEnabled} isOpen={isOpenInsert} onRequestClose={onRequestCloseInsert} onInsertRoute={onInsertRoute} parentId={insertRouteItemParentId} onSubmit={createRouteItem} />
   </>
 );
 }

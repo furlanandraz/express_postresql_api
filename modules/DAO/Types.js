@@ -36,7 +36,7 @@ class Types {
 
         const existing = `(${data.map(value => `'${value.url_name}'`).join(', ')})`;
 
-        console.log(values, "\n", existing);
+        
 
 
         try {

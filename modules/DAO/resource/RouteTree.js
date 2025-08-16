@@ -4,12 +4,12 @@ import resourceRouteItemTree from '#DAO/functions/builders/resourceRouteItemTree
 
 class RouteTree {
 
-    static async select() {
+    static async select(simple = false) {
 
         try {
-            return await resourceRouteItemTree();
+            return await resourceRouteItemTree(simple);
         } catch (error) {
-            console.log(error);
+            console.error(error);
             return pgError2HttpStatus(error, 'RouteTree.select()');
         }
     }

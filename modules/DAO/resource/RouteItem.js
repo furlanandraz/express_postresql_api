@@ -2,11 +2,12 @@ import { god } from "#DAO/clients/index.js";
 import Route from '#DAO/primitive/navigation/Route.js';
 import RouteTranslation from '#DAO/primitive/language/RouteTranslation.js';
 import pgError2HttpStatus from "#DAO/functions/formatters/pgError2HttpStatus.js";
+import routeItemNormalize from '#DAO/functions/formatters/routeItemNormalize.js';
 import resourceRouteItemURL from "#DAO/functions/builders/resourceRouteItemURL.js";
 
 class RouteItem {
 
-    static async select(id = null) {
+    static async select(id = null, normalize = false) {
 
         let query = `
         SELECT
@@ -23,8 +24,13 @@ class RouteItem {
 
         try {
             const result = await god.query(query, params);
+            if (normalize && result.rows) {
+                
+                return {rows: routeItemNormalize(result.rows)};
+            }
             return result;
         } catch (error) {
+            console.error(error);
             return {
                 error: 'Database query error',
                 details: {
@@ -42,13 +48,15 @@ class RouteItem {
         try {
             await client.query('BEGIN');
             const route = await Route.insert(data, client);
+            
             if (route.error) return route;
             const id = route.rows[0]?.id;
-            const transation = await RouteTranslation.insert(id, [...data.translation], client);
+            console.log('insert', id);
+            const transation = await RouteTranslation.insert(id, [...data.route_translation], client);
             if (transation.error) return transation;
-            const url = await RouteItem.generateURL(id, client);
-            if (url.error) return url;
+            
             await client.query('COMMIT');
+            await RouteItem.generateURL(id, client);
             return route;
         } catch (error) {
             hasError = true;
@@ -70,9 +78,8 @@ class RouteItem {
             if (route.error) return route;
             const transation = await RouteTranslation.update(data.id, data.route_translation, client);
             if (transation.error) return transation;
-            const url = await RouteItem.generateURL(data.id, client);
-            if (url.error) return url;
             await client.query('COMMIT');
+            await RouteItem.generateURL(data.id, client);
             return route;
         } catch (error) {
             
@@ -94,6 +101,7 @@ class RouteItem {
         try {
             if (!inheritedClient) await client.query('BEGIN');
             const generateURL = await resourceRouteItemURL(id);
+            console.log('generateURL', generateURL);
             if (generateURL.error) return generateURL;
             const update = await RouteTranslation.updateURL(generateURL, client);
             if (update.error) return update;
@@ -109,6 +117,37 @@ class RouteItem {
             }
         }
     }
+
+    static async selectSimple(id = null) {
+
+        let query = `
+        SELECT
+            *
+        FROM
+            public.route_item_simple ris;`
+        ;
+        
+        const params = [];
+        if (id) {
+            params.push(id);
+            query += ' WHERE ris.id = $1';
+        };
+
+
+        try {
+            const result = await god.query(query, params);
+            return result;
+        } catch (error) {
+            return {
+                error: 'Database query error',
+                details: {
+                    method: 'RouteItem.selectSimple()' 
+                }
+            };
+        }
+    }
+
+    select
 
 }
 

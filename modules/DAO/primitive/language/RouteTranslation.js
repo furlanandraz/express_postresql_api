@@ -119,6 +119,8 @@ class RouteTranslation {
 
     static async updateURL(data, inheritedClient) {
 
+        console.log('updateURL', data);
+
         const client = inheritedClient || await god.connect();
         let hasError = false;
 

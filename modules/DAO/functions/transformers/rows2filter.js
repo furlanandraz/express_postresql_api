@@ -55,7 +55,7 @@ export default function rows2filter({ filters, table }) {
 
   result.conditions = conditions.length ? ' WHERE ' + conditions.join(' AND ') : '';
     result.params = params;
-    console.log(result);
+    
   return result;
 }
 

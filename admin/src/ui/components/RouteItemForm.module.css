@@ -1,0 +1,68 @@
+.tabList {
+    display: flex;
+    gap: 8px;
+    border-bottom: 1px solid #e5e7eb;
+    margin-bottom: 12px;
+}
+
+.tab {
+    padding: 6px 10px;
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    border-bottom: 2px solid transparent;
+    color: #374151;
+}
+
+.tab:hover {
+    background: #f9fafb;
+}
+
+.tabActive {
+    border-bottom-color: #111827;
+    /* near-black */
+    color: #111827;
+    font-weight: 600;
+}
+
+.form {
+    display: block;
+}
+
+.panel {
+    padding: 8px 0;
+}
+
+.panelHidden {
+    display: none;
+}
+
+.field {
+    display: grid;
+    gap: 6px;
+    margin-bottom: 12px;
+}
+
+.field>span {
+    font-size: 0.85rem;
+    color: #4b5563;
+    /* gray-600 */
+}
+
+.actions {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 12px;
+}
+
+.actions button {
+    padding: 8px 12px;
+    border-radius: 8px;
+    border: 1px solid #e5e7eb;
+    background: white;
+    cursor: pointer;
+}
+
+.actions button:hover {
+    background: #f9fafb;
+}

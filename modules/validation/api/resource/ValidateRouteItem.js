@@ -4,11 +4,11 @@ import { ValidateRouteTranslation } from '#validation/api/primitive/language/Val
 
 export const ValidateRouteItemInsert = z.object({
     parent_id: z.number().min(1),
-    prev_id: z.number().min(1).nullable(),
-    next_id: z.number().min(1).nullable(),
+    prev_id: z.number().min(1).nullable().optional(),
+    next_id: z.number().min(1).nullable().optional(),
     render_type: z.enum(['page', 'topic']),
     render_method: z.enum(['SSR', 'SSG', 'CSR']),
-    translation: z.array(ValidateRouteTranslation.omit({'route_id': true})).min(1)
+    route_translation: z.array(ValidateRouteTranslation.omit({'route_id': true})).min(1)
 }).strip();
 
 export const ValidateRouteItemUpdate = z.object({
@@ -18,6 +18,6 @@ export const ValidateRouteItemUpdate = z.object({
     render_method: z.enum(['SSR', 'SSG', 'CSR']),
     prev_id: z.number().min(1).nullable(),
     next_id: z.number().min(1).nullable(),
-    translation: z.array(ValidateRouteTranslation.omit({'route_id': true})).min(1)
+    route_translation: z.array(ValidateRouteTranslation.omit({'route_id': true})).min(1)
 }).strip();
   
