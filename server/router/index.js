@@ -11,6 +11,9 @@ import settings from './primitve/settings/index.js';
 import routeItem from './resource/route-item/index.js';
 import routeTree from './resource/route-tree/index.js';
 
+//adapter
+import build from './build/index.js';
+
 // upload
 import upload from './upload/index.js';
 
@@ -29,6 +32,9 @@ router.use('/auth', auth);
 //resources
 router.use('/resource/route-item', routeItem);
 router.use('/resource/route-tree', routeTree);
+
+//adapter
+router.use('/adapter/build', build);
 
 // upload
 router.use('/upload', upload);

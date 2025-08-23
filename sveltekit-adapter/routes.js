@@ -2,7 +2,8 @@ import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
 
-import { god } from '#DAO/clients/index.js';
+// import { god } from '#DAO/clients/index.js';
+import Build from '#DAO/adapter/Build.js';
 import config from './templates/config.js';
 
 import renderLayoutServer from './templates/renderLayoutServer.js';
@@ -115,7 +116,8 @@ function cleanup(dir) {
             fs.rmSync(filePath, { recursive: true, force: true });
         }
     });
-        const { rows: routes } = await god.query("SELECT * FROM navigation.route ORDER BY id;");
+        // const { rows: routes } = await god.query("SELECT * FROM navigation.route ORDER BY id;");
+        const { rows: routes } = await Build.navigation();
         // can be replaced with Navigation.getRouteItems();
         
         const success = await buildRoutes(routes);
