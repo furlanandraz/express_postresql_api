@@ -48,15 +48,13 @@ class RouteItem {
         try {
             await client.query('BEGIN');
             const route = await Route.insert(data, client);
-            
             if (route.error) return route;
             const id = route.rows[0]?.id;
             console.log('insert', id);
             const transation = await RouteTranslation.insert(id, [...data.route_translation], client);
             if (transation.error) return transation;
-            
             await client.query('COMMIT');
-            await RouteItem.generateURL(id, client);
+            await RouteItem.generateURL(id);
             return route;
         } catch (error) {
             hasError = true;
@@ -100,8 +98,8 @@ class RouteItem {
 
         try {
             if (!inheritedClient) await client.query('BEGIN');
+            // q routes and languages and pass them to generator function, so that client is on this level only
             const generateURL = await resourceRouteItemURL(id);
-            console.log('generateURL', generateURL);
             if (generateURL.error) return generateURL;
             const update = await RouteTranslation.updateURL(generateURL, client);
             if (update.error) return update;
@@ -109,7 +107,7 @@ class RouteItem {
             return generateURL;
         } catch (error) {
             hasError = true;
-            return pgError2HttpStatus(error, 'RouteItem.update()');
+            return pgError2HttpStatus(error, 'RouteItem.generateURL()');
         } finally {
             if (!inheritedClient) {
                 if(hasError) await client.query('ROLLBACK');
