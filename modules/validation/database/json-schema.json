@@ -141,11 +141,41 @@
             "CSR"
           ]
         },
+        "route_layout_instance_translation": {
+          "anyOf": [
+            {
+              "$ref": "#/definitions/route_layout_instance_translation"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
         "route_translation": {
           "type": "array",
           "items": {
             "$ref": "#/definitions/route_translation"
           }
+        },
+        "route_route_next_idToroute": {
+          "anyOf": [
+            {
+              "$ref": "#/definitions/route"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "other_route_route_next_idToroute": {
+          "anyOf": [
+            {
+              "$ref": "#/definitions/route"
+            },
+            {
+              "type": "null"
+            }
+          ]
         },
         "route": {
           "anyOf": [
@@ -163,11 +193,35 @@
             "$ref": "#/definitions/route"
           }
         },
+        "route_route_prev_idToroute": {
+          "anyOf": [
+            {
+              "$ref": "#/definitions/route"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "other_route_route_prev_idToroute": {
+          "anyOf": [
+            {
+              "$ref": "#/definitions/route"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
         "route_layout_class": {
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/route_layout_class"
-          }
+          "anyOf": [
+            {
+              "$ref": "#/definitions/route_layout_class"
+            },
+            {
+              "type": "null"
+            }
+          ]
         },
         "route_template_class": {
           "type": "array",
@@ -186,15 +240,6 @@
     "route_layout_class": {
       "type": "object",
       "properties": {
-        "id": {
-          "type": "integer"
-        },
-        "route_layout_instance_translation": {
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/route_layout_instance_translation"
-          }
-        },
         "layout_type": {
           "$ref": "#/definitions/layout_type"
         },
@@ -486,8 +531,8 @@
         "language": {
           "$ref": "#/definitions/language"
         },
-        "route_layout_class": {
-          "$ref": "#/definitions/route_layout_class"
+        "route": {
+          "$ref": "#/definitions/route"
         }
       }
     },

@@ -55,29 +55,34 @@ model image {
 }
 
 model route {
-  id                   Int                    @id @default(autoincrement())
-  parent_id            Int?
-  render_type          route_render_type      @default(page)
-  render_method        route_render_method    @default(SSR)
-  route_translation    route_translation[]
-  route                route?                 @relation("routeToroute", fields: [parent_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
-  other_route          route[]                @relation("routeToroute")
-  route_layout_class   route_layout_class[]
-  route_template_class route_template_class[]
-  route_topic_class    route_topic_class[]
+  id                                Int                                @id @default(autoincrement())
+  parent_id                         Int?
+  render_type                       route_render_type                  @default(page)
+  render_method                     route_render_method                @default(SSR)
+  prev_id                           Int?                               @unique(map: "unique_prev_id")
+  next_id                           Int?                               @unique(map: "unique_next_id")
+  route_layout_instance_translation route_layout_instance_translation?
+  route_translation                 route_translation[]
+  route_route_next_idToroute        route?                             @relation("route_next_idToroute", fields: [next_id], references: [id], onUpdate: NoAction)
+  other_route_route_next_idToroute  route?                             @relation("route_next_idToroute")
+  route                             route?                             @relation("routeToroute", fields: [parent_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  other_route                       route[]                            @relation("routeToroute")
+  route_route_prev_idToroute        route?                             @relation("route_prev_idToroute", fields: [prev_id], references: [id], onUpdate: NoAction)
+  other_route_route_prev_idToroute  route?                             @relation("route_prev_idToroute")
+  route_layout_class                route_layout_class?
+  route_template_class              route_template_class[]
+  route_topic_class                 route_topic_class[]
 
   @@schema("navigation")
 }
 
 model route_layout_class {
-  id                                Int                                 @id @default(autoincrement())
-  route_id                          Int
-  layout_type_id                    Int
-  route_layout_instance_translation route_layout_instance_translation[]
-  layout_type                       layout_type                         @relation(fields: [layout_type_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
-  route                             route                               @relation(fields: [route_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  route_id       Int         @unique
+  layout_type_id Int
+  layout_type    layout_type @relation(fields: [layout_type_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  route          route       @relation(fields: [route_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
 
-  @@unique([route_id, layout_type_id])
+  @@id([route_id, layout_type_id])
   @@schema("presentation")
 }
 
@@ -184,13 +189,13 @@ model global_translation {
 }
 
 model route_layout_instance_translation {
-  route_layout_class_id Int
-  language_code         String             @db.VarChar(2)
-  data                  Json               @default("{}") @db.Json
-  language              language           @relation(fields: [language_code], references: [code], onDelete: Cascade, onUpdate: NoAction)
-  route_layout_class    route_layout_class @relation(fields: [route_layout_class_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  route_id      Int      @unique
+  language_code String   @db.VarChar(2)
+  data          Json     @default("{}") @db.Json
+  language      language @relation(fields: [language_code], references: [code], onDelete: Cascade, onUpdate: NoAction)
+  route         route    @relation(fields: [route_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
 
-  @@id([route_layout_class_id, language_code])
+  @@id([route_id, language_code])
   @@schema("language")
 }
 

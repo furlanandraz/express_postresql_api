@@ -5,6 +5,8 @@ import Route from '#DAO/primitive/navigation/Route.js';
 import IdChecker from '#validation/api/general/IdChecker.js';
 import ValidateRoute from '#validation/api/primitive/navigation/ValidateRoute.js';
 
+
+
 const router = express.Router();
 
 router.get('/', async (req, res) => {

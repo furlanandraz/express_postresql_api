@@ -14,7 +14,7 @@
     "app:status": "npx pm2 list",
     "cache:notify": "node cache/_global/notify.js",
     "types:init": "node modules/json/parse.js",
-    "routes:build": "node modules/sveltekit-adapter/routes.js"
+    "routes:build": "node sveltekit-adapter/routes.js"
   },
   "repository": {
     "type": "git",

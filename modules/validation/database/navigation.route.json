@@ -32,6 +32,20 @@
       ],
       "custom_type": "route_render_method",
       "title": "Render Method"
+    },
+    "prev_id": {
+      "type": [
+        "integer",
+        "null"
+      ],
+      "title": "Prev Id"
+    },
+    "next_id": {
+      "type": [
+        "integer",
+        "null"
+      ],
+      "title": "Next Id"
     }
   }
 }

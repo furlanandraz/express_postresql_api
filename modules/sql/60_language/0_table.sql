@@ -22,11 +22,11 @@ CREATE TABLE language.route_translation (
 );
 
 CREATE TABLE language.route_layout_instance_translation (
-    route_layout_class_id INT NOT NULL REFERENCES presentation.route_layout_class(id) ON DELETE CASCADE,
+    route_id INT NOT NULL REFERENCES navigation.route(id) ON DELETE CASCADE,
     language_code VARCHAR(2) NOT NULL REFERENCES settings.language(code) ON DELETE CASCADE,
     data JSON NOT NULL DEFAULT '{}',
 
-    PRIMARY KEY (route_layout_class_id, language_code)
+    PRIMARY KEY (route_id, language_code)
 );
 
 CREATE TABLE language.route_template_instance_translation (

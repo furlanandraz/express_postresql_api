@@ -1,4 +1,4 @@
-import Route from '#DAO/primitive/navigation/Route.js';
+import RouteTree from '#DAO/resource/RouteTree.js';
 import navigationRouteTree from "#DAO/functions/builders/navigationRouteTree.js";
 
 class Build {
@@ -6,9 +6,9 @@ class Build {
     static async navigation() {
 
         try {
-            const rotues = await Route.select();
+            const rotues = await RouteTree.select();
             if (rotues.error) return rotues;
-            return navigationRouteTree(rotues.rows);
+            return rotues;
         } catch (error) {
             console.error(error)
             return {

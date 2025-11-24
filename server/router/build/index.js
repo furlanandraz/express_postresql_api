@@ -10,7 +10,7 @@ router.get('/navigation', async (req, res) => {
     try {
         const result = await Build.navigation();
         if (result.error) return res.status(result.status || 500).json(result);
-        res.json({data: result});
+        return res.json({data: result});
     } catch (error) {
         res.status(500).json({ error: 'Internal server error' });
     }

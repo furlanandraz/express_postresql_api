@@ -10,6 +10,7 @@ import settings from './primitve/settings/index.js';
 // resources
 import routeItem from './resource/route-item/index.js';
 import routeTree from './resource/route-tree/index.js';
+import routeLayout from './resource/route-layout/index.js';
 
 //adapter
 import build from './build/index.js';
@@ -32,6 +33,7 @@ router.use('/auth', auth);
 //resources
 router.use('/resource/route-item', routeItem);
 router.use('/resource/route-tree', routeTree);
+router.use('/resource/route-layout', routeLayout);
 
 //adapter
 router.use('/adapter/build', build);

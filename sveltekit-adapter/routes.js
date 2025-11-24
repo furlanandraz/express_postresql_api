@@ -66,27 +66,38 @@ async function buildSlug(route, buildPath) {
     
 }
 
-async function buildRoutes(routes, parentId = null, buildPath = outputDir) {
+async function buildRoutes(data, outputDir) {
+    const { language_default, language_enabled, route_tree } = data;
 
-    try { 
-        for (const route of routes.filter(route => route.parent_id === parentId)) {
-            const folderName = route.slug;
-            const folderPath = path.join(buildPath, folderName);
-            fs.mkdirSync(folderPath, { recursive: true });
+     for (const lang of language_enabled) {
+    const baseDir = lang === language_default
+      ? outputDir
+      : path.join(outputDir, lang);
 
-            await buildFiles(route, parentId, folderPath);
-            await buildRoutes(routes, route.id, folderPath);
+    fs.mkdirSync(baseDir, { recursive: true });
+    await buildRoutesForLang(route_tree, lang, language_default, baseDir);
+  }
+}
 
-            if (route.url_type === 'dynamic') {
-                await buildSlug(route, folderPath);
-            }
-        };
-        return true;
-    } catch (err) {
-        console.error("Error building routes:", err);
-        return false;
+async function buildRoutesForLang(nodes, lang, defaultLang, baseDir) {
+  for (const node of nodes) {
+    const slug = pickSlug(node, lang, defaultLang);
+    const currentDir = slug ? path.join(baseDir, slug) : baseDir;
+
+    fs.mkdirSync(currentDir, { recursive: true });
+
+    if (Array.isArray(node.children) && node.children.length) {
+      await buildRoutesForLang(node.children, lang, defaultLang, currentDir);
     }
+  }
+}
 
+function pickSlug(node, lang, defaultLang) {
+  const byLang = node.route_translation?.find(t => t.language_code === lang);
+  if (byLang && typeof byLang.slug === 'string') return byLang.slug;
+
+  const byDefault = node.route_translation?.find(t => t.language_code === defaultLang);
+  return byDefault?.slug ?? '';
 }
 
 
@@ -117,10 +128,10 @@ function cleanup(dir) {
         }
     });
         // const { rows: routes } = await god.query("SELECT * FROM navigation.route ORDER BY id;");
-        const { rows: routes } = await Build.navigation();
+        const data = await Build.navigation();
         // can be replaced with Navigation.getRouteItems();
         
-        const success = await buildRoutes(routes);
+        const success = await buildRoutes(data, outputDir);
         if (success) {
             console.log("Routes built successfully.");
         } else {
@@ -131,7 +142,7 @@ function cleanup(dir) {
         console.error("Error in routes", err);
         process.exit(1);
     } finally {
-        cleanup(outputDir);
+        // cleanup(outputDir);
         process.exit(0);
     }
     

@@ -3,10 +3,6 @@
   "title": "presentation.route_layout_class",
   "type": "object",
   "properties": {
-    "id": {
-      "type": "integer",
-      "title": "Id"
-    },
     "route_id": {
       "type": "integer",
       "title": "Route Id"

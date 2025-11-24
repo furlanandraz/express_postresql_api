@@ -45,7 +45,6 @@ router.post('/', async (req, res) => {
     try {
         ValidateRouteItemInsert.parse(payload);
         const result = await RouteItem.insert(payload);
-        console.log(result);
         if (result.error) return res.status(result.status || 500).json(result);
         return res.json({data: result});
     } catch (error) {

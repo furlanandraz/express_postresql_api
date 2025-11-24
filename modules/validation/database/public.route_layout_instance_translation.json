@@ -3,9 +3,9 @@
   "title": "public.route_layout_instance_translation",
   "type": "object",
   "properties": {
-    "route_layout_class_id": {
+    "route_id": {
       "type": "integer",
-      "title": "Route Layout Class Id"
+      "title": "Route Id"
     },
     "language_code": {
       "type": "string",
@@ -24,7 +24,7 @@
     }
   },
   "required": [
-    "route_layout_class_id",
+    "route_id",
     "language_code"
   ]
 }

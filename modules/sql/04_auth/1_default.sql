@@ -31,9 +31,9 @@ INSERT INTO auth.user (
 ), (
     'editor@furlanandraz.com',
     '$2b$12$S1WM.Oi5fXfs2oR8.Avc9uiwRGOzNhi3JPlUCT1s4C9Q51H3CR19W', -- pass: editor
-    1
+    2
 ), (
     'viewer@furlanandraz.com',
     '$2b$12$/JDar.z8Y4A/.2XVPI4dXezW9Ibs/QSAiqHnSdfMX3OfSIUnB3Miy', -- pass: viewer
-    1
+    3
 );
